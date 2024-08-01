@@ -3,7 +3,10 @@
 <h1>git commit -m "sadsad"
 <h1>git push origin NAME
 <h1>Only use this directory to push and not to work<h1\>
-<p></p>https://github.com/mcombeau/minishell
+<p>
+https://github.com/mcombeau/minishell
+https://github.com/jotavare/42-resources?tab=readme-ov-file#minishell
+</p>
 ^^^for the technical blogs
 
 done:

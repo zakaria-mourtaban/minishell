@@ -2,7 +2,7 @@
 <h1>git add *
 <h1>git commit -m "sadsad"
 <h1>git push origin NAME
-<h1>Only use this directory to push and not to work
+<h1>Only use this directory to push and not to work<h1\>
 https://github.com/mcombeau/minishell
 ^^^for the technical blogs
 

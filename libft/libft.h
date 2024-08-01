@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 10:20:02 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/07/15 01:57:17 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/01 23:16:46 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ int					ft_tolower(int c);
 char				*ft_strchr(const char *s, int c);
 char				*ft_strrchr(const char *s, int c);
 int					ft_strncmp(const char *s1, const char *s2, size_t n);
+int					ft_strcmp(const char *s1, const char *s2);
 void				*ft_memchr(const void *s, int c, size_t n);
 void				*ft_memrchr(const void *s, int c, size_t n);
 char				*ft_strnstr(const char *big, const char *little,

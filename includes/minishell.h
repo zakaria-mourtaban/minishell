@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:57 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/01 23:12:21 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/01 23:58:44 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ typedef struct s_cmd
 {
 	char		**cmd;
 	int			status;
+	pid_t		pid;
 }				t_cmd;
 
 extern t_cmd	cmd;

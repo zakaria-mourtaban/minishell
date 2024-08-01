@@ -11,4 +11,4 @@ made terminal execute simple commands
 
 to do:
 implement tokinization
-<p\>
+<p/>

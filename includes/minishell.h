@@ -6,41 +6,48 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:57 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/01 11:21:41 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/01 23:12:21 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
-#define MINISHELL_H
+# define MINISHELL_H
 
-#include "../libft/libft.h"
+# include "../libft/libft.h"
 
 /* Standard Input/Output functions */
-#include <stdio.h>    // printf, perror, strerror
-#include <unistd.h>   // write, access, close, read, getcwd, chdir, isatty, ttyname, ttyslot, ioctl, dup, dup2, pipe, fork, execve
-#include <stdlib.h>   // malloc, free, exit, getenv
+# include <stdio.h>
+# include <stdlib.h>
+# include <unistd.h>
 
 /* System and Process Management */
-#include <sys/types.h>  // pid_t
-#include <sys/wait.h>   // wait, waitpid, wait3, wait4
-#include <signal.h>     // signal, sigaction, sigemptyset, sigaddset, kill
+# include <signal.h>
+# include <sys/types.h>
+# include <sys/wait.h>
 
 /* File system operations */
-#include <sys/stat.h>   // stat, lstat, fstat
-#include <fcntl.h>      // open, unlink
-#include <dirent.h>     // opendir, readdir, closedir
-
+# include <dirent.h>
+# include <fcntl.h>
+# include <sys/stat.h>
 /* Terminal control */
-#include <termios.h>    // tcsetattr, tcgetattr
-#include <curses.h>     // tgetent, tgetflag, tgetnum, tgetstr, tgoto, tputs
+# include <curses.h>
+# include <termios.h>
 
 /* Readline library */
-#include <readline/readline.h> // readline
-#include <readline/history.h>  // rl_clear_history, rl_on_new_line, rl_replace_line, rl_redisplay, add_history
+# include <readline/history.h>
+# include <readline/readline.h>
 
 /* ascii art */
-#include "art.h"
+# include "art.h"
 
-void	art();
+typedef struct s_cmd
+{
+	char		**cmd;
+	int			status;
+}				t_cmd;
+
+extern t_cmd	cmd;
+void			art(void);
+char			*get_path(char *cmd, char **env);
 
 #endif

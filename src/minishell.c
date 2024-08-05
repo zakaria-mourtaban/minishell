@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/05 01:20:06 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/05 14:15:17 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ int	main(int ac, char **av, char **env)
 	char	*input;
 	t_data	data;
 
-	// Set up signal handlers
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, handle_sigquit);
 	art();

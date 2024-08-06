@@ -15,7 +15,7 @@ SRCS = $(wildcard $(SRC_DIR)/*.c)
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 # Executable
-TARGET = minikleb
+TARGET = minishell
 
 # Targets
 all: $(LIBFT_LIB) $(TARGET)

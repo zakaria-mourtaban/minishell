@@ -16,4 +16,8 @@ to do:
 fix exit bug(having to exit multiple times for it to exit);
 implement tokinization
 <p/>
+<<<<<<< HEAD
+<h6>test commit from mkraytem</h6>
+=======
 sadsads
+>>>>>>> main

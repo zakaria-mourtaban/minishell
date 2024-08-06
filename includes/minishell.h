@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:57 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/05 00:57:45 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/06 14:59:14 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ typedef struct s_data
 	t_cmd			cmd;
 }					t_data;
 
-extern volatile int	signalint;
+extern volatile int	g_signalint;
 void				art(void);
 char				*get_path(char *cmd, char **env);
 void				initcmd(const char *input, char **env, t_data *data);

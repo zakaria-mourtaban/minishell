@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 00:00:34 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/05 01:19:43 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/06 14:59:14 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,16 @@ void	handlesignal(t_data *data)
 {
 	if (data->cmd.running == 1)
 		kill(data->cmd.pid, SIGINT);
-	signalint = 0;
+	g_signalint = 0;
 }
 
 void	handle_sigint(int sig)
 {
-	signalint = 1;
+	g_signalint = 1;
 	printf("\n");
 	rl_on_new_line();       // Move to a new line
 	rl_replace_line("", 0); // Clear the current line
-	rl_redisplay();    // Refresh the display to show the new promp    
+	rl_redisplay();         // Refresh the display to show the new promp
 	(void)sig;
 }
 

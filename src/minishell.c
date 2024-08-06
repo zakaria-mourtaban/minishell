@@ -6,13 +6,13 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/05 14:15:17 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/06 14:59:14 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-volatile int	signalint;
+volatile int	g_signalint;
 
 int	main(int ac, char **av, char **env)
 {
@@ -26,7 +26,7 @@ int	main(int ac, char **av, char **env)
 	while (1)
 	{
 		data.cmd.running = 0;
-		if (signalint != 1)
+		if (g_signalint != 1)
 			input = readline(">>>");
 		else
 			input = readline("");

@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:57 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/01 23:58:44 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/05 00:57:45 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,23 @@
 
 typedef struct s_cmd
 {
-	char		**cmd;
-	int			status;
-	pid_t		pid;
-}				t_cmd;
+	char			**cmd;
+	int				status;
+	int				running;
+	pid_t			pid;
+}					t_cmd;
 
-extern t_cmd	cmd;
-void			art(void);
-char			*get_path(char *cmd, char **env);
+typedef struct s_data
+{
+	t_cmd			cmd;
+}					t_data;
 
+extern volatile int	signalint;
+void				art(void);
+char				*get_path(char *cmd, char **env);
+void				initcmd(const char *input, char **env, t_data *data);
+void				runcmd(const char *input, char **env, t_data *data);
+void				handle_sigquit(int sig);
+void				handle_sigint(int sig);
+void				handlesignal(t_data *data);
 #endif

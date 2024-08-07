@@ -16,15 +16,17 @@ OBJS = $(SRCS:.c=.o)
 ALL_OBJS= $(OBJS) # $(BONUS_OBJS) 
 
 $(NAME): $(OBJS)
-	ar src $(NAME) $(OBJS)
+	@ar src $(NAME) $(OBJS) > /dev/null 2>&1
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@ > /dev/null 2>&1
 # bonus: $(OBJS) $(BONUS_OBJS)
 # 	$(AR) -r $(NAME) $?
 clean:
-	rm -f $(OBJS:.c=.o) $(BONUS_OBJS:.c=.o)
+	@rm -f $(OBJS:.c=.o) $(BONUS_OBJS:.c=.o) > /dev/null 2>&1
+	@echo "libft cleaned successfully" > /dev/null 2>&1
 fclean: clean
-	rm -f $(NAME) 
+	@rm -f $(NAME) > /dev/null 2>&1
+	@echo "libft fcleaned successfully" > /dev/null 2>&1
 re: fclean all
 
 .PHONY: all clean fclean re bonus

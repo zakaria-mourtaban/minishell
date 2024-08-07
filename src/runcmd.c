@@ -44,9 +44,12 @@ void	runcmd(const char *input, char **env, t_data *data)
 // can be modified for future implementation of signals
 void	initcmd(const char *input, char **env, t_data *data)
 {
+	
 	if (input == NULL || *input == '\0')
 		return ;
+	data->cmd.running = 1;
 	//! only for current testing will be removed later in development
 	runcmd(input, env, data);
 	waitpid(data->cmd.pid, &data->cmd.status, 0);
+	data->cmd.running = 0;
 }

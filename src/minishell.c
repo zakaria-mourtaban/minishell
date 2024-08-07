@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/05 14:15:17 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/07 15:20:31 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,50 @@
 
 volatile int	signalint;
 
+void	interactivemode(t_data *data, char **input)
+{
+	signal(SIGINT, interactivehandle_sigint);
+	signal(SIGQUIT, interactivehandle_sigquit);
+	while (1)
+	{
+		*input = readline(">>>");
+		if (ft_strlen(*input) != 0 && input != NULL)
+			break ;
+	}
+	(void)data;
+}
+
+void	noninteractivemode(t_data *data, char **input)
+{
+	signal(SIGINT, noninteractivehandle_sigint);
+	signal(SIGQUIT, noninteractivehandle_sigint);
+	while (data->cmd.running == 1 && signalint != 1)
+	{
+		if (signalint == 1)
+			handlesignal(data);
+		printf("\n");
+	}
+	(void)*input;
+}
+
 int	main(int ac, char **av, char **env)
 {
 	char	*input;
 	t_data	data;
 
-	signal(SIGINT, handle_sigint);
-	signal(SIGQUIT, handle_sigquit);
 	art();
 	using_history();
 	while (1)
 	{
-		data.cmd.running = 0;
-		if (signalint != 1)
-			input = readline(">>>");
-		else
-			input = readline("");
-		handlesignal(&data);
+		interactivemode(&data, &input);
 		if (input == NULL)
 		{
-			printf("\n");
+			free(input);
 			break ;
 		}
-		add_history(input);
+		if (ft_strlen(input) != 0)
+			add_history(input);
+		noninteractivemode(&data, &input);
 		initcmd(input, env, &data);
 		free(input);
 	}

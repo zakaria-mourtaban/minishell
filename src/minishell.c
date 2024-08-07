@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/07 15:20:31 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/07 16:29:28 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,31 +14,7 @@
 
 volatile int	signalint;
 
-void	interactivemode(t_data *data, char **input)
-{
-	signal(SIGINT, interactivehandle_sigint);
-	signal(SIGQUIT, interactivehandle_sigquit);
-	while (1)
-	{
-		*input = readline(">>>");
-		if (ft_strlen(*input) != 0 && input != NULL)
-			break ;
-	}
-	(void)data;
-}
 
-void	noninteractivemode(t_data *data, char **input)
-{
-	signal(SIGINT, noninteractivehandle_sigint);
-	signal(SIGQUIT, noninteractivehandle_sigint);
-	while (data->cmd.running == 1 && signalint != 1)
-	{
-		if (signalint == 1)
-			handlesignal(data);
-		printf("\n");
-	}
-	(void)*input;
-}
 
 int	main(int ac, char **av, char **env)
 {
@@ -51,10 +27,7 @@ int	main(int ac, char **av, char **env)
 	{
 		interactivemode(&data, &input);
 		if (input == NULL)
-		{
-			free(input);
 			break ;
-		}
 		if (ft_strlen(input) != 0)
 			add_history(input);
 		noninteractivemode(&data, &input);

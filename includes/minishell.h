@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:57 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/07 15:17:45 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/07 16:27:44 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,5 +62,7 @@ void				noninteractivehandle_sigquit(int sig);
 void				noninteractivehandle_sigint(int sig);
 void				interactivehandle_sigquit(int sig);
 void				interactivehandle_sigint(int sig);
+void	interactivemode(t_data *data, char **input);
+void	noninteractivemode(t_data *data, char **input);
 void				handlesignal(t_data *data);
 #endif

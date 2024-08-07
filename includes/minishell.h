@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: afarachi <afarachi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:57 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/07 15:17:45 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/07 15:13:43 by afarachi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "../libft/libft.h"
+# include "../libft/inc/libft.h"
 
 /* Standard Input/Output functions */
 # include <stdio.h>
@@ -40,6 +40,8 @@
 /* ascii art */
 # include "art.h"
 
+
+
 typedef struct s_cmd
 {
 	char			**cmd;
@@ -63,4 +65,45 @@ void				noninteractivehandle_sigint(int sig);
 void				interactivehandle_sigquit(int sig);
 void				interactivehandle_sigint(int sig);
 void				handlesignal(t_data *data);
+
+
+
+//ahmad 
+
+typedef enum e_token_type {
+    TOKEN_WORD,
+    TOKEN_PIPE,
+    TOKEN_REDIRECT_IN,
+    TOKEN_REDIRECT_OUT,
+    TOKEN_APPEND,
+    TOKEN_HEREDOC,
+    TOKEN_ERROR,
+    TOKEN_EOF
+} t_tokens_type;
+
+typedef struct s_token
+{
+	char            *type;
+	char			*value;
+	struct	s_token	*next;
+}	t_list_tokens;
+
+typedef struct s_command
+{
+    t_list_tokens tokens_list;
+    
+}   t_command;
+
+int					ft_iswhitespace(char c);
+void				*ft_skip_spaces(char *str);
+char				*strndup(const char *s, size_t n);
+t_list_tokens		*add_token(t_list_tokens **tokens, t_tokens_type type, char *value);
+char				*collect_word(char **input);
+int					*tokenize(char *input);
+void				free_tokens(t_list_tokens *tokens);
+
 #endif
+
+
+
+

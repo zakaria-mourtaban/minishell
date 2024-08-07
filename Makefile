@@ -1,7 +1,7 @@
 # Compiler and flags
 CC = clang
-CFLAGS = -Wall -Wextra -Werror -Iincludes
-LDFLAGS = -lreadline -lcurses -L/usr/local/lib -I/usr/local/include
+CFLAGS = -Wall -Wextra -Werror -Iincludes -fPIE
+LDFLAGS = -lreadline -lcurses -L/usr/local/lib -I/usr/local/include -pie
 
 # Directories
 SRC_DIR = src

@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 00:00:34 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/07 15:20:50 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/07 20:55:27 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	handlesignal(t_data *data)
 {
 	if (data->cmd.running == 1)
 		kill(data->cmd.pid, SIGINT);
-	signalint = 0;
+	data->cmd.running = 0;
 }
 
 void	interactivehandle_sigint(int sig)
@@ -46,4 +46,35 @@ void	noninteractivehandle_sigint(int sig)
 void	noninteractivehandle_sigquit(int sig)
 {
 	(void)sig;
+}
+
+void	interactivemode(t_data *data, char **input)
+{
+	signal(SIGINT, interactivehandle_sigint);
+	signal(SIGQUIT, interactivehandle_sigquit);
+	while (1)
+	{
+		*input = readline(">>>");
+		if (input != NULL)
+			break ;
+		if (ft_strlen(*input) != 0)
+			break ;
+	}
+	(void)data;
+}
+
+void	noninteractivemode(t_data *data, char **input)
+{
+	signal(SIGINT, noninteractivehandle_sigint);
+	signal(SIGQUIT, noninteractivehandle_sigint);
+	while (data->cmd.running == 1 && signalint != 1)
+	{
+		if (signalint == 1)
+		{
+			handlesignal(data);
+			printf("\n");
+			break ;
+		}
+	}
+	(void)*input;
 }

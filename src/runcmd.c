@@ -49,6 +49,7 @@ void	initcmd(const char *input, char **env, t_data *data)
 		return ;
 	data->cmd.running = 1;
 	//! only for current testing will be removed later in development
+	// parsecmd();
 	runcmd(input, env, data);
 	waitpid(data->cmd.pid, &data->cmd.status, 0);
 	data->cmd.running = 0;

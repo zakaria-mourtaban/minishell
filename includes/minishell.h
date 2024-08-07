@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:57 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/07 16:27:44 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/07 20:45:33 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ typedef struct s_cmd
 typedef struct s_data
 {
 	t_cmd			cmd;
+	int				errorid;
 }					t_data;
 
 extern volatile int	signalint;
@@ -62,7 +63,8 @@ void				noninteractivehandle_sigquit(int sig);
 void				noninteractivehandle_sigint(int sig);
 void				interactivehandle_sigquit(int sig);
 void				interactivehandle_sigint(int sig);
-void	interactivemode(t_data *data, char **input);
-void	noninteractivemode(t_data *data, char **input);
+void				interactivemode(t_data *data, char **input);
+void				noninteractivemode(t_data *data, char **input);
+char				*tokenizer(char *input, t_data *data);
 void				handlesignal(t_data *data);
 #endif

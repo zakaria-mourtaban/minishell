@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 00:00:34 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/07 16:28:54 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/07 20:55:27 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,9 @@ void	interactivemode(t_data *data, char **input)
 	while (1)
 	{
 		*input = readline(">>>");
-		if (ft_strlen(*input) != 0 && input != NULL)
+		if (input != NULL)
+			break ;
+		if (ft_strlen(*input) != 0)
 			break ;
 	}
 	(void)data;

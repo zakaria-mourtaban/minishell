@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:57 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/08 15:49:31 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/08 22:39:26 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,16 @@
 /* ascii art */
 # include "art.h"
 
+typedef struct s_value
+{
+	char *value;
+	struct s_value *next;
+} t_value;
+
 typedef struct s_env
 {
 	char *key;
-	char *value;
+	t_value *value_head;
 	struct s_env *next;
 } t_env;
 
@@ -73,7 +79,7 @@ void				interactivehandle_sigquit(int sig);
 void				interactivehandle_sigint(int sig);
 void				interactivemode(t_data *data, char **input);
 void				noninteractivemode(t_data *data, char **input);
-char				*tokenizer(char *input, t_data *data);
+char				*rmquote(char *input, t_data *data);
 void				handlesignal(t_data *data);
 
 /***** for ENVP *****/

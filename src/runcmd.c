@@ -46,7 +46,7 @@ void	runcmd(const char *input, char **env, t_data *data)
 // void	parsecmd(const char *input, t_data *data)
 // {
 // 	char *tokens;
-// 	tokens = tokenizer((char *)input, data);
+// 	tokens = rmquote((char *)input, data);
 // }
 
 void	initcmd(const char *input, char **env, t_data *data)
@@ -56,7 +56,7 @@ void	initcmd(const char *input, char **env, t_data *data)
 	data->cmd.running = 1;
 	//! only for current testing will be removed later in development
 	// parsecmd(input, data);
-	runcmd(tokenizer((char *)input, data), env, data);
+	runcmd(rmquote((char *)input, data), env, data);
 	waitpid(data->cmd.pid, &data->cmd.status, 0);
 	data->cmd.running = 0;
 }

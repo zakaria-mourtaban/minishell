@@ -1,8 +1,7 @@
 # Compiler and flags
 CC = clang
-CFLAGS = -Wall -Wextra -Werror -Iincludes -g
-LDFLAGS = -lreadline -lcurses -L/usr/local/lib -I/usr/local/include
-
+CFLAGS = -Wall -Wextra -Werror -Iincludes -g 
+LDFLAGS = -l readline -L /usr/lib -I /usr/include -l ncurses 
 # Directories
 SRC_DIR = src
 OBJ_DIR = obj

@@ -3,34 +3,64 @@
 /*                                                        :::      ::::::::   */
 /*   environment.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: mouhamad_kraytem <mouhamad_kraytem@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 23:43:26 by odib              #+#    #+#             */
-/*   Updated: 2024/08/08 15:49:25 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/08 20:39:06 by mouhamad_kr      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
+t_value *new_value_node(char *value)
+{
+	t_value *node = (t_value *)malloc(sizeof(t_value));
+	if (!node)
+		return NULL;
+	if (value)
+		node->value = ft_strdup(value);
+	else
+		node->value = ft_strdup("");
+	node->next = NULL;
+	return node;
+}
+void add_value_node(t_value **value_head, char *value)
+{
+	t_value *new_value;
+
+	new_value = new_value_node(value);
+	if (!*value_head)
+	{
+		*value_head = new_value;
+	}
+	else
+	{
+		t_value *temp = *value_head;
+		while (temp->next)
+			temp = temp->next;
+		temp->next = new_value;
+	}
+}
+
 t_env *create_node(char *key, char *value)
 {
 	t_env *res = malloc(sizeof(t_env));
+	int i = 0;
 	if (!res)
 	{
 		perror("Failed to allocate memory for new node");
 		return NULL;
 	}
 	res->key = ft_strdup(key);
-	res->value = ft_strdup(value);
-	res->next = NULL;
-	if (!res->key || !res->value)
+	res->value_head = NULL; // Initialize value_head to NULL
+	char **splited_values = ft_split(value, ':');
+	while (splited_values[i])
 	{
-		perror("Failed to allocate memory for key or value");
-		free(res->key);
-		free(res->value);
-		free(res);
-		return NULL;
+		add_value_node(&(res->value_head), splited_values[i]);
+		i++;
 	}
+	res->next = NULL;
+
 	return res;
 }
 
@@ -61,24 +91,48 @@ void free_tab(char **tab)
 	}
 	free(tab);
 }
-
-void free_list(t_env *head)
+//free functions
+void free_value_list(t_value *value_head)
 {
-	t_env *temp;
-	while (head)
+	t_value *current_value;
+	t_value *next_value;
+
+	current_value = value_head;
+	while (current_value)
 	{
-		temp = head;
-		head = head->next;
-		free(temp->key);
-		free(temp->value);
-		free(temp);
+		next_value = current_value->next;
+		free(current_value->value);
+		free(current_value);
+		current_value = next_value;
 	}
 }
 
+void free_list(t_env *env_head)
+{
+	t_env *current_env;
+	t_env *next_env;
+
+	current_env = env_head;
+	while (current_env)
+	{
+		next_env = current_env->next;
+
+		// Free the key
+		free(current_env->key);
+
+		// Free the value list associated with this env node
+		free_value_list(current_env->value_head);
+
+		// Free the env node itself
+		free(current_env);
+
+		current_env = next_env;
+	}
+}
 void init_copy_envp(t_env **head, char **envp)
 {
-	char	**copy_env;
-	int		i;
+	char **copy_env;
+	int i;
 
 	i = 0;
 	while (envp[i] != NULL)
@@ -95,16 +149,31 @@ void init_copy_envp(t_env **head, char **envp)
 		i++;
 	}
 }
-
 // for testing
-//
-void print_list(t_env *head)
+
+void print_list(t_env *env_head)
 {
-	t_env *current = head;
-	while (current)
+	t_env *current_env = env_head;
+
+	while (current_env)
 	{
-		printf("%s=%s\n", current->key, current->value);
-		current = current->next;
+		// Print the key
+		printf("Key: %s\n", current_env->key);
+
+		// Print the values
+		t_value *current_value = current_env->value_head;
+		printf("Values: ");
+		while (current_value)
+		{
+			printf("%s", current_value->value);
+			if (current_value->next)
+				printf(", ");
+			current_value = current_value->next;
+		}
+		printf("\n\n"); // Print a newline between entries
+
+		// Move to the next env node
+		current_env = current_env->next;
 	}
 }
 

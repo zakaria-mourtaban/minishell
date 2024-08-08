@@ -1,7 +1,7 @@
 # Compiler and flags
-CC = clang
+CC = gcc
 CFLAGS = -Wall -Wextra -Werror -Iincludes -g -gdwarf-4
-LDFLAGS = -l readline -L /usr/lib -I /usr/include -l ncurses 
+LDFLAGS = -L/lib/x86_64-linux-gnu -I/usr/include -lncurses -lreadline
 # Directories
 SRC_DIR = src
 OBJ_DIR = obj
@@ -22,7 +22,7 @@ all: $(LIBFT_LIB) $(TARGET)
 # Link the executable
 $(TARGET): $(OBJS) $(LIBFT_LIB)
 	@echo "Linking..."
-	@$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBFT_LIB)
+	@$(CC) -o $@ $(OBJS) $(LDFLAGS) $(LIBFT_LIB)
 	@echo "Compilation completed."
 
 # Compile source files into object files

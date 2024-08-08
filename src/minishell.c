@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/07 21:08:24 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/08 23:44:59 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,11 @@ int	main(int ac, char **av, char **env)
 
 	art();
 	using_history();
+	init_copy_envp(&(data.env_list),env);
+	
+	//print list for testing don't forget to remove it from .h file
+	//print_list(data.env_list);
+	
 	while (1)
 	{
 		interactivemode(&data, &input);

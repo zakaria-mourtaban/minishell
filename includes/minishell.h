@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: mouhamad_kraytem <mouhamad_kraytem@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:57 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/08 15:49:31 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/08 20:34:21 by mouhamad_kr      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,16 @@
 /* ascii art */
 # include "art.h"
 
+typedef struct s_value
+{
+	char *value;
+	struct s_value *next;
+} t_value;
+
 typedef struct s_env
 {
 	char *key;
-	char *value;
+	t_value *value_head;
 	struct s_env *next;
 } t_env;
 

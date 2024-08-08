@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 16:42:37 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/07 20:48:48 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/08 15:46:34 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,36 @@ char	*processstr(char *input, t_data *data)
 	return (buffer);
 }
 
+// char	*envconcatlen(char *input, t_data *data)
+// {
+// 	int	i;
+// 	int	len;
+
+// 	i = 0;
+// 	len = 0;
+// 	while (input[i] != '\0')
+// 	{
+// 		/* code */
+// 	}
+// }
+
+// char	*envconcat(char *input, t_data *data)
+// {
+// 	int	i;
+// 	i = 0;
+// 	while (input[i] != '\0')
+// 	{
+// 		if (input[i] == '$' && input[i + 1] != '\0')
+// 		{
+			
+// 		}
+// 	}
+// }
+
 char	*tokenizer(char *input, t_data *data)
 {
+	// char *str;
+
+	// str = envconcat(input, data);
 	return (processstr(input, data));
 }

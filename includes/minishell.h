@@ -40,6 +40,13 @@
 /* ascii art */
 # include "art.h"
 
+typedef struct s_env
+{
+	char *key;
+	char *value;
+	struct s_env *next;
+} t_env;
+
 typedef struct s_cmd
 {
 	char			**cmd;
@@ -50,6 +57,7 @@ typedef struct s_cmd
 
 typedef struct s_data
 {
+	t_env			*env_list;
 	t_cmd			cmd;
 	int				errorid;
 }					t_data;
@@ -67,4 +75,13 @@ void				interactivemode(t_data *data, char **input);
 void				noninteractivemode(t_data *data, char **input);
 char				*tokenizer(char *input, t_data *data);
 void				handlesignal(t_data *data);
+
+/***** for ENVP *****/
+void				init_copy_envp(t_env **head, char **envp);
+void				free_list(t_env *head);
+void				free_tab(char **tab);
+void				append_node(t_env **head, char *key, char *value);
+t_env				*create_node(char *key, char *value);
+void print_list(t_env *head);
+char **ft_split_env(char *str, char del);
 #endif

@@ -4,6 +4,5 @@ git checkout -b newbranchname<br>
 git add *<br>
 git commit -m "pushmessage"<br>
 git push orgin newbranchname<br>
-<h1>Only use this directory to push and not to work<\h1><br>
 to remove old local branches<br>
 git fetch --prune && git branch -d $(git branch --merged | grep -v 'main')

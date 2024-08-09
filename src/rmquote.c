@@ -21,11 +21,13 @@ int	numchar(char *input, char c)
 	i = 0;
 	while (input[i] != '\0')
 	{
-		if (input[i] == '\'')
+		while (input[i] == '\'')
 		{
 			i++;
 			while (input[i] != '\'' && input[i] != '\0')
 				i++;
+			if (input[i] == '\0')
+				break ;
 		}
 		if (input[i] == c)
 			count++;

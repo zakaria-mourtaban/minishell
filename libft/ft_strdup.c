@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 17:50:46 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/06/20 10:47:52 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/09 15:28:49 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,4 +31,12 @@ char	*ft_strdup(const char *s)
 	}
 	sr[i] = '\0';
 	return (sr);
+}
+
+char	*ft_strnew(int len)
+{
+	char *str;
+
+	str = malloc(len * sizeof(char));
+	return (str);
 }

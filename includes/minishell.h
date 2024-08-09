@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:57 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/08 22:39:26 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/09 16:15:39 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,16 +42,16 @@
 
 typedef struct s_value
 {
-	char *value;
-	struct s_value *next;
-} t_value;
+	char			*value;
+	struct s_value	*next;
+}					t_value;
 
 typedef struct s_env
 {
-	char *key;
-	t_value *value_head;
-	struct s_env *next;
-} t_env;
+	char			*key;
+	t_value			*value_head;
+	struct s_env	*next;
+}					t_env;
 
 typedef struct s_cmd
 {
@@ -88,6 +88,9 @@ void				free_list(t_env *head);
 void				free_tab(char **tab);
 void				append_node(t_env **head, char *key, char *value);
 t_env				*create_node(char *key, char *value);
-void print_list(t_env *head);
-char **ft_split_env(char *str, char del);
+void				print_list(t_env *head);
+char				**ft_split_env(char *str, char del);
+char				*envvaluestr(char *key, t_data *data);
+char				*concatenv(char *input, t_data *data);
+int					numchar(char *input, char c);
 #endif

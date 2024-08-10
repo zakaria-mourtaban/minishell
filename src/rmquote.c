@@ -26,8 +26,7 @@ int	numchar(char *input, char c)
 			i++;
 			while (input[i] != '\'' && input[i] != '\0')
 				i++;
-			if (input[i] == '\0')
-				break ;
+			i++;
 		}
 		if (input[i] == c)
 			count++;
@@ -61,7 +60,17 @@ char	*removepair(char *buffer, int ic, int ci)
 	return (newbuffer);
 }
 
-char	*recursivequote(char *buffer, char c)
+void	skipsingle(char *input, int *i)
+{
+	if (input[*i] == '\'' && input[*i] != '\0')
+	{
+		(*i)++;
+		while (input[*i] != '\'' && input[*i] != '\0')
+			(*i)++;
+	}
+}
+
+char	*loopquote(char *buffer, char c)
 {
 	int	ci;
 	int	ic;
@@ -70,36 +79,30 @@ char	*recursivequote(char *buffer, char c)
 	{
 		ic = 0;
 		ci = 0;
-		while (buffer[ic] != c && buffer[ic] != '\'' && buffer[ic] != '\0')
-			ic++;
-		if (buffer[ic] == '\'')
+		while (buffer[ic] != c && buffer[ic] != '\0')
 		{
+			skipsingle(buffer, &ic);
 			ic++;
-			while (buffer[ic] != '\'' && buffer[ic + 1] != '\0')
-				ic++;
 		}
-		while (buffer[ic + 1] == c && buffer[ic] != '\'' && buffer[ic
-			+ 1] != '\0')
-			ic++;
-		if (buffer[ic] == '\'')
+		if (buffer[ic] == '\0')
+			break ;
+		while (buffer[ic] != c && buffer[ic] != '\0')
 		{
+			skipsingle(buffer, &ic);
 			ic++;
-			while (buffer[ic] != '\'' && buffer[ic + 1] != '\0')
-				ic++;
 		}
-		ci++;
+		if (buffer[ic] == '\0')
+			break ;
 		ci = ic + 1;
-		while (buffer[ci + 1] != c && buffer[ci] != '\'' && buffer[ci
-			+ 1] != '\0')
-			ci++;
-		if (buffer[ci] == '\'')
+		while (buffer[ci] != c && buffer[ci] != '\0')
 		{
+			skipsingle(buffer, &ci);
 			ci++;
-			while (buffer[ci] != '\'' && buffer[ci + 1] != '\0')
-				ci++;
 		}
-		ci++;
+		if (buffer[ci] == '\0')
+			break ;
 		buffer = removepair(buffer, ic, ci);
+		printf("%s\n", buffer);
 	}
 	return (buffer);
 }
@@ -123,7 +126,7 @@ char	*processstr(char *input, t_data *data)
 		return (NULL);
 	}
 	if (numchar(buffer, '\"') != 0)
-		buffer = recursivequote(buffer, '\"');
+		buffer = loopquote(buffer, '\"');
 	return (buffer);
 }
 

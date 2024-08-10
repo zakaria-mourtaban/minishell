@@ -47,7 +47,7 @@ void	runcmd(const char *input, char **env, t_data *data)
 // {
 // 	char *tokens;
 // 	tokens = rmquote((char *)input, data);
-// }
+// }cd , echo , unset , exit
 
 void	initcmd(const char *input, char **env, t_data *data)
 {
@@ -56,7 +56,9 @@ void	initcmd(const char *input, char **env, t_data *data)
 	data->cmd.running = 1;
 	//! only for current testing will be removed later in development
 	// parsecmd(input, data);
-	runcmd(rmquote((char *)input, data), env, data);
-	waitpid(data->cmd.pid, &data->cmd.status, 0);
+	// runcmd(rmquote((char *)input, data), env, data);
+	// waitpid(data->cmd.pid, &data->cmd.status, 0);
+	printf("%s\n", rmquote((char *)input, data));
+	(void)env;
 	data->cmd.running = 0;
 }

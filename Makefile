@@ -1,6 +1,6 @@
 # Compiler and flags
-CC = gcc
 CFLAGS = -Wall -Wextra -Werror -Iincludes -g -gdwarf-4
+CC = gcc
 LDFLAGS = -L/lib/x86_64-linux-gnu -I/usr/include -lncurses -lreadline
 # Directories
 SRC_DIR = src

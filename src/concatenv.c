@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 14:42:27 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/09 17:02:13 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/10 16:05:15 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,16 @@ char	*envvaluestr(char *key, t_data *data)
 	return (valuestr);
 }
 
+int	find_char_index(char *string, char c)
+{
+	int	i;
+
+	i = 0;
+	while (string[i] != c && string[i] != '\0')
+		i++;
+	return (i);
+}
+
 char	*concatenvloop(char *input, t_data *data)
 {
 	int		i;
@@ -59,7 +69,7 @@ char	*concatenvloop(char *input, t_data *data)
 	before = ft_strnew(i + 1);
 	ft_strlcpy(before, input, i + 1);
 	j = i;
-	while (input[j] != ' ' && input[j] != '\0')
+	while (input[j] != ' ' && input[j] != '\0' && input[j] != '\"')
 	{
 		if (input[j] == '\'')
 		{
@@ -72,13 +82,8 @@ char	*concatenvloop(char *input, t_data *data)
 	}
 	if (input[j] == '\0')
 		return (input);
-	if (input[i] == '$' && input[i + 1] != ' ' && input[i + 1] != '\0')
-	{
-		key = ft_strnew(j - i + 1);
-		ft_strlcpy(key, (input + i), j - i + 1);
-	}
-	else
-		key = ft_strdup("$");
+	key = ft_strnew(j - i + 1);
+	ft_strlcpy(key, (input + i), j - i + 1);
 	after = ft_strnew(ft_strlen(input) - ft_strlen(before) + ft_strlen(key)
 			+ 1);
 	ft_strlcpy(after, (input + ft_strlen(before) + ft_strlen(key)),
@@ -108,6 +113,13 @@ int	dollarcount(char *input)
 	count = 0;
 	while (input[i] != '\0')
 	{
+		if (input[i] == '$' && !isalpha(input[i + 1]))
+		{
+			i++;
+			while (input[i] != ' ' && input[i] != '\0' && input[i] != '\"')
+				i++;
+			i++;
+		}
 		if (input[i] == '$')
 			count++;
 		if (input[i] == '\'')

@@ -58,16 +58,16 @@ e_token	get_delimiter_type(char *str)
 {
 	if (ft_strcmp(str, "|") == 0)
 		return (TOKEN_PIPE);
-	if (ft_strcmp(str, "<<") == 0)
-		return (TOKEN_OUT_A_FILE);
-	if (ft_strcmp(str, ">>") == 0)
-		return (TOKEN_HEREDOC_EOF);
-	if (ft_strcmp(str, "<") == 0)
+	else if (ft_strcmp(str, "<") == 0)
 		return (TOKEN_IN_FILE);
-	if (ft_strcmp(str, ">") == 0)
+	else if (ft_strcmp(str, ">") == 0)
 		return (TOKEN_OUT_FILE);
-	if (ft_strcmp(str, " ") == 0)
+	else if (ft_strcmp(str, " ") == 0)
 		return (TOKEN_SPACE);
+	else if (ft_strcmp(str, "<<") == 0)
+		return (TOKEN_HEREDOC_EOF);
+	else if (ft_strcmp(str, ">>") == 0)
+		return (TOKEN_OUT_A_FILE);
 	return (TOKEN_COMMAND);
 }
 
@@ -98,7 +98,7 @@ void	tokenizer(char *input, t_data *data)
 			if (buf_i > 0)
 			{
 				buffer[buf_i] = '\0';
-				append(&data->cmdchain, buffer, TOKEN_COMMAND);
+				append(&data->cmdchain, buffer, TOKEN_WORD);
 				buf_i = 0;
 			}
 			quote = input[i];

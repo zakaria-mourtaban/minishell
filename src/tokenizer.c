@@ -21,7 +21,7 @@ t_tokens	*newnode(char *data, int type)
 	return (ptr);
 }
 
-void	append(t_tokens **cmds, char *data, int type)
+void	 append(t_tokens **cmds, char *data, int type)
 {
 	t_tokens	*new_node;
 	t_tokens	*tmp;
@@ -141,4 +141,5 @@ void	tokenizer(char *input, t_data *data)
 		buffer[buf_i] = '\0';
 		append(&data->cmdchain, buffer, TOKEN_COMMAND);
 	}
+	free(input);
 }

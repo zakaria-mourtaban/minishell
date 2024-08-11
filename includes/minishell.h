@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:57 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/11 16:25:32 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/12 06:59:59 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,34 @@ typedef struct s_data
 	t_cmd			cmd;
 	int				errorid;
 }					t_data;
+
+
+
+//#$%^&**@!#&******######!!@@^^*(_++)
+typedef enum s_token
+{
+	
+    TOKEN_WORD      = 0x01, 
+    TOKEN_IN_FILE   = 0x02, 
+	TOKEN_OUT_FILE  = 0x04, 
+    TOKEN_HEREDOC_EOF = 0x08,
+    TOKEN_OUT_A_FILE = 0x10, 
+    TOKEN_COMMAND   = 0x20,
+    TOKEN_OPERATOR  = 0x40, 
+	TOKEN_PIPE      = 0x80,
+}	e_token;
+
+typedef struct s_tokens
+{
+	int			id;
+	char			*content;
+	struct s_tokens	*next;
+}	t_tokens;
+void	remove_quotes(t_tokens *tokens);
+void	specify_token_cmd(t_tokens *token);
+
+//#$%^&**@!#&******######!!@@^^*(_++)
+
 
 extern volatile int	signalint;
 void				art(void);

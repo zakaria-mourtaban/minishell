@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/11 16:43:58 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/12 07:02:00 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,10 @@ int	main(int ac, char **av, char **env)
 	// print_list(data.env_list);
 	printf("%s\n", concatenv(ft_strdup("test $ $HOME \"$HOME $HOME\" '$HOME' test"),
 			&data));
+	t_tokens v ;
+	v.content = ft_strdup("'\"he'\'""k\"'");
+	remove_quotes(&v);
+	printf("test: %s\n",v.content);
 	while (1)
 	{
 		interactivemode(&data, &input);

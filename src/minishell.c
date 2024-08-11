@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/11 16:43:58 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/11 22:55:19 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,12 @@ int	main(int ac, char **av, char **env)
 	init_copy_envp(&(data.env_list), env);
 	// print list for testing don't forget to remove it from .h file
 	// print_list(data.env_list);
-	printf("%s\n", concatenv(ft_strdup("test $ $HOME \"$HOME $HOME\" '$HOME' test"),
+	printf("%s\n",
+		concatenv(ft_strdup("test $ $HOME \"$HOME $HOME\" '$HOME' test"),
 			&data));
+	tokenizer(concatenv(ft_strdup("test $ $HOME \"$HOME $HOME\" '$HOME' test"), &data), &data);
+	remove_quotes(data.cmdchain);
+	printcmds(&data);
 	while (1)
 	{
 		interactivemode(&data, &input);

@@ -49,16 +49,15 @@ void	runcmd(const char *input, char **env, t_data *data)
 // 	tokens = rmquote((char *)input, data);
 // }cd , echo , unset , exit
 
-void	initcmd(const char *input, char **env, t_data *data)
+void	initcmd(char *input, char **env, t_data *data)
 {
 	if (input == NULL || *input == '\0')
 		return ;
 	data->cmd.running = 1;
 	//! only for current testing will be removed later in development
-	// parsecmd(input, data);
-	// runcmd(rmquote((char *)input, data), env, data);
-	// waitpid(data->cmd.pid, &data->cmd.status, 0);
-	printf("%s\n", rmquote((char *)input, data));
+	concatenv(input, data);
+	tokenizer(concatenv(input, data), data);
+	printcmds(data);
 	(void)env;
 	data->cmd.running = 0;
 }

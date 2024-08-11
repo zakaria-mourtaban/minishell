@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:57 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/09 16:15:39 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/11 16:25:32 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,17 +61,28 @@ typedef struct s_cmd
 	pid_t			pid;
 }					t_cmd;
 
+typedef struct s_cmds
+{
+	char			*value;
+	struct s_cmds	*next;
+	int				type;
+}					t_cmds;
+
 typedef struct s_data
 {
 	t_env			*env_list;
+	t_cmds			*cmdchain;
 	t_cmd			cmd;
 	int				errorid;
 }					t_data;
 
 extern volatile int	signalint;
 void				art(void);
+
+void	tokenizer(char *input, t_data *data);
+void	printcmds(t_data *data);
 char				*get_path(char *cmd, char **env);
-void				initcmd(const char *input, char **env, t_data *data);
+void				initcmd(char *input, char **env, t_data *data);
 void				runcmd(const char *input, char **env, t_data *data);
 void				noninteractivehandle_sigquit(int sig);
 void				noninteractivehandle_sigint(int sig);

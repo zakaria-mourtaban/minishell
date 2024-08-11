@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 14:42:27 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/10 16:05:15 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/11 16:44:33 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,14 +49,18 @@ char	*concatenvloop(char *input, t_data *data)
 {
 	int		i;
 	int		j;
+	int		inq;
 	char	*before;
 	char	*after;
 	char	*key;
 
 	i = 0;
+	inq = 0;
 	while (input[i] != '$' && input[i] != '\0')
 	{
-		if (input[i] == '\'')
+		if (input[i] == '"')
+			inq = !inq;
+		if (input[i] == '\'' && !inq)
 		{
 			i++;
 			while (input[i] != '\'' && input[i] != '\0')
@@ -71,7 +75,9 @@ char	*concatenvloop(char *input, t_data *data)
 	j = i;
 	while (input[j] != ' ' && input[j] != '\0' && input[j] != '\"')
 	{
-		if (input[j] == '\'')
+		if (input[i] == '"')
+			inq = !inq;
+		if (input[j] == '\'' && !inq)
 		{
 			j++;
 			while (input[j] != '\'' && input[j] != '\0')
@@ -91,12 +97,9 @@ char	*concatenvloop(char *input, t_data *data)
 	free(input);
 	input = ft_strdup("");
 	input = ft_strjoingnl(input, before);
-	if (ft_strlen(key) != 0)
-	{
-		input = ft_strjoingnl(input, "'");
-		input = ft_strjoingnl(input, envvaluestr(key + 1, data));
-		input = ft_strjoingnl(input, "'");
-	}
+	input = ft_strjoingnl(input, "'");
+	input = ft_strjoingnl(input, envvaluestr(key + 1, data));
+	input = ft_strjoingnl(input, "'");
 	input = ft_strjoingnl(input, after);
 	return (input);
 }
@@ -108,7 +111,9 @@ int	dollarcount(char *input)
 {
 	int	i;
 	int	count;
+	int	inq;
 
+	inq = 0;
 	i = 0;
 	count = 0;
 	while (input[i] != '\0')
@@ -122,7 +127,9 @@ int	dollarcount(char *input)
 		}
 		if (input[i] == '$')
 			count++;
-		if (input[i] == '\'')
+		if (input[i] == '"')
+			inq = !inq;
+		if (input[i] == '\'' && !inq)
 		{
 			i++;
 			while (input[i] != '\'' && input[i] != '\0')

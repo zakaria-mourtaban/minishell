@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/11 22:53:49 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/11 23:39:14 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,26 +40,26 @@
 //#$%^&**@!#&******######!!@@^^*(_++)
 typedef enum s_token
 {
-	
-    TOKEN_WORD      = 1, 
-    TOKEN_IN_FILE   = 2, 
-	TOKEN_OUT_FILE  = 3, 
-    TOKEN_HEREDOC_EOF = 4,
-    TOKEN_OUT_A_FILE = 5, 
-    TOKEN_COMMAND   = 6,
-    TOKEN_OPERATOR  = 7, 
-	TOKEN_PIPE      = 8,
-	TOKEN_SPACE		= 9
-}	e_token;
+
+	TOKEN_WORD = 1,
+	TOKEN_IN_FILE = 2,
+	TOKEN_OUT_FILE = 3,
+	TOKEN_HEREDOC_EOF = 4,
+	TOKEN_OUT_A_FILE = 5,
+	TOKEN_COMMAND = 6,
+	TOKEN_OPERATOR = 7,
+	TOKEN_PIPE = 8,
+	TOKEN_SPACE = 9
+}					e_token;
 
 typedef struct s_tokens
 {
 	e_token			id;
 	char			*content;
 	struct s_tokens	*next;
-}	t_tokens;
-void	remove_quotes(t_tokens *tokens);
-void	specify_token_cmd(t_tokens *token);
+}					t_tokens;
+void				remove_quotes(t_tokens *tokens);
+void				specify_token_cmd(t_tokens *token);
 
 //#$%^&**@!#&******######!!@@^^*(_++)
 
@@ -90,20 +90,16 @@ typedef struct s_cmd
 typedef struct s_data
 {
 	t_env			*env_list;
-	t_tokens			*cmdchain;
+	t_tokens		*cmdchain;
 	t_cmd			cmd;
 	int				errorid;
 }					t_data;
 
-
-
-
-
 extern volatile int	signalint;
 void				art(void);
-
-void	tokenizer(char *input, t_data *data);
-void	printcmds(t_data *data);
+void				free_data(t_data *data);
+void				tokenizer(char *input, t_data *data);
+void				printcmds(t_data *data);
 char				*get_path(char *cmd, char **env);
 void				initcmd(char *input, char **env, t_data *data);
 void				runcmd(const char *input, char **env, t_data *data);

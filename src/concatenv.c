@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 14:42:27 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/11 16:44:33 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/11 23:49:34 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ char	*envvaluestr(char *key, t_data *data)
 			valuestr = ft_strjoingnl(valuestr, ":");
 		value = value->next;
 	}
+	free(key);
 	return (valuestr);
 }
 
@@ -95,12 +96,16 @@ char	*concatenvloop(char *input, t_data *data)
 	ft_strlcpy(after, (input + ft_strlen(before) + ft_strlen(key)),
 		ft_strlen(input) - ft_strlen(before) + ft_strlen(key) + 1);
 	free(input);
+	key = envvaluestr(key + 1, data);
 	input = ft_strdup("");
 	input = ft_strjoingnl(input, before);
 	input = ft_strjoingnl(input, "'");
-	input = ft_strjoingnl(input, envvaluestr(key + 1, data));
+	input = ft_strjoingnl(input, key);
 	input = ft_strjoingnl(input, "'");
 	input = ft_strjoingnl(input, after);
+	free(before);
+	free(key);
+	free(after);
 	return (input);
 }
 // printf("before:%s\n", before);

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/01 10:22:57 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/11 22:04:47 by zmourtab         ###   ########.fr       */
+/*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
+/*   Updated: 2024/08/11 22:53:49 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,32 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 
+//#$%^&**@!#&******######!!@@^^*(_++)
+typedef enum s_token
+{
+	
+    TOKEN_WORD      = 1, 
+    TOKEN_IN_FILE   = 2, 
+	TOKEN_OUT_FILE  = 3, 
+    TOKEN_HEREDOC_EOF = 4,
+    TOKEN_OUT_A_FILE = 5, 
+    TOKEN_COMMAND   = 6,
+    TOKEN_OPERATOR  = 7, 
+	TOKEN_PIPE      = 8,
+	TOKEN_SPACE		= 9
+}	e_token;
+
+typedef struct s_tokens
+{
+	e_token			id;
+	char			*content;
+	struct s_tokens	*next;
+}	t_tokens;
+void	remove_quotes(t_tokens *tokens);
+void	specify_token_cmd(t_tokens *token);
+
+//#$%^&**@!#&******######!!@@^^*(_++)
+
 /* ascii art */
 # include "art.h"
 
@@ -61,20 +87,17 @@ typedef struct s_cmd
 	pid_t			pid;
 }					t_cmd;
 
-typedef struct s_cmds
-{
-	char			*value;
-	struct s_cmds	*next;
-	int				type;
-}					t_cmds;
-
 typedef struct s_data
 {
 	t_env			*env_list;
-	t_cmds			*cmdchain;
+	t_tokens			*cmdchain;
 	t_cmd			cmd;
 	int				errorid;
 }					t_data;
+
+
+
+
 
 extern volatile int	signalint;
 void				art(void);

@@ -1,32 +1,34 @@
 #include "../includes/minishell.h"
 
-#define TOKEN_CMD 0
-#define TOKEN_PIPE 1
-#define TOKEN_DLESS 2
-#define TOKEN_DGREAT 3
-#define TOKEN_LESS 4
-#define TOKEN_GREAT 5
-#define TOKEN_SPACE 6
+// #define TOKEN_CMD 0
+// #define TOKEN_PIPE 1
+// #define TOKEN_DLESS 2
+// #define TOKEN_DGREAT 3
+// #define TOKEN_LESS 4
+// #define TOKEN_GREAT 5
+// #define TOKEN_SPACE 6
 
-t_cmds	*newnode(char *data, int type)
+t_tokens	*newnode(char *data, int type)
 {
-	t_cmds	*ptr;
+	t_tokens	*ptr;
 
-	ptr = malloc(sizeof(t_cmds));
+	ptr = malloc(sizeof(t_tokens));
 	if (ptr == NULL)
 		return (NULL);
-	ptr->value = ft_strdup(data);
-	ptr->type = type;
+	ptr->content = ft_strdup(data);
+	ptr->id = type;
 	ptr->next = NULL;
 	return (ptr);
 }
 
-void	append(t_cmds **cmds, char *data, int type)
+void	append(t_tokens **cmds, char *data, int type)
 {
-	t_cmds	*new_node;
-	t_cmds	*tmp;
+	t_tokens	*new_node;
+	t_tokens	*tmp;
 
+	new_node = NULL;
 	new_node = newnode(data, type);
+	printf("%s\n", data);
 	if (*cmds == NULL)
 	{
 		*cmds = new_node;
@@ -40,33 +42,33 @@ void	append(t_cmds **cmds, char *data, int type)
 
 void	printcmds(t_data *data)
 {
-	t_cmds		*tmp;
-	const char	*type_names[] = {"CMD", "PIPE", "DLESS", "DGREAT", "LESS",
-			"GREAT", "SPACE"};
+	t_tokens	*tmp;
+	const char	*type_names[] = {"DEFID", "WORD", "INFILE", "OUTFILE",
+			"HEREDOC", "OUTAPPEND", "COMMAND", "OPERATOR", "PIPE", "SPACE"};
 
 	tmp = data->cmdchain;
 	while (tmp != NULL)
 	{
-		printf("[%s] %s\n", type_names[tmp->type], tmp->value);
+		printf("[%s] %s\n", type_names[tmp->id], tmp->content);
 		tmp = tmp->next;
 	}
 }
 
-int	get_delimiter_type(char *str)
+e_token	get_delimiter_type(char *str)
 {
 	if (ft_strcmp(str, "|") == 0)
 		return (TOKEN_PIPE);
 	if (ft_strcmp(str, "<<") == 0)
-		return (TOKEN_DLESS);
+		return (TOKEN_OUT_A_FILE);
 	if (ft_strcmp(str, ">>") == 0)
-		return (TOKEN_DGREAT);
+		return (TOKEN_HEREDOC_EOF);
 	if (ft_strcmp(str, "<") == 0)
-		return (TOKEN_LESS);
+		return (TOKEN_IN_FILE);
 	if (ft_strcmp(str, ">") == 0)
-		return (TOKEN_GREAT);
+		return (TOKEN_OUT_FILE);
 	if (ft_strcmp(str, " ") == 0)
 		return (TOKEN_SPACE);
-	return (TOKEN_CMD);
+	return (TOKEN_COMMAND);
 }
 
 void	tokenizer(char *input, t_data *data)
@@ -87,7 +89,7 @@ void	tokenizer(char *input, t_data *data)
 			{
 				quote = 0;
 				buffer[buf_i] = '\0';
-				append(&data->cmdchain, buffer, TOKEN_CMD);
+				append(&data->cmdchain, buffer, TOKEN_COMMAND);
 				buf_i = 0;
 			}
 		}
@@ -96,7 +98,7 @@ void	tokenizer(char *input, t_data *data)
 			if (buf_i > 0)
 			{
 				buffer[buf_i] = '\0';
-				append(&data->cmdchain, buffer, TOKEN_CMD);
+				append(&data->cmdchain, buffer, TOKEN_COMMAND);
 				buf_i = 0;
 			}
 			quote = input[i];
@@ -107,17 +109,17 @@ void	tokenizer(char *input, t_data *data)
 			if (buf_i > 0)
 			{
 				buffer[buf_i] = '\0';
-				append(&data->cmdchain, buffer, TOKEN_CMD);
+				append(&data->cmdchain, buffer, TOKEN_COMMAND);
 				buf_i = 0;
 			}
 			if (input[i] == '<' && input[i + 1] == '<')
 			{
-				append(&data->cmdchain, "<<", TOKEN_DLESS);
+				append(&data->cmdchain, "<<", TOKEN_HEREDOC_EOF);
 				i++;
 			}
 			else if (input[i] == '>' && input[i + 1] == '>')
 			{
-				append(&data->cmdchain, ">>", TOKEN_DGREAT);
+				append(&data->cmdchain, ">>", TOKEN_OUT_A_FILE);
 				i++;
 			}
 			else
@@ -137,6 +139,6 @@ void	tokenizer(char *input, t_data *data)
 	if (buf_i > 0)
 	{
 		buffer[buf_i] = '\0';
-		append(&data->cmdchain, buffer, TOKEN_CMD);
+		append(&data->cmdchain, buffer, TOKEN_COMMAND);
 	}
 }

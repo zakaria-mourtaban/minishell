@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 14:42:27 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/11 23:49:34 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/13 10:25:52 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ char	*envvaluestr(char *key, t_data *data)
 			valuestr = ft_strjoingnl(valuestr, ":");
 		value = value->next;
 	}
-	free(key);
 	return (valuestr);
 }
 

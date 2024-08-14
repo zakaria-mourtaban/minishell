@@ -1,6 +1,6 @@
 
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 
 // runs cmd without any handling

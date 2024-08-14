@@ -6,7 +6,7 @@
 /*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/15 07:07:35 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/15 12:41:39 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,8 +101,8 @@ t_command *parse_tokens(t_tokens *tokens)
     {
         printf("Processing token: id=%d, content=%s\n", tokens->id, tokens->content);
 
-        if (tokens->id == TOKEN_WORD)
-        {
+        if (tokens->id == TOKEN_WORD || tokens->id == TOKEN_COMMAND)
+        {    
             if (!current_cmd)
             {
                 current_cmd = create_command_node();
@@ -128,7 +128,7 @@ t_command *parse_tokens(t_tokens *tokens)
         else if (tokens->id == TOKEN_IN_FILE)
         {
             tokens = tokens->next; // Move to the next token, which should be the filename
-            if (tokens && tokens->id == TOKEN_WORD && current_cmd)
+            if (tokens && (tokens->id == TOKEN_WORD || tokens->id == TOKEN_COMMAND) && current_cmd)
             {
                 current_cmd->infile = open(tokens->content, O_RDONLY);
                 if (current_cmd->infile < 0)
@@ -140,7 +140,7 @@ t_command *parse_tokens(t_tokens *tokens)
         else if (tokens->id == TOKEN_OUT_FILE)
         {
             tokens = tokens->next; // Move to the next token, which should be the filename
-            if (tokens && tokens->id == TOKEN_WORD && current_cmd)
+            if (tokens && (tokens->id == TOKEN_WORD || tokens->id == TOKEN_COMMAND) && current_cmd)
             {
                 current_cmd->outfile = open(tokens->content, O_WRONLY | O_CREAT | O_TRUNC, 0644);
                 if (current_cmd->outfile < 0)
@@ -152,7 +152,7 @@ t_command *parse_tokens(t_tokens *tokens)
         else if (tokens->id == TOKEN_OUT_A_FILE)
         {
             tokens = tokens->next; // Move to the next token, which should be the filename
-            if (tokens && tokens->id == TOKEN_WORD && current_cmd)
+            if (tokens && (tokens->id == TOKEN_WORD || tokens->id == TOKEN_COMMAND) && current_cmd)
             {
                 current_cmd->outfile = open(tokens->content, O_WRONLY | O_CREAT | O_APPEND, 0644);
                 if (current_cmd->outfile < 0)

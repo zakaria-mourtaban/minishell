@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 14:42:27 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/14 12:10:19 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/14 13:46:48 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,16 @@ char	*envvaluestr(char *key, t_data *data)
 	t_value	*value;
 	char	*valuestr;
 
-	if (ft_strlen(key) == 0)
+	printf("KEY:%s\n", key);
+	if (ft_strlen(key) == 0 )
 		return (ft_strdup(""));
 	envtmp = data->env_list;
 	while (envtmp != NULL && ft_strcmp(envtmp->key, key) != 0)
+	{
+		printf("env:%s\n", envtmp->key);
 		envtmp = envtmp->next;
-	if (envtmp == NULL)
+	}
+	if (envtmp == NULL || (ft_strlen(key) != ft_strlen(envtmp->key)))
 		return (ft_strdup(""));
 	value = envtmp->value_head;
 	valuestr = ft_strdup("");
@@ -74,7 +78,8 @@ char	*concatenvloop(char *input, t_data *data)
 	before = ft_strnew(i + 1);
 	ft_strlcpy(before, input, i + 1);
 	j = i;
-	while (input[j] != ' ' && input[j] != '\0' && input[j] != '\"' && input[j] != '\'')
+	while (input[j] != ' ' && input[j] != '\0' && input[j] != '\"'
+		&& input[j] != '\'')
 	{
 		if (input[j] == '"')
 			inq = !inq;
@@ -100,14 +105,14 @@ char	*concatenvloop(char *input, t_data *data)
 	input = ft_strjoingnl(input, before);
 	input = ft_strjoingnl(input, key);
 	input = ft_strjoingnl(input, after);
-	printf("before:%s\n", before);
-	printf("key:%s\n", key);
-	printf("after:%s\n", after);
 	free(before);
 	free(key);
 	free(after);
 	return (input);
 }
+// printf("before:%s\n", before);
+// printf("key:%s\n", key);
+// printf("after:%s\n", after);
 
 int	dollarcount(char *input)
 {
@@ -156,4 +161,16 @@ char	*concatenv(char *input, t_data *data)
 		// sleep(1);
 	}
 	return (out);
+}
+
+void	concatenvtoken(t_data *data)
+{
+	t_tokens	*tmp;
+
+	tmp = data->cmdchain;
+	while (tmp)
+	{
+		tmp->content = concatenv(tmp->content, data);
+		tmp = tmp->next;
+	}
 }

@@ -73,7 +73,7 @@ void	tokenizer(char *input, t_data *data) {
   char quote = 0;
 
   data->cmdchain = NULL;
-  buffer = ft_calloc(ft_strlen(input), sizeof(char));
+  buffer = ft_calloc(ft_strlen(input) + 1, sizeof(char));
   while (input[i] != '\0') {
     if (quote) {
       buffer[buf_i++] = input[i];

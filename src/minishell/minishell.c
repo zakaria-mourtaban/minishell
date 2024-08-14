@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/14 12:10:23 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/14 13:26:31 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ int	main(int ac, char **av, char **env)
 {
 	char	*input;
 	t_data	data;
-
+	
+	data.cmd.running = 0;
 	art();
 	using_history();
 	data.env_list = NULL;
@@ -41,7 +42,7 @@ int	main(int ac, char **av, char **env)
 			add_history(input);
 		noninteractivemode(&data, &input);
 		initcmd(input, env, &data);
-		free(input);
+		// free(input);
 	}
 	free_data(&data);
 	(void)ac;

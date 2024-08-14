@@ -6,11 +6,11 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 23:10:31 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/01 23:12:00 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/14 12:10:19 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 void	ft_free_tab(char **tab)
 {

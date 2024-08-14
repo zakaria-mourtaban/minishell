@@ -6,11 +6,11 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/10 12:49:20 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/14 12:10:19 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 void art(void) {
 	//printf("\x1b[2J\x1b[H");

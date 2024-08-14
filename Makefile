@@ -2,6 +2,7 @@
 CFLAGS = -Wall -Wextra -Werror -Iincludes -g -gdwarf-4
 CC = gcc
 LDFLAGS = -L/lib/x86_64-linux-gnu -I/usr/include -lncurses -lreadline
+
 # Directories
 SRC_DIR = src
 OBJ_DIR = obj
@@ -10,8 +11,8 @@ LIBFT_DIR = libft
 LIBFT_LIB = $(LIBFT_DIR)/libft.a
 
 # Source files and object files
-SRCS = $(wildcard $(SRC_DIR)/*.c)
-OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+SRCS = $(wildcard $(SRC_DIR)/**/*.c)
+OBJS = $(patsubst %.c,$(OBJ_DIR)/%.o,$(notdir $(SRCS)))
 
 # Executable
 TARGET = minishell
@@ -26,11 +27,11 @@ $(TARGET): $(OBJS) $(LIBFT_LIB)
 	@echo "Compilation completed."
 
 # Compile source files into object files
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+$(OBJ_DIR)/%.o: $(SRC_DIR)/**/%.c
 	@mkdir -p $(OBJ_DIR)
-	@echo -n "Compiling $<... "; \
-	$(CC) $(CFLAGS) -c $< -o $@; \
-	echo "done."
+	@echo -n "Compiling $<... "
+	@$(CC) $(CFLAGS) -c $< -o $@
+	@echo "done."
 
 # Compile libft
 $(LIBFT_LIB):

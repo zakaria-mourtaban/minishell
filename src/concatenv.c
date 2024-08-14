@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 14:42:27 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/11 23:49:34 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/14 11:12:00 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ char	*envvaluestr(char *key, t_data *data)
 	t_value	*value;
 	char	*valuestr;
 
+	if (ft_strlen(key) == 0)
+		return (ft_strdup(""));
 	envtmp = data->env_list;
 	while (envtmp != NULL && ft_strcmp(envtmp->key, key) != 0)
 		envtmp = envtmp->next;
@@ -32,7 +34,7 @@ char	*envvaluestr(char *key, t_data *data)
 			valuestr = ft_strjoingnl(valuestr, ":");
 		value = value->next;
 	}
-	free(key);
+	// free(key);
 	return (valuestr);
 }
 
@@ -69,14 +71,12 @@ char	*concatenvloop(char *input, t_data *data)
 		}
 		i++;
 	}
-	if (input[i] == '\0' && i++)
-		return (input);
 	before = ft_strnew(i + 1);
 	ft_strlcpy(before, input, i + 1);
 	j = i;
-	while (input[j] != ' ' && input[j] != '\0' && input[j] != '\"')
+	while (input[j] != ' ' && input[j] != '\0' && input[j] != '\"' && input[j] != '\'')
 	{
-		if (input[i] == '"')
+		if (input[j] == '"')
 			inq = !inq;
 		if (input[j] == '\'' && !inq)
 		{
@@ -87,30 +87,27 @@ char	*concatenvloop(char *input, t_data *data)
 		else
 			j++;
 	}
-	if (input[j] == '\0')
-		return (input);
+	printf("inq:%d\n", inq);
 	key = ft_strnew(j - i + 1);
 	ft_strlcpy(key, (input + i), j - i + 1);
 	after = ft_strnew(ft_strlen(input) - ft_strlen(before) + ft_strlen(key)
 			+ 1);
-	ft_strlcpy(after, (input + ft_strlen(before) + ft_strlen(key)),
-		ft_strlen(input) - ft_strlen(before) + ft_strlen(key) + 1);
+	ft_strlcpy(after, (input + j), ft_strlen(input) - ft_strlen(before)
+		+ ft_strlen(key) + 1);
 	free(input);
 	key = envvaluestr(key + 1, data);
 	input = ft_strdup("");
 	input = ft_strjoingnl(input, before);
-	input = ft_strjoingnl(input, "'");
 	input = ft_strjoingnl(input, key);
-	input = ft_strjoingnl(input, "'");
 	input = ft_strjoingnl(input, after);
+	printf("before:%s\n", before);
+	printf("key:%s\n", key);
+	printf("after:%s\n", after);
 	free(before);
 	free(key);
 	free(after);
 	return (input);
 }
-// printf("before:%s\n", before);
-// printf("key:%s\n", key);
-// printf("after:%s\n", after);
 
 int	dollarcount(char *input)
 {
@@ -153,6 +150,10 @@ char	*concatenv(char *input, t_data *data)
 
 	out = ft_strdup(input);
 	while (dollarcount(out) != 0)
+	{
 		out = concatenvloop(out, data);
+		printf("out:%s\n", out);
+		// sleep(1);
+	}
 	return (out);
 }

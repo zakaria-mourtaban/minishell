@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/11 23:39:14 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/14 13:26:05 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ char				*rmquote(char *input, t_data *data);
 void				handlesignal(t_data *data);
 
 /***** for ENVP *****/
+void				concatenvtoken(t_data *data);
 void				init_copy_envp(t_env **head, char **envp);
 void				free_list(t_env *head);
 void				free_tab(char **tab);

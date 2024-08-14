@@ -43,7 +43,8 @@ void	initcmd(char *input, char **env, t_data *data)
 	data->cmd.running = 1;
 	//! only for current testing will be removed later in development
 	concatenv(input, data);
-	tokenizer(concatenv(input, data), data);
+	tokenizer(input, data);
+	concatenvtoken(data);
 	printcmds(data);
 	(void)env;
 	data->cmd.running = 0;

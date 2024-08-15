@@ -17,6 +17,7 @@ t_tokens	*newnode(char *data, int type) {
   ptr->content = ft_strdup(data);
   ptr->id = type;
   ptr->next = NULL;
+  ptr->previous = NULL;
   return (ptr);
 }
 
@@ -35,6 +36,7 @@ void	append(t_tokens **cmds, char *data, int type) {
   while (tmp->next != NULL)
     tmp = tmp->next;
   tmp->next = new_node;
+  new_node->previous = tmp;
 }
 
 void	printcmds(t_data *data) {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 06:58:20 by odib              #+#    #+#             */
-/*   Updated: 2024/08/14 12:10:19 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/15 06:17:14 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,6 @@ void specify_token_cmd(t_tokens *token)
         {
             token = token->next;
         }
-        
     }
 }
+

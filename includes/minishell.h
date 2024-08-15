@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/14 13:26:05 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/15 12:07:34 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,10 @@
 # include <readline/readline.h>
 
 //#$%^&**@!#&******######!!@@^^*(_++)
+
+
+
+
 typedef enum s_token
 {
 
@@ -58,6 +62,7 @@ typedef struct s_tokens
 	char			*content;
 	struct s_tokens	*next;
 }					t_tokens;
+
 void				remove_quotes(t_tokens *tokens);
 void				specify_token_cmd(t_tokens *token);
 

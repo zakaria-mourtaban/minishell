@@ -38,14 +38,14 @@ void	runcmd(const char *input, char **env, t_data *data)
 
 void	initcmd(char *input, char **env, t_data *data)
 {
-	if (input == NULL || *input == '\0')
-		return ;
-	data->cmd.running = 1;
-	//! only for current testing will be removed later in development
-	concatenv(input, data);
 	tokenizer(input, data);
 	concatenvtoken(data);
-	printcmds(data);
+	parse_tokens(data->cmdchain);
+	if (checksyntaxerror(data))
+	{
+		printf("error\n");
+		//compile as commands and open files
+		//execution, basically pipex
+	}
 	(void)env;
-	data->cmd.running = 0;
 }

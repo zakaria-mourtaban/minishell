@@ -59,7 +59,7 @@ int	checkheredoc(t_tokens *token)
 
 int	checkfileout(t_tokens *token)
 {
-	printf("cont:%s\n",getnext(token->next)->content);
+	printf("cont:%s\n", getnext(token->next)->content);
 	if (!getnext(token->next) || (getnext(token->next)->id != TOKEN_WORD
 			&& getnext(token->next)->id != TOKEN_COMMAND))
 		return (1);
@@ -87,7 +87,11 @@ int	checksyntaxerror(t_data *data)
 			if (checkpipe(tmp))
 				return (1);
 			break ;
-		case (TOKEN_OUT_FILE | TOKEN_OUT_A_FILE):
+		case (TOKEN_OUT_FILE):
+			if (checkfileout(tmp))
+				return (1);
+			break ;
+		case (TOKEN_OUT_A_FILE):
 			if (checkfileout(tmp))
 				return (1);
 			break ;

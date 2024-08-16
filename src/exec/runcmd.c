@@ -38,6 +38,7 @@ void	runcmd(const char *input, char **env, t_data *data)
 
 void	initcmd(char *input, char **env, t_data *data)
 {
+	//check quote closed
 	tokenizer(input, data);
 	concatenvtoken(data);
 	parse_tokens(data->cmdchain);

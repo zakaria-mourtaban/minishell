@@ -79,9 +79,11 @@ void	tokenizer(char *input, t_data *data)
 	char *buffer;
 	int buf_i = 0;
 	char quote = 0;
+	int last_was_space = 0;
 
 	data->cmdchain = NULL;
 	buffer = ft_calloc(ft_strlen(input) + 1, sizeof(char));
+
 	while (input[i] != '\0')
 	{
 		if (quote)
@@ -94,17 +96,19 @@ void	tokenizer(char *input, t_data *data)
 				append(&data->cmdchain, buffer, TOKEN_COMMAND);
 				buf_i = 0;
 			}
+			last_was_space = 0;
 		}
 		else if (input[i] == '\'' || input[i] == '\"')
 		{
 			if (buf_i > 0)
 			{
 				buffer[buf_i] = '\0';
-				append(&data->cmdchain, buffer, TOKEN_WORD);
+				append(&data->cmdchain, buffer, TOKEN_COMMAND);
 				buf_i = 0;
 			}
 			quote = input[i];
 			buffer[buf_i++] = input[i];
+			last_was_space = 0;
 		}
 		else if (ft_strchr("|<> ", input[i]))
 		{
@@ -114,49 +118,59 @@ void	tokenizer(char *input, t_data *data)
 				append(&data->cmdchain, buffer, TOKEN_COMMAND);
 				buf_i = 0;
 			}
+
 			if (input[i] == '<' && input[i + 1] == '<')
 			{
 				append(&data->cmdchain, "<<", TOKEN_HEREDOC_EOF);
 				i++;
+				last_was_space = 0;
 			}
 			else if (input[i] == '>' && input[i + 1] == '>')
 			{
 				append(&data->cmdchain, ">>", TOKEN_OUT_A_FILE);
 				i++;
+				last_was_space = 0;
 			}
 			else if (input[i] == '>')
 			{
 				append(&data->cmdchain, ">", TOKEN_OUT_FILE);
-				i++;
+				last_was_space = 0;
 			}
 			else if (input[i] == '<')
 			{
 				append(&data->cmdchain, "<", TOKEN_IN_FILE);
-				i++;
+				last_was_space = 0;
 			}
 			else if (input[i] == '|')
 			{
 				append(&data->cmdchain, "|", TOKEN_PIPE);
-				i++;
-			}
-			else
-			{
-				buffer[0] = input[i];
-				buffer[1] = '\0';
-				append(&data->cmdchain, buffer, get_delimiter_type(buffer));
+				last_was_space = 0;
 			}
 		}
 		else
 		{
-			buffer[buf_i++] = input[i];
+			if (last_was_space)
+			{
+				// Skip adding extra spaces
+				buffer[0] = input[i];
+				buffer[1] = '\0';
+				append(&data->cmdchain, buffer, get_delimiter_type(buffer));
+			}
+			else
+			{
+				buffer[buf_i++] = input[i];
+			}
+			last_was_space = (input[i] == ' ');
 		}
 		i++;
 	}
 
+	// Handle any remaining data in the buffer
 	if (buf_i > 0)
 	{
 		buffer[buf_i] = '\0';
 		append(&data->cmdchain, buffer, TOKEN_COMMAND);
 	}
-	free(input);
+
+	free(buffer);
 }

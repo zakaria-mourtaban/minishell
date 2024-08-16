@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/15 11:42:44 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/16 17:16:57 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,6 @@
 
 //#$%^&**@!#&******######!!@@^^*(_++)
 
-
-
-
 typedef enum s_token
 {
 
@@ -54,80 +51,98 @@ typedef enum s_token
 	TOKEN_OPERATOR = 7,
 	TOKEN_PIPE = 8,
 	TOKEN_SPACE = 9
-}					e_token;
+}						e_token;
 
 typedef struct s_tokens
 {
-	e_token			id;
-	char			*content;
-	struct s_tokens	*next;
-	struct s_tokens	*previous;
-}					t_tokens;
+	e_token				id;
+	char				*content;
+	struct s_tokens		*next;
+	struct s_tokens		*previous;
+}						t_tokens;
 
-void				remove_quotes(t_tokens *tokens);
-void				specify_token_cmd(t_tokens *token);
+void					remove_quotes(t_tokens *tokens);
+void					specify_token_cmd(t_tokens *token);
 
 //#$%^&**@!#&******######!!@@^^*(_++)
 
 /* ascii art */
 # include "art.h"
 
+typedef struct s_arg
+{
+	char				*arg;
+	struct s_arg		*next;
+}						t_arg;
+
+typedef struct s_command
+{
+	t_arg				*args;
+	int					infile;
+	int					outfile;
+	struct s_command	*next;
+}						t_command;
+
 typedef struct s_value
 {
-	char			*value;
-	struct s_value	*next;
-}					t_value;
+	char				*value;
+	struct s_value		*next;
+}						t_value;
 
 typedef struct s_env
 {
-	char			*key;
-	t_value			*value_head;
-	struct s_env	*next;
-}					t_env;
+	char				*key;
+	t_value				*value_head;
+	struct s_env		*next;
+}						t_env;
 
 typedef struct s_cmd
 {
-	char			**cmd;
-	int				status;
-	int				running;
-	pid_t			pid;
-}					t_cmd;
+	char				**cmd;
+	int					status;
+	int					running;
+	pid_t				pid;
+}						t_cmd;
 
 typedef struct s_data
 {
-	t_env			*env_list;
-	t_tokens		*cmdchain;
-	t_cmd			cmd;
-	int				errorid;
-}					t_data;
+	t_env				*env_list;
+	t_tokens			*cmdchain;
+	t_cmd				cmd;
+	int					errorid;
+}						t_data;
 
-extern volatile int	signalint;
-void				art(void);
-void				free_data(t_data *data);
-void				tokenizer(char *input, t_data *data);
-void				printcmds(t_data *data);
-char				*get_path(char *cmd, char **env);
-void				initcmd(char *input, char **env, t_data *data);
-void				runcmd(const char *input, char **env, t_data *data);
-void				noninteractivehandle_sigquit(int sig);
-void				noninteractivehandle_sigint(int sig);
-void				interactivehandle_sigquit(int sig);
-void				interactivehandle_sigint(int sig);
-void				interactivemode(t_data *data, char **input);
-void				noninteractivemode(t_data *data, char **input);
-char				*rmquote(char *input, t_data *data);
-void				handlesignal(t_data *data);
+extern volatile int		signalint;
+void					art(void);
+void					free_data(t_data *data);
+void					tokenizer(char *input, t_data *data);
+void					printcmds(t_data *data);
+char					*get_path(char *cmd, char **env);
+void					initcmd(char *input, char **env, t_data *data);
+void					runcmd(const char *input, char **env, t_data *data);
+void					noninteractivehandle_sigquit(int sig);
+void					noninteractivehandle_sigint(int sig);
+void					interactivehandle_sigquit(int sig);
+void					interactivehandle_sigint(int sig);
+void					interactivemode(t_data *data, char **input);
+void					noninteractivemode(t_data *data, char **input);
+char					*rmquote(char *input, t_data *data);
+void					handlesignal(t_data *data);
+t_command				*parse_tokens(t_tokens *tokens);
+void					free_command_list(t_command *head);
+void					print_command_list(t_command *cmd_list);
+int						checksyntaxerror(t_data *data);
 
 /***** for ENVP *****/
-void				concatenvtoken(t_data *data);
-void				init_copy_envp(t_env **head, char **envp);
-void				free_list(t_env *head);
-void				free_tab(char **tab);
-void				append_node(t_env **head, char *key, char *value);
-t_env				*create_node(char *key, char *value);
-void				print_list(t_env *head);
-char				**ft_split_env(char *str, char del);
-char				*envvaluestr(char *key, t_data *data);
-char				*concatenv(char *input, t_data *data);
-int					numchar(char *input, char c);
+void					concatenvtoken(t_data *data);
+void					init_copy_envp(t_env **head, char **envp);
+void					free_list(t_env *head);
+void					free_tab(char **tab);
+void					append_node(t_env **head, char *key, char *value);
+t_env					*create_node(char *key, char *value);
+void					print_list(t_env *head);
+char					**ft_split_env(char *str, char del);
+char					*envvaluestr(char *key, t_data *data);
+char					*concatenv(char *input, t_data *data);
+int						numchar(char *input, char c);
 #endif

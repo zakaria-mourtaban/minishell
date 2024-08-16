@@ -59,19 +59,24 @@ int	checkheredoc(t_tokens *token)
 
 int	checkfileout(t_tokens *token)
 {
-	printf("cont:%s\n", getnext(token->next)->content);
-	if (!getnext(token->next) || (getnext(token->next)->id != TOKEN_WORD
-			&& getnext(token->next)->id != TOKEN_COMMAND))
-		return (1);
-	return (0);
+	t_tokens	*next_token;
+
+	next_token = getnext(token->next);
+	if (!next_token || (next_token->id != TOKEN_WORD
+			&& next_token->id != TOKEN_COMMAND))
+		return (1); // Error: No valid file or command after >
+	return (0); // No error
 }
 
 int	checkfilein(t_tokens *token)
 {
-	if (!getnext(token->next) || (getnext(token->next)->id != TOKEN_WORD
-			&& getnext(token->next)->id != TOKEN_COMMAND))
-		return (1);
-	return (0);
+	t_tokens	*next_token;
+
+	next_token = getnext(token->next);
+	if (!next_token || (next_token->id != TOKEN_WORD
+			&& next_token->id != TOKEN_COMMAND))
+		return (1); // Error: No valid file or command after <
+	return (0); // No error
 }
 
 int	checksyntaxerror(t_data *data)

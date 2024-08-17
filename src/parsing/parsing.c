@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 16:05:11 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/16 17:43:08 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/17 21:30:33 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,7 @@ t_command	*parse_tokens(t_tokens *tokens)
 			{
 				current_cmd->outfile = open(tokens->content,
 						O_WRONLY | O_CREAT | O_TRUNC, 0644);
+				current_cmd->append = 0;
 				if (current_cmd->outfile < 0)
 					perror("Failed to open output file");
 				else
@@ -147,6 +148,7 @@ t_command	*parse_tokens(t_tokens *tokens)
 			{
 				current_cmd->outfile = open(tokens->content,
 						O_WRONLY | O_CREAT | O_APPEND, 0644);
+				current_cmd->append = 1;
 				if (current_cmd->outfile < 0)
 					perror("Failed to open append output file");
 				else

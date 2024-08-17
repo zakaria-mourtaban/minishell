@@ -41,12 +41,13 @@ void	initcmd(char *input, char **env, t_data *data)
 	//check quote closed
 	tokenizer(input, data);
 	concatenvtoken(data);
-	parse_tokens(data->cmdchain);
+	print_command_list(parse_tokens(data->cmdchain));
 	if (checksyntaxerror(data))
 	{
 		printf("error\n");
 		//compile as commands and open files
 		//execution, basically pipex
 	}
+	execute_pipeline(parse_tokens(data->cmdchain));
 	(void)env;
 }

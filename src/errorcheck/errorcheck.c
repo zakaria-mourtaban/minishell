@@ -36,15 +36,18 @@ t_tokens	*getnext(t_tokens *token)
 
 int	checkpipe(t_tokens *token)
 {
-	if (!getnext(token->next) || getnext(token->next)->id != TOKEN_WORD
-		|| !getprev(token->previous)
-		|| getprev(token->previous)->id != TOKEN_WORD)
+	printf("pipecheck\n");
+	if (!getnext(token->next) || (getnext(token->next)->id != TOKEN_WORD
+			&& getnext(token->next)->id != TOKEN_COMMAND)
+		|| !getprev(token->previous) || (getprev(token->next)->id != TOKEN_WORD
+			&& getprev(token->next)->id != TOKEN_COMMAND))
 		return (1);
 	return (0);
 }
 
 int	checkfileoutappend(t_tokens *token)
 {
+	printf("fileoa\n");
 	if (!getnext(token->next) || getnext(token->next)->id != TOKEN_WORD)
 		return (1);
 	return (0);
@@ -52,6 +55,7 @@ int	checkfileoutappend(t_tokens *token)
 
 int	checkheredoc(t_tokens *token)
 {
+	printf("heredoc\n");
 	if (!getnext(token->next) || getnext(token->next)->id != TOKEN_COMMAND)
 		return (1);
 	return (0);
@@ -61,22 +65,24 @@ int	checkfileout(t_tokens *token)
 {
 	t_tokens	*next_token;
 
+	printf("fileo\n");
 	next_token = getnext(token->next);
 	if (!next_token || (next_token->id != TOKEN_WORD
 			&& next_token->id != TOKEN_COMMAND))
 		return (1); // Error: No valid file or command after >
-	return (0); // No error
+	return (0);     // No error
 }
 
 int	checkfilein(t_tokens *token)
 {
 	t_tokens	*next_token;
 
+	printf("filein\n");
 	next_token = getnext(token->next);
 	if (!next_token || (next_token->id != TOKEN_WORD
 			&& next_token->id != TOKEN_COMMAND))
 		return (1); // Error: No valid file or command after <
-	return (0); // No error
+	return (0);     // No error
 }
 
 int	checksyntaxerror(t_data *data)

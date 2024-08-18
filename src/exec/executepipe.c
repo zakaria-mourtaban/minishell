@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/17 21:43:24 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/18 20:55:26 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds)
 		// Execute the command
 		path = get_path(args[0], environ);
 		execve(path, args, environ);
-		perror("execve");
+		perror(cmd->args->arg);
 		free(args);
 		if (path != args[0])
 			free(path);

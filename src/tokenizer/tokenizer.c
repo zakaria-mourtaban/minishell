@@ -38,8 +38,13 @@ void	append(t_tokens **cmds, char *data, int type)
 	tmp = *cmds;
 	while (tmp->next != NULL)
 		tmp = tmp->next;
+	if ((tmp->id == TOKEN_COMMAND || tmp->id == TOKEN_WORD) && (type == TOKEN_WORD || type == TOKEN_COMMAND))
+		tmp->content = ft_strjoingnl(tmp->content, data);
+	else
+	{
 	tmp->next = new_node;
 	new_node->previous = tmp;
+	}
 }
 
 void	printcmds(t_data *data)
@@ -58,14 +63,14 @@ void	printcmds(t_data *data)
 
 e_token	get_delimiter_type(char *str)
 {
-	if (ft_strcmp(str, "|") == 0)
-		return (TOKEN_PIPE);
+	if (ft_strcmp(str, " ") == 0)
+		return (TOKEN_SPACE);
 	else if (ft_strcmp(str, "<") == 0)
 		return (TOKEN_IN_FILE);
 	else if (ft_strcmp(str, ">") == 0)
 		return (TOKEN_OUT_FILE);
-	else if (ft_strcmp(str, " ") == 0)
-		return (TOKEN_SPACE);
+	else if (ft_strcmp(str, "|") == 0)
+		return (TOKEN_PIPE);
 	else if (ft_strcmp(str, "<<") == 0)
 		return (TOKEN_HEREDOC_EOF);
 	else if (ft_strcmp(str, ">>") == 0)
@@ -146,12 +151,16 @@ void	tokenizer(char *input, t_data *data)
 				append(&data->cmdchain, "|", TOKEN_PIPE);
 				last_was_space = 0;
 			}
+			else if (input[i] == ' ')
+			{
+				append(&data->cmdchain, " ", TOKEN_SPACE);
+				last_was_space = 0;
+			}
 		}
 		else
 		{
 			if (last_was_space)
 			{
-				// Skip adding extra spaces
 				buffer[0] = input[i];
 				buffer[1] = '\0';
 				append(&data->cmdchain, buffer, get_delimiter_type(buffer));
@@ -164,13 +173,10 @@ void	tokenizer(char *input, t_data *data)
 		}
 		i++;
 	}
-
-	// Handle any remaining data in the buffer
 	if (buf_i > 0)
 	{
 		buffer[buf_i] = '\0';
 		append(&data->cmdchain, buffer, TOKEN_COMMAND);
 	}
-
 	free(buffer);
 }

@@ -38,15 +38,20 @@ void	runcmd(const char *input, char **env, t_data *data)
 
 void	initcmd(char *input, char **env, t_data *data)
 {
-	//check quote closed
+	// check quote closed
+	t_command *command;
 	tokenizer(input, data);
 	concatenvtoken(data);
-	parse_tokens(data->cmdchain);
+	remove_quotes(data->cmdchain);
+	printcmds(data);
+	command = parse_tokens(data->cmdchain);
+	print_command_list(command);
 	if (checksyntaxerror(data))
 	{
 		printf("error\n");
-		//compile as commands and open files
-		//execution, basically pipex
+		// compile as commands and open files
+		// execution, basically pipex
 	}
+	execute_pipeline(command);
 	(void)env;
 }

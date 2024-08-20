@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/16 17:16:57 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/17 21:32:22 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ typedef struct s_command
 	t_arg				*args;
 	int					infile;
 	int					outfile;
+	int					append;
 	struct s_command	*next;
 }						t_command;
 
@@ -113,6 +114,7 @@ typedef struct s_data
 }						t_data;
 
 extern volatile int		signalint;
+void					execute_pipeline(t_command *cmds);
 void					art(void);
 void					free_data(t_data *data);
 void					tokenizer(char *input, t_data *data);

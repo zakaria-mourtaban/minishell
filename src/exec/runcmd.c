@@ -43,6 +43,7 @@ void	initcmd(char *input, char **env, t_data *data)
 	tokenizer(input, data);
 	concatenvtoken(data);
 	remove_quotes(data->cmdchain);
+	printcmds(data);
 	command = parse_tokens(data->cmdchain);
 	print_command_list(command);
 	if (checksyntaxerror(data))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/17 21:32:22 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/22 02:30:09 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,26 @@ typedef struct s_tokens
 	struct s_tokens		*previous;
 }						t_tokens;
 
+typedef struct s_env
+{
+	char				*key;
+	char				*value;
+	struct s_env		*next;
+}						t_env;
+
+
 void					remove_quotes(t_tokens *tokens);
 void					specify_token_cmd(t_tokens *token);
+
+char *get_env_copy(char *name,t_env *copy_env);
+void replace_env(char **input, char *old, char *new);
+pid_t ft_getpid(void);
+char *handle_double_dollar(char *input);
+char *remove_char(char *str, char char_to_remove);
+int ft_is_delimiter(char c);
+char *handle_dollar_signe(char *input, t_env *envp_head);
+
+
 
 //#$%^&**@!#&******######!!@@^^*(_++)
 
@@ -84,19 +102,20 @@ typedef struct s_command
 	struct s_command	*next;
 }						t_command;
 
-typedef struct s_value
-{
-	char				*value;
-	struct s_value		*next;
-}						t_value;
+// typedef struct s_value
+// {
+// 	char				*value;
+// 	struct s_value		*next;
+// }						t_value;
 
-typedef struct s_env
-{
-	char				*key;
-	t_value				*value_head;
-	struct s_env		*next;
-}						t_env;
 
+
+// typedef struct s_env
+// {
+// 	char *key;
+// 	char *value;
+// 	struct s_env *next;
+// } t_env;
 typedef struct s_cmd
 {
 	char				**cmd;

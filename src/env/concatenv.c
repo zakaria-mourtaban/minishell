@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   concatenv.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 14:42:27 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/14 13:46:48 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/21 04:15:38 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 char	*envvaluestr(char *key, t_data *data)
 {
 	t_env	*envtmp;
-	t_value	*value;
+	char	*value;
 	char	*valuestr;
 
 	printf("KEY:%s\n", key);
@@ -29,14 +29,14 @@ char	*envvaluestr(char *key, t_data *data)
 	}
 	if (envtmp == NULL || (ft_strlen(key) != ft_strlen(envtmp->key)))
 		return (ft_strdup(""));
-	value = envtmp->value_head;
+	value = envtmp->value;
 	valuestr = ft_strdup("");
-	while (value != NULL)
+	if (value != NULL)
 	{
-		valuestr = ft_strjoingnl(valuestr, value->value);
-		if (value->next != NULL)
-			valuestr = ft_strjoingnl(valuestr, ":");
-		value = value->next;
+		valuestr = ft_strjoingnl(valuestr, value);
+		// if (value->next != NULL)
+		// 	valuestr = ft_strjoingnl(valuestr, ":");
+		// value = value->next;
 	}
 	// free(key);
 	return (valuestr);

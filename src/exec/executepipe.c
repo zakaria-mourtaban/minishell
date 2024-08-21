@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executepipe.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/18 20:55:26 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/20 03:10:31 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,9 +99,9 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds)
 		path = get_path(args[0], environ);
 		execve(path, args, environ);
 		perror(cmd->args->arg);
-		free(args);
 		if (path != args[0])
 			free(path);
+		free(args);
 		exit(1);
 	}
 }

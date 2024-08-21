@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 00:00:34 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/14 12:10:19 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/22 02:27:09 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ void	noninteractivehandle_sigquit(int sig)
 
 void	interactivemode(t_data *data, char **input)
 {
+	
 	signal(SIGINT, interactivehandle_sigint);
 	signal(SIGQUIT, interactivehandle_sigquit);
 	while (1)
@@ -58,7 +59,10 @@ void	interactivemode(t_data *data, char **input)
 		if (input != NULL)
 			break ;
 		if (ft_strlen(*input) != 0)
+		{
 			break ;
+			
+		}
 	}
 	(void)data;
 }

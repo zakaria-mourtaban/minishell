@@ -3,70 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   environment.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 23:43:26 by odib              #+#    #+#             */
-/*   Updated: 2024/08/14 12:10:19 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/21 04:11:33 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-t_value	*new_value_node(char *value)
-{
-	t_value	*node;
-
-	node = (t_value *)malloc(sizeof(t_value));
-	if (!node)
-		return (NULL);
-	if (value)
-		node->value = ft_strdup(value);
-	else
-		node->value = ft_strdup("");
-	node->next = NULL;
-	return (node);
-}
-
-void	add_value_node(t_value **value_head, char *value)
-{
-	t_value	*new_value;
-	t_value	*temp;
-
-	new_value = new_value_node(value);
-	if (!*value_head)
-	{
-		*value_head = new_value;
-	}
-	else
-	{
-		temp = *value_head;
-		while (temp->next)
-			temp = temp->next;
-		temp->next = new_value;
-	}
-}
-
 t_env	*create_node(char *key, char *value)
 {
 	t_env	*res;
-	int		i;
-	char	**splited_values;
 
 	res = malloc(sizeof(t_env));
-	i = 0;
 	if (!res)
 	{
 		perror("Failed to allocate memory for new node");
 		return (NULL);
 	}
 	res->key = ft_strdup(key);
-	res->value_head = NULL; // Initialize value_head to NULL
-	splited_values = ft_split(value, ':');
-	while (splited_values[i])
-	{
-		add_value_node(&(res->value_head), splited_values[i]);
-		i++;
-	}
+	res->value = ft_strdup(value);
 	res->next = NULL;
 	return (res);
 }
@@ -102,21 +59,6 @@ void	free_tab(char **tab)
 	}
 	free(tab);
 }
-// free functions
-void	free_value_list(t_value *value_head)
-{
-	t_value	*current_value;
-	t_value	*next_value;
-
-	current_value = value_head;
-	while (current_value)
-	{
-		next_value = current_value->next;
-		free(current_value->value);
-		free(current_value);
-		current_value = next_value;
-	}
-}
 
 void	free_list(t_env *env_head)
 {
@@ -130,7 +72,7 @@ void	free_list(t_env *env_head)
 		// Free the key
 		free(current_env->key);
 		// Free the value list associated with this env node
-		free_value_list(current_env->value_head);
+		free(current_env->value);
 		// Free the env node itself
 		free(current_env);
 		current_env = next_env;
@@ -162,7 +104,7 @@ void	init_copy_envp(t_env **head, char **envp)
 void	print_list(t_env *env_head)
 {
 	t_env	*current_env;
-	t_value	*current_value;
+	char	*current_value;
 
 	current_env = env_head;
 	while (current_env)
@@ -170,15 +112,9 @@ void	print_list(t_env *env_head)
 		// Print the key
 		printf("Key: %s\n", current_env->key);
 		// Print the values
-		current_value = current_env->value_head;
+		current_value = current_env->value;
 		printf("Values: ");
-		while (current_value)
-		{
-			printf("%s", current_value->value);
-			if (current_value->next)
-				printf(", ");
-			current_value = current_value->next;
-		}
+		printf("%s", current_value);
 		printf("\n\n"); // Print a newline between entries
 		// Move to the next env node
 		current_env = current_env->next;

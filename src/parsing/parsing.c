@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 16:05:11 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/18 21:17:45 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/22 11:43:22 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,15 @@ void	append_command_node(t_command **cmd_list, t_command *new_cmd)
 	}
 }
 
-t_command	*parse_tokens(t_tokens *tokens)
+int	hasaccess(t_tokens *token, t_data *data)
+{
+	if (access(get_path(token->content, data->env), X_OK))
+		return (1);
+	printf("bash: %s: command not found\n",token->content);
+	return (0);
+}
+
+t_command	*parse_tokens(t_tokens *tokens,t_data *data)
 {
 	t_command	*cmd_list;
 	t_command	*current_cmd;
@@ -86,8 +94,6 @@ t_command	*parse_tokens(t_tokens *tokens)
 	current_cmd = NULL;
 	while (tokens)
 	{
-		printf("Processing token: id=%d, content=%s\n", tokens->id,
-			tokens->content);
 		if (tokens->id == TOKEN_WORD || tokens->id == TOKEN_COMMAND)
 		{
 			if (!current_cmd)
@@ -98,17 +104,14 @@ t_command	*parse_tokens(t_tokens *tokens)
 					fprintf(stderr, "Failed to create a new command node.\n");
 					return (NULL);
 				}
-				printf("Created new command node.\n");
 			}
 			add_argument(current_cmd, tokens->content);
-			printf("Added argument: %s\n", tokens->content);
 		}
 		else if (tokens->id == TOKEN_PIPE)
 		{
 			if (current_cmd)
 			{
 				append_command_node(&cmd_list, current_cmd);
-				printf("Appended command to list. Starting new command.\n");
 				current_cmd = NULL;
 			}
 		}
@@ -159,11 +162,8 @@ t_command	*parse_tokens(t_tokens *tokens)
 			tokens = tokens->next;
 	}
 	if (current_cmd)
-	{
 		append_command_node(&cmd_list, current_cmd);
-		printf("Appended final command to list.\n");
-	}
-	printf("Parsing complete\n");
+	(void)data;
 	return (cmd_list);
 }
 

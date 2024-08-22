@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 00:00:34 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/14 12:10:19 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/22 11:50:54 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,15 +50,19 @@ void	noninteractivehandle_sigquit(int sig)
 
 void	interactivemode(t_data *data, char **input)
 {
+	
 	signal(SIGINT, interactivehandle_sigint);
 	signal(SIGQUIT, interactivehandle_sigquit);
 	while (1)
 	{
-		*input = readline(">>>");
+		*input = readline(GREEN_BRIGHT"⫸"RESET);
 		if (input != NULL)
 			break ;
 		if (ft_strlen(*input) != 0)
+		{
 			break ;
+			
+		}
 	}
 	(void)data;
 }

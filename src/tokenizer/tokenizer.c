@@ -29,7 +29,7 @@ void	append(t_tokens **cmds, char *data, int type)
 
 	new_node = NULL;
 	new_node = newnode(data, type);
-	printf("%s\n", data);
+	// printf("%s\n", data);a
 	if (*cmds == NULL)
 	{
 		*cmds = new_node;

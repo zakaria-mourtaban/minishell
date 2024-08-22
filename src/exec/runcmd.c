@@ -43,15 +43,12 @@ void	initcmd(char *input, char **env, t_data *data)
 	tokenizer(input, data);
 	concatenvtoken(data);
 	remove_quotes(data->cmdchain);
+	command = parse_tokens(data->cmdchain, data);
 	printcmds(data);
-	command = parse_tokens(data->cmdchain);
 	print_command_list(command);
-	if (checksyntaxerror(data))
+	if (!checksyntaxerror(data) && command != NULL)
 	{
-		printf("error\n");
-		// compile as commands and open files
-		// execution, basically pipex
+		execute_pipeline(command, data);
 	}
-	execute_pipeline(command);
 	(void)env;
 }

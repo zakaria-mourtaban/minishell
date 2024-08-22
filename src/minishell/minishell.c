@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/16 16:25:25 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/22 11:27:48 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,17 @@ int	main(int ac, char **av, char **env)
 	art();
 	using_history();
 	data.env_list = NULL;
+	data.cmdchain = NULL;
+	data.status = 0;
+	data.env = env;
 	init_copy_envp(&(data.env_list), env);
+	// print_list(data.env_list);
+	// printf("#############\n");
 	// Initial test input to tokenize, parse, and run
-	// tokenizer(concatenv(ft_strdup("test $ $HOME \"$HOME $HOME\" '$HOME' test | < >> << >"),&data),
-	//&data);
+	// tokenizer(concatenv(ft_strdup("test $123 $ $ $ \"$HOME $HOME\" \"'$HOME'\" test | < >> << >"),&data),
+	// &data);
+	// tokenizer(concatenv(handle_dollar_sign(ft_strdup("test $123 $ $ $ \"$HOME $HOME\" \"'$HOME'\" test | < >> << >"),
+	// copy_env),&data),&data);
 	// remove_quotes(data.cmdchain);
 	// printcmds(&data);
 	// Parse the tokens into command structures
@@ -39,7 +46,10 @@ int	main(int ac, char **av, char **env)
 			break ;
 		}
 		if (ft_strlen(input) != 0)
+		{
 			add_history(input);
+			// printf("%s\n", input);
+		}
 		// Non-interactive mode processing
 		noninteractivemode(&data, &input);
 		initcmd(input, env, &data);

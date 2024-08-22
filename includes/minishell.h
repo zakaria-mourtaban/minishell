@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/22 02:30:09 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/22 11:27:19 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 # include <sys/stat.h>
 /* Terminal control */
 # include <curses.h>
+# include <errno.h>
 # include <termios.h>
 
 /* Readline library */
@@ -50,7 +51,8 @@ typedef enum s_token
 	TOKEN_COMMAND = 6,
 	TOKEN_OPERATOR = 7,
 	TOKEN_PIPE = 8,
-	TOKEN_SPACE = 9
+	TOKEN_SPACE = 9,
+	TOKEN_DIRECTORY = 10,
 }						e_token;
 
 typedef struct s_tokens
@@ -68,19 +70,16 @@ typedef struct s_env
 	struct s_env		*next;
 }						t_env;
 
-
 void					remove_quotes(t_tokens *tokens);
 void					specify_token_cmd(t_tokens *token);
 
-char *get_env_copy(char *name,t_env *copy_env);
-void replace_env(char **input, char *old, char *new);
-pid_t ft_getpid(void);
-char *handle_double_dollar(char *input);
-char *remove_char(char *str, char char_to_remove);
-int ft_is_delimiter(char c);
-char *handle_dollar_signe(char *input, t_env *envp_head);
-
-
+char					*get_env_copy(char *name, t_env *copy_env);
+void					replace_env(char **input, char *old, char *new);
+pid_t					ft_getpid(void);
+char					*handle_double_dollar(char *input);
+char					*remove_char(char *str, char char_to_remove);
+int						ft_is_delimiter(char c);
+char					*handle_dollar_sign(char *input, t_env *envp_head);
 
 //#$%^&**@!#&******######!!@@^^*(_++)
 
@@ -108,8 +107,6 @@ typedef struct s_command
 // 	struct s_value		*next;
 // }						t_value;
 
-
-
 // typedef struct s_env
 // {
 // 	char *key;
@@ -129,11 +126,13 @@ typedef struct s_data
 	t_env				*env_list;
 	t_tokens			*cmdchain;
 	t_cmd				cmd;
-	int					errorid;
+	char				**env;
+	int					status;
 }						t_data;
 
 extern volatile int		signalint;
-void					execute_pipeline(t_command *cmds);
+int						hasaccess(t_tokens *token, t_data *data);
+void					execute_pipeline(t_command *cmds, t_data *data);
 void					art(void);
 void					free_data(t_data *data);
 void					tokenizer(char *input, t_data *data);
@@ -149,7 +148,7 @@ void					interactivemode(t_data *data, char **input);
 void					noninteractivemode(t_data *data, char **input);
 char					*rmquote(char *input, t_data *data);
 void					handlesignal(t_data *data);
-t_command				*parse_tokens(t_tokens *tokens);
+t_command				*parse_tokens(t_tokens *tokens, t_data *data);
 void					free_command_list(t_command *head);
 void					print_command_list(t_command *cmd_list);
 int						checksyntaxerror(t_data *data);

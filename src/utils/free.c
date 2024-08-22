@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 23:38:08 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/16 17:07:29 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/22 11:25:45 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,10 @@ void free_cmdchain(t_tokens *cmdchain)
     while (current != NULL)
     {
         next = current->next;
-        free(current->content);
-        free(current);
+		if (current->content != NULL)
+        	free(current->content);
+		if (current != NULL)
+        	free(current);
         current = next;
     }
 }
@@ -47,7 +49,7 @@ void free_env_list(t_env *env_list)
 
 void free_data(t_data *data)
 {
-    if (data)
+    if (data != NULL)
     {
         free_cmdchain(data->cmdchain);
         free_env_list(data->env_list);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 00:00:34 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/22 02:27:09 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/22 11:50:54 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	interactivemode(t_data *data, char **input)
 	signal(SIGQUIT, interactivehandle_sigquit);
 	while (1)
 	{
-		*input = readline(">>>");
+		*input = readline(GREEN_BRIGHT"⫸"RESET);
 		if (input != NULL)
 			break ;
 		if (ft_strlen(*input) != 0)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   concatenv.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 14:42:27 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/21 04:15:38 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/21 16:21:39 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*envvaluestr(char *key, t_data *data)
 	char	*valuestr;
 
 	printf("KEY:%s\n", key);
-	if (ft_strlen(key) == 0 )
+	if (ft_strlen(key) == 0)
 		return (ft_strdup(""));
 	envtmp = data->env_list;
 	while (envtmp != NULL && ft_strcmp(envtmp->key, key) != 0)
@@ -170,7 +170,7 @@ void	concatenvtoken(t_data *data)
 	tmp = data->cmdchain;
 	while (tmp)
 	{
-		tmp->content = concatenv(tmp->content, data);
+		tmp->content = handle_dollar_sign(tmp->content, data->env_list);
 		tmp = tmp->next;
 	}
 }

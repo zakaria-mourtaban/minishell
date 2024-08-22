@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executepipe.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/20 03:10:31 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/21 17:32:45 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds)
 	t_arg	*current;
 	pid_t	pid;
 	char	*path;
+	int		j;
 
 	pid = fork();
 	if (pid == -1)
@@ -47,7 +48,6 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds)
 		{
 			dup2(pipes[(i - 1) * 2], STDIN_FILENO);
 		}
-
 		// Handle pipe output
 		if (i < num_cmds - 1)
 		{
@@ -58,19 +58,16 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds)
 		{
 			dup2(cmd->outfile, STDOUT_FILENO);
 		}
-
 		// Handle input redirection if infile is provided
 		if (cmd->infile != -1)
 		{
 			dup2(cmd->infile, STDIN_FILENO);
 		}
-		
 		// Close all pipe ends in child process
 		for (int j = 0; j < 2 * (num_cmds - 1); j++)
 		{
 			close(pipes[j]);
 		}
-
 		// Construct the arguments array
 		arg_count = 0;
 		current = cmd->args;
@@ -86,7 +83,7 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds)
 			exit(1);
 		}
 		current = cmd->args;
-		int j = 0;
+		j = 0;
 		while (current)
 		{
 			args[j] = current->arg;
@@ -94,11 +91,11 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds)
 			j++;
 		}
 		args[j] = NULL;
-
 		// Execute the command
 		path = get_path(args[0], environ);
 		execve(path, args, environ);
-		perror(cmd->args->arg);
+		if (access(get_path(path, environ), X_OK))
+				printf("bash: %s: command not found\n",path);
 		if (path != args[0])
 			free(path);
 		free(args);
@@ -106,7 +103,7 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds)
 	}
 }
 
-void	execute_pipeline(t_command *cmds)
+void	execute_pipeline(t_command *cmds, t_data *data)
 {
 	int			*pipes;
 	int			num_cmds;
@@ -146,9 +143,8 @@ void	execute_pipeline(t_command *cmds)
 	i = 0;
 	while (i < num_cmds)
 	{
-		waitpid(-1, NULL, 0);
+		waitpid(-1, &data->status, 0);
 		i++;
 	}
 	free(pipes);
 }
-

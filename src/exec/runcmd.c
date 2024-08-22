@@ -16,7 +16,7 @@ void	runcmd(const char *input, char **env, t_data *data)
 		printf("error in fork should be doing something here");
 	if (pid == 0)
 	{
-		status = execve(get_path(data->cmd.cmd[0], env), data->cmd.cmd, env);
+		status = execve(get_path(data->cmd.cmd[0], data->env_list), data->cmd.cmd, env);
 		if (status != 0)
 		{
 			printf("%s: command not found\n", data->cmd.cmd[0]);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/22 11:27:48 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/22 18:07:32 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	main(int ac, char **av, char **env)
 	data.cmdchain = NULL;
 	data.status = 0;
 	data.env = env;
-	init_copy_envp(&(data.env_list), env);
+	data.env_list = init_copy_envp(env);
 	// print_list(data.env_list);
 	// printf("#############\n");
 	// Initial test input to tokenize, parse, and run

@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 14:42:27 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/21 16:21:39 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/22 23:22:35 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,7 @@ void	concatenvtoken(t_data *data)
 	tmp = data->cmdchain;
 	while (tmp)
 	{
-		tmp->content = handle_dollar_sign(tmp->content, data->env_list);
+		tmp->content = handle_dollar_sign(tmp->content, data);
 		tmp = tmp->next;
 	}
 }

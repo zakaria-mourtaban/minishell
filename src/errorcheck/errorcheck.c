@@ -38,8 +38,9 @@ int	checkpipe(t_tokens *token)
 {
 	if (!getnext(token->next) || (getnext(token->next)->id != TOKEN_WORD
 			&& getnext(token->next)->id != TOKEN_COMMAND)
-		|| !getprev(token->previous) || (getprev(token->next)->id != TOKEN_WORD
-			&& getprev(token->next)->id != TOKEN_COMMAND))
+		|| !getprev(token->previous)
+		|| (getprev(token->previous)->id != TOKEN_WORD
+			&& getprev(token->previous)->id != TOKEN_COMMAND))
 		return (1);
 	return (0);
 }
@@ -117,6 +118,7 @@ int	checksyntaxerror(t_data *data)
 	{
 		if (tmp->id == TOKEN_PIPE)
 		{
+			singalint = 2;
 			if (checkpipe(tmp))
 			{
 				printerror(tmp);
@@ -128,47 +130,92 @@ int	checksyntaxerror(t_data *data)
 	tmp = data->cmdchain;
 	while (tmp)
 	{
-		switch (tmp->id)
+		if (tmp->id == TOKEN_HEREDOC_EOF && checkheredoc(tmp))
 		{
-		case TOKEN_COMMAND:
-			if (isdirectory(tmp))
-			{
-				printerror(tmp);
-				return (1);
-			}
-			break ;
-		case (TOKEN_OUT_FILE):
-			if (checkfileout(tmp))
-			{
-				printerror(tmp);
-				return (1);
-			}
-			break ;
-		case (TOKEN_OUT_A_FILE):
-			if (checkfileout(tmp))
-			{
-				printerror(tmp);
-				return (1);
-			}
-			break ;
-		case TOKEN_IN_FILE:
-			if (checkfilein(tmp))
-			{
-				printerror(tmp);
-				return (1);
-			}
-			break ;
-		case TOKEN_HEREDOC_EOF:
-			if (checkheredoc(tmp))
-			{
-				printerror(tmp);
-				return (1);
-			}
-			break ;
-		default:
-			break ;
+			singalint = 2;
+			printerror(tmp);
+			return (1);
+		}
+		tmp = tmp->next;
+	}
+	tmp = data->cmdchain;
+	while (tmp)
+	{
+		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
+		{
+			singalint = 2;
+			printerror(tmp);
+			return (1);
+		}
+		tmp = tmp->next;
+	}
+	tmp = data->cmdchain;
+	while (tmp)
+	{
+		if ((tmp->id == TOKEN_OUT_FILE || tmp->id == TOKEN_OUT_A_FILE)
+			&& checkfileout(tmp))
+		{
+			singalint = 2;
+			printerror(tmp);
+			return (1);
+		}
+		tmp = tmp->next;
+	}
+	tmp = data->cmdchain;
+	while (tmp)
+	{
+		if (tmp->id == TOKEN_COMMAND && isdirectory(tmp))
+		{
+			singalint = 126;
+			printerror(tmp);
+			return (1);
 		}
 		tmp = tmp->next;
 	}
 	return (0);
 }
+// tmp = data->cmdchain;
+// while (tmp)
+// {
+// 	switch (tmp->id)
+// 	{
+// 	case TOKEN_COMMAND:
+// 		if (isdirectory(tmp))
+// 		{
+// 			printerror(tmp);
+// 			return (1);
+// 		}
+// 		break ;
+// 	case (TOKEN_OUT_FILE):
+// 		if (checkfileout(tmp))
+// 		{
+// 			printerror(tmp);
+// 			return (1);
+// 		}
+// 		break ;
+// 	case (TOKEN_OUT_A_FILE):
+// 		if (checkfileout(tmp))
+// 		{
+// 			printerror(tmp);
+// 			return (1);
+// 		}
+// 		break ;
+// 	case TOKEN_IN_FILE:
+// 		if (checkfilein(tmp))
+// 		{
+// 			printerror(tmp);
+// 			return (1);
+// 		}
+// 		break ;
+// 	case TOKEN_HEREDOC_EOF:
+// 		if (checkheredoc(tmp))
+// 		{
+// 			printerror(tmp);
+// 			return (1);
+// 		}
+// 		break ;
+// 	default:
+// 		break ;
+// 	}
+// 	tmp = tmp->next;
+// }

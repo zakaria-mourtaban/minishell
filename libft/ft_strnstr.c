@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 16:42:57 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/06/11 18:18:43 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/22 23:46:04 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,3 +34,27 @@ char	*ft_strnstr(const char *big, const char *little, size_t len)
 	}
 	return (NULL);
 }
+
+char	*ft_strstr(const char *big, const char *little)
+{
+	size_t	j;
+
+	if (!big)
+		return (NULL);
+	if (!*little)
+		return ((char *)big);
+	while (*big)
+	{
+		j = 0;
+		while (*(big + j) == *(little + j)
+			&& *(little + j))
+		{
+			if (!*(little + j + 1))
+				return ((char *)big);
+			j++;
+		}
+		big++;
+	}
+	return (NULL);
+}
+

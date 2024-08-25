@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 16:05:11 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/22 11:43:22 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/22 18:04:26 by mkraytem         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	append_command_node(t_command **cmd_list, t_command *new_cmd)
 
 int	hasaccess(t_tokens *token, t_data *data)
 {
-	if (access(get_path(token->content, data->env), X_OK))
+	if (access(get_path(token->content ,data->env_list), X_OK))
 		return (1);
 	printf("bash: %s: command not found\n",token->content);
 	return (0);

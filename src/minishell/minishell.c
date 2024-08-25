@@ -3,29 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/22 11:27:48 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/23 00:15:37 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-volatile int	signalint;
+int	volatile signalint;
 int	main(int ac, char **av, char **env)
 {
 	char	*input;
 	t_data	data;
 
+	signalint = 0;
 	data.cmd.running = 0;
 	art();
 	using_history();
 	data.env_list = NULL;
 	data.cmdchain = NULL;
-	data.status = 0;
 	data.env = env;
-	init_copy_envp(&(data.env_list), env);
+	data.env_list = init_copy_envp(env);
 	// print_list(data.env_list);
 	// printf("#############\n");
 	// Initial test input to tokenize, parse, and run
@@ -37,6 +37,7 @@ int	main(int ac, char **av, char **env)
 	// printcmds(&data);
 	// Parse the tokens into command structures
 	// You can now print or execute commands here for debugging
+
 	while (1)
 	{
 		interactivemode(&data, &input);

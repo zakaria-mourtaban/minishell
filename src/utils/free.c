@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 23:38:08 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/22 11:25:45 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/22 23:57:02 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,10 @@ void free_data(t_data *data)
 {
     if (data != NULL)
     {
-        free_cmdchain(data->cmdchain);
-        free_env_list(data->env_list);
+		if (data->cmdchain != NULL)
+        	free_cmdchain(data->cmdchain);
+		if (data->env_list != NULL)
+        	free_env_list(data->env_list);
         // Free any other dynamically allocated members of t_data
         // For example:
         // free(data->cmd.command);

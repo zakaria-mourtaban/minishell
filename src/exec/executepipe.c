@@ -7,6 +7,7 @@
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
 /*   Updated: 2024/08/22 18:12:48 by mkraytem         ###   ########.fr       */
+/*   Updated: 2024/08/23 00:15:54 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +136,12 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	current = cmds;
 	while (current)
 	{
+		if (access(get_path(current->args->arg, environ), X_OK))
+		{
+			printf("bash: %s: command not found\n", current->args->arg);
+			singalint = 127;
+			break ;
+		}
 		execute_command(current, pipes, i, num_cmds, data->env_list);
 		current = current->next;
 		i++;
@@ -143,7 +150,7 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	i = 0;
 	while (i < num_cmds)
 	{
-		waitpid(-1, &data->status, 0);
+		waitpid(-1, &singalint, 0);
 		i++;
 	}
 	free(pipes);

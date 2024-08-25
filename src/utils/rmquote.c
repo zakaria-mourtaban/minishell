@@ -120,7 +120,7 @@ char	*processstr(char *input, t_data *data)
 		l++;
 	if (l != 0)
 	{
-		data->status = 2;
+		singalint = 2;
 		printf("error syntax should be erroring properly%d,%d\n", l,
 			numchar(buffer, '\"'));
 		return (NULL);

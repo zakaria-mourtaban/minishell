@@ -38,12 +38,13 @@ void	append(t_tokens **cmds, char *data, int type)
 	tmp = *cmds;
 	while (tmp->next != NULL)
 		tmp = tmp->next;
-	if ((tmp->id == TOKEN_COMMAND || tmp->id == TOKEN_WORD) && (type == TOKEN_WORD || type == TOKEN_COMMAND))
+	if ((tmp->id == TOKEN_COMMAND || tmp->id == TOKEN_WORD)
+		&& (type == TOKEN_WORD || type == TOKEN_COMMAND))
 		tmp->content = ft_strjoingnl(tmp->content, data);
 	else
 	{
-	tmp->next = new_node;
-	new_node->previous = tmp;
+		tmp->next = new_node;
+		new_node->previous = tmp;
 	}
 }
 
@@ -75,7 +76,7 @@ e_token	get_delimiter_type(char *str)
 		return (TOKEN_HEREDOC_EOF);
 	else if (ft_strcmp(str, ">>") == 0)
 		return (TOKEN_OUT_A_FILE);
-	return (TOKEN_COMMAND);
+	return (TOKEN_WORD);
 }
 
 void	tokenizer(char *input, t_data *data)
@@ -85,6 +86,7 @@ void	tokenizer(char *input, t_data *data)
 	int buf_i = 0;
 	char quote = 0;
 	int last_was_space = 0;
+	int foundcmd = 0;
 
 	data->cmdchain = NULL;
 	buffer = ft_calloc(ft_strlen(input) + 1, sizeof(char));
@@ -98,7 +100,13 @@ void	tokenizer(char *input, t_data *data)
 			{
 				quote = 0;
 				buffer[buf_i] = '\0';
-				append(&data->cmdchain, buffer, TOKEN_COMMAND);
+				if (!foundcmd)
+				{
+					append(&data->cmdchain, buffer, TOKEN_COMMAND);
+					foundcmd = 1;
+				}
+				else
+					append(&data->cmdchain, buffer, TOKEN_WORD);
 				buf_i = 0;
 			}
 			last_was_space = 0;
@@ -108,7 +116,13 @@ void	tokenizer(char *input, t_data *data)
 			if (buf_i > 0)
 			{
 				buffer[buf_i] = '\0';
-				append(&data->cmdchain, buffer, TOKEN_COMMAND);
+				if (!foundcmd)
+				{
+					append(&data->cmdchain, buffer, TOKEN_COMMAND);
+					foundcmd = 1;
+				}
+				else
+					append(&data->cmdchain, buffer, TOKEN_WORD);
 				buf_i = 0;
 			}
 			quote = input[i];
@@ -120,7 +134,13 @@ void	tokenizer(char *input, t_data *data)
 			if (buf_i > 0)
 			{
 				buffer[buf_i] = '\0';
-				append(&data->cmdchain, buffer, TOKEN_COMMAND);
+				if (!foundcmd)
+				{
+					append(&data->cmdchain, buffer, TOKEN_COMMAND);
+					foundcmd = 1;
+				}
+				else
+					append(&data->cmdchain, buffer, TOKEN_WORD);
 				buf_i = 0;
 			}
 
@@ -171,12 +191,20 @@ void	tokenizer(char *input, t_data *data)
 			}
 			last_was_space = (input[i] == ' ');
 		}
+		if (input[i] == '|')
+			foundcmd = 0;
 		i++;
 	}
 	if (buf_i > 0)
 	{
 		buffer[buf_i] = '\0';
-		append(&data->cmdchain, buffer, TOKEN_COMMAND);
+		if (!foundcmd)
+		{
+			append(&data->cmdchain, buffer, TOKEN_COMMAND);
+			foundcmd = 1;
+		}
+		else
+			append(&data->cmdchain, buffer, TOKEN_WORD);
 	}
 	free(buffer);
 }

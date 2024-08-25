@@ -6,7 +6,7 @@
 /*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/22 18:24:13 by mkraytem         ###   ########.fr       */
+/*   Updated: 2024/08/23 00:15:33 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,16 +70,6 @@ typedef struct s_env
 	struct s_env		*next;
 }						t_env;
 
-void					remove_quotes(t_tokens *tokens);
-void					specify_token_cmd(t_tokens *token);
-
-char					*get_env_copy(char *name, t_env *copy_env);
-void					replace_env(char **input, char *old, char *new);
-pid_t					ft_getpid(void);
-char					*handle_double_dollar(char *input);
-char					*remove_char(char *str, char char_to_remove);
-int						ft_is_delimiter(char c);
-char					*handle_dollar_sign(char *input, t_env *envp_head);
 
 //#$%^&**@!#&******######!!@@^^*(_++)
 
@@ -127,10 +117,10 @@ typedef struct s_data
 	t_tokens			*cmdchain;
 	t_cmd				cmd;
 	char				**env;
-	int					status;
 }						t_data;
 
 extern volatile int		signalint;
+void					free_cmdchain(t_tokens *cmdchain);
 int						hasaccess(t_tokens *token, t_data *data);
 void					execute_pipeline(t_command *cmds, t_data *data);
 void					art(void);
@@ -152,6 +142,16 @@ t_command				*parse_tokens(t_tokens *tokens, t_data *data);
 void					free_command_list(t_command *head);
 void					print_command_list(t_command *cmd_list);
 int						checksyntaxerror(t_data *data);
+void					remove_quotes(t_tokens *tokens);
+void					specify_token_cmd(t_tokens *token);
+char					*get_env(t_env *head, const char *key);
+char					*get_env_copy(char *name, t_env *copy_env);
+void					replace_env(char **input, char *old, char *new);
+pid_t					ft_getpid(void);
+char					*handle_double_dollar(char *input);
+char					*remove_char(char *str, char char_to_remove);
+int						ft_is_delimiter(char c);
+char					*handle_dollar_sign(char *input, t_data *data);
 
 /***** for ENVP *****/
 void					concatenvtoken(t_data *data);

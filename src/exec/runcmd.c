@@ -97,6 +97,8 @@ void	initcmd(char *input, char **env, t_data *data)
 	print_command_list(command);
 	if (!checksyntaxerror(data) && command != NULL)
 		execute_pipeline(command, data);
+	free(input);
+	free_command_list(command);
 	(void)env;
 	(void)command;
 	(void)data;

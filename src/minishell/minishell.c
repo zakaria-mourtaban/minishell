@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/23 00:15:37 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/26 12:16:14 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	volatile signalint;
+int	signalint;
 int	main(int ac, char **av, char **env)
 {
 	char	*input;
@@ -37,7 +37,6 @@ int	main(int ac, char **av, char **env)
 	// printcmds(&data);
 	// Parse the tokens into command structures
 	// You can now print or execute commands here for debugging
-
 	while (1)
 	{
 		interactivemode(&data, &input);

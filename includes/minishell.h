@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/23 00:15:33 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/26 12:16:14 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ typedef struct s_env
 	struct s_env		*next;
 }						t_env;
 
-
 //#$%^&**@!#&******######!!@@^^*(_++)
 
 /* ascii art */
@@ -119,7 +118,7 @@ typedef struct s_data
 	char				**env;
 }						t_data;
 
-extern volatile int		signalint;
+extern int		signalint;
 void					free_cmdchain(t_tokens *cmdchain);
 int						hasaccess(t_tokens *token, t_data *data);
 void					execute_pipeline(t_command *cmds, t_data *data);
@@ -151,7 +150,7 @@ pid_t					ft_getpid(void);
 char					*handle_double_dollar(char *input);
 char					*remove_char(char *str, char char_to_remove);
 int						ft_is_delimiter(char c);
-char					*handle_dollar_sign(char *input, t_data *data);
+char					*handle_dollar_sign(char *input, t_env *env);
 
 /***** for ENVP *****/
 void					concatenvtoken(t_data *data);
@@ -166,13 +165,14 @@ char					*envvaluestr(char *key, t_data *data);
 char					*concatenv(char *input, t_data *data);
 int						numchar(char *input, char c);
 
-//envp
-void free_env_list(t_env *env_list);
+// envp
+void					free_env_list(t_env *env_list);
 char					*get_env(t_env *head, const char *key);
-int						set_env(t_env **head, const char *key, const char *value);
+int						set_env(t_env **head, const char *key,
+							const char *value);
 void					ft_split_env(char *envp_str, char **key, char **value);
 int						unset_env(t_env **head, const char *key);
 void					print_list(t_env *env_head);
-pid_t					ft_getuid();
+pid_t					ft_getuid(void);
 
 #endif

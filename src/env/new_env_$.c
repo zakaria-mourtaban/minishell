@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   new_env_$.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 23:30:14 by odib              #+#    #+#             */
-/*   Updated: 2024/08/23 00:15:54 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/26 12:16:14 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,22 +25,22 @@
 
 size_t	ft_strnlen(const char *str, size_t n)
 {
-	size_t length;
-	
+	size_t	length;
+
 	length = 0;
 	while (length < n && str[length] != '\0')
 		length++;
 	return (length);
 }
 
-char	*ft_strncpy(char *dest, const char *src, size_t n) 
+char	*ft_strncpy(char *dest, const char *src, size_t n)
 {
 	size_t	i;
 
 	i = 0;
 	while (i < n)
 	{
-		if (src[i] != '\0') 
+		if (src[i] != '\0')
 			dest[i] = src[i];
 		else
 			dest[i] = '\0';
@@ -51,38 +51,16 @@ char	*ft_strncpy(char *dest, const char *src, size_t n)
 
 char	*ft_strndup(const char *s, size_t n)
 {
-	size_t len;
-	char *new_str;
+	size_t	len;
+	char	*new_str;
 
 	len = ft_strnlen(s, n);
 	new_str = malloc(len + 1);
 	if (!new_str)
-		return NULL; 
-	ft_strncpy(new_str, s, len);       
-	new_str[len] = '\0';        
+		return (NULL);
+	ft_strncpy(new_str, s, len);
+	new_str[len] = '\0';
 	return (new_str);
-}
-
-char	*ft_strstr(char *haystack, char *needle)
-{
-	int	i;
-	int	j;
-
-	i = 0;
-	if (needle[0] == '\0')
-		return (haystack);
-	while (haystack[i] != '\0')
-	{
-		j = 0;
-		while (haystack[i + j] == needle[j] && haystack[i + j] != '\0')
-		{
-			if (needle[j + 1] == '\0')
-				return (&haystack[i]);
-			j++;
-		}
-		i++;
-	}
-	return (0);
 }
 
 int	ft_strlen1(const char *s)
@@ -92,7 +70,7 @@ int	ft_strlen1(const char *s)
 	len = 0;
 	while (s[len] != '\0')
 	{
-		len ++;
+		len++;
 	}
 	return (len);
 }
@@ -103,12 +81,11 @@ char	*read_pid_line(int fd)
 	ssize_t		bytesRead;
 
 	bytesRead = read(fd, buffer, sizeof(buffer) - 1);
-	if (bytesRead <= 0) 
+	if (bytesRead <= 0)
 		return (NULL);
 	buffer[bytesRead] = '\0';
 	return (strstr(buffer, "Pid:"));
 }
-
 
 void	ft_split_env(char *envp_str, char **key, char **value)
 {
@@ -127,13 +104,14 @@ void	ft_split_env(char *envp_str, char **key, char **value)
 	}
 }
 
-pid_t	ft_getpid()
+pid_t	ft_getpid(void)
 {
 	int		fd;
 	char	*line;
 
 	fd = open("/proc/self/status", O_RDONLY);
-	if (fd == -1) {
+	if (fd == -1)
+	{
 		perror("open");
 		return (-1);
 	}
@@ -145,45 +123,49 @@ pid_t	ft_getpid()
 		return (-1);
 }
 
-ssize_t read_status_file(char *buffer, size_t size)
+ssize_t	read_status_file(char *buffer, size_t size)
 {
-    int fd = open("/proc/self/status", O_RDONLY);
-    ssize_t bytesRead = -1;
-    if (fd != -1)
-    {
-        bytesRead = read(fd, buffer, size - 1);
-        close(fd);
-    }
-    return (bytesRead);
+	int		fd;
+	ssize_t	bytesRead;
+
+	fd = open("/proc/self/status", O_RDONLY);
+	bytesRead = -1;
+	if (fd != -1)
+	{
+		bytesRead = read(fd, buffer, size - 1);
+		close(fd);
+	}
+	return (bytesRead);
 }
 
-pid_t ft_getuid()
+pid_t	ft_getuid(void)
 {
-    char buffer[256];
-    ssize_t bytesRead;
-    char *uid_line;
-    pid_t uid = -1;
+	char	buffer[256];
+	ssize_t	bytesRead;
+	char	*uid_line;
+	pid_t	uid;
 
-    bytesRead = read_status_file(buffer, sizeof(buffer));
-    if (bytesRead > 0)
-    {
-        buffer[bytesRead] = '\0';
-        uid_line = ft_strstr(buffer, "Uid:");
-        if (uid_line)
-        {
-            uid_line = ft_strchr(uid_line, '\t');
-            if (uid_line)
-                uid = ft_atoi(uid_line + 1);
-        }
-    }
-    return (uid);
+	uid = -1;
+	bytesRead = read_status_file(buffer, sizeof(buffer));
+	if (bytesRead > 0)
+	{
+		buffer[bytesRead] = '\0';
+		uid_line = ft_strstr(buffer, "Uid:");
+		if (uid_line)
+		{
+			uid_line = ft_strchr(uid_line, '\t');
+			if (uid_line)
+				uid = ft_atoi(uid_line + 1);
+		}
+	}
+	return (uid);
 }
-void handle_normal_variable(char *input, int *i, char **result, t_env *env)
+void	handle_normal_variable(char *input, int *i, char **result, t_env *env)
 {
-	int start;
-	int end;
-	char *sub_env;
-	char *env_value;
+	int		start;
+	int		end;
+	char	*sub_env;
+	char	*env_value;
 
 	(*i)++;
 	start = *i;
@@ -193,13 +175,13 @@ void handle_normal_variable(char *input, int *i, char **result, t_env *env)
 	if (start != end)
 	{
 		sub_env = ft_substr(input, start, end - start);
-        env_value = get_env(env, sub_env);
-        if (env_value)
-            *result = ft_strjoin(*result, env_value);
-        free(sub_env);
+		env_value = get_env(env, sub_env);
+		if (env_value)
+			*result = ft_strjoin(*result, env_value);
+		free(sub_env);
 	}
 	else
-        *result = ft_strjoin(*result, "$");
+		*result = ft_strjoin(*result, "$");
 }
 
 void	handle_two_dollar(char **result, int *i)
@@ -223,159 +205,18 @@ char	*handle_dollar_sign(char *input, t_env *env)
 		if (input[i] == '$')
 		{
 			// if (input[i + 1] == '?')
-				// handle_exit..
+			// handle_exit..
 			if (input[i + 1] == '$')
 				handle_two_dollar(&result, &i);
+			else if (input[i + 1] == '?')
+			{
+				result = ft_strjoingnl(result, ft_itoa(signalint));
+				i += 2;
+			}
 			else if (ft_isdigit(input[i + 1]))
 				i += 2;
 			else
 				handle_normal_variable(input, &i, &result, env);
-=======
-char	*read_pid_line(int fd)
-{
-	static char	buffer[256];
-	ssize_t		bytesRead;
-
-	bytesRead = read(fd, buffer, sizeof(buffer) - 1);
-	if (bytesRead <= 0) 
-		return (NULL);
-	buffer[bytesRead] = '\0';
-	return (ft_strnstr(buffer, "Pid:",4));
-}
-
-ssize_t read_status_file(char *buffer, size_t size)
-{
-    int fd = open("/proc/self/status", O_RDONLY);
-    ssize_t bytesRead = -1;
-    if (fd != -1)
-    {
-        bytesRead = read(fd, buffer, size - 1);
-        close(fd);
-    }
-    return (bytesRead);
-}
-
-pid_t ft_getuid()
-{
-    char buffer[256];
-    ssize_t bytesRead;
-    char *uid_line;
-    pid_t uid = -1;
-
-    bytesRead = read_status_file(buffer, sizeof(buffer));
-    if (bytesRead > 0)
-    {
-        buffer[bytesRead] = '\0';
-        uid_line = ft_strstr(buffer, "Uid:");
-        if (uid_line)
-        {
-            uid_line = ft_strchr(uid_line, '\t');
-            if (uid_line)
-                uid = ft_atoi(uid_line + 1);
-        }
-    }
-    return (uid);
-}
-pid_t	ft_getpid()
-{
-	int		fd;
-	char	*line;
-
-	fd = open("/proc/self/status", O_RDONLY);
-	if (fd == -1) {
-		perror("open");
-		return (-1);
-	}
-	line = read_pid_line(fd);
-	close(fd);
-	if (line != NULL)
-		return ((pid_t)ft_atoi(line + 4));
-	else
-		return (-1);
-}
-
-char	*get_env(t_env *head, const char *key)
-{
-	if (!ft_strcmp(key,"UID") && ft_strlen(key) == 3)
-		return (ft_itoa((int)ft_getuid()));
-	while (head)
-	{
-		if (ft_strcmp(head->key, key) == 0 && ft_strlen(head->key) == ft_strlen(key)) 
-			return head->value;
-		head = head->next;
-	}
-	return NULL;
-}
-
-void handle_normal_variable(char *input, int *i, char **result, t_env *env)
-{
-	int start;
-	int end;
-	char *sub_env;
-	char *env_value;
-
-	(*i)++;
-	start = *i;
-	if (*result == NULL)
-		*result = ft_strdup("");
-	while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
-		(*i)++;
-	end = *i;
-	if (start != end)
-	{
-		sub_env = ft_substr(input, start, end - start);
-        env_value = get_env(env, sub_env);
-        if (env_value)
-            *result = ft_strjoingnl(*result, env_value);  // Append the env value to result
-        free(sub_env);
-	}
-	else
-        *result = ft_strjoingnl(*result, "$");
-}
-char	*handle_two_dollar(char *input, int *i)
-{
-	char	*result;
-	char	*num_str;
-
-	result = ft_substr(input, 0, *i);
-	num_str = ft_itoa(getpid());
-	result = ft_strjoingnl(result, num_str);
-	result = ft_strjoingnl(result, (input) + (*i) + 2);
-	*i += ft_strlen(num_str);
-	free(num_str);
-	return (result);
-}
-char	*handle_dollar_sign(char *input, t_data *data)
-{
-	int		i;
-	char	*result;
-	char	tmp[2];
-
-	i = 0;
-	result = NULL;
-	while (i < (int)ft_strlen(input) && input[i])
-	{
-		
-		if (input[i] == '$')
-		{
-			if (input[i + 1] == '\'' || input[i + 1] == '\"')
-				i++;
-			else if (input[i + 1] == '?')
-			{
-				result = ft_itoa(singalint);
-				i+=2;
-			}
-			else if (input[i + 1] == '$')
-			{
-				result = ft_itoa((int)ft_getpid());
-				i+=2;
-			}
-			else if (input[i + 1] == '$')
-				result = handle_two_dollar(input, &i);
-			else if (ft_isdigit(input[i + 1]))
-				i += 2;
-			else
-				handle_normal_variable(input, &i, &result, data->env_list);
 		}
 		else
 		{
@@ -390,17 +231,17 @@ char	*handle_dollar_sign(char *input, t_data *data)
 t_tokens	*dollar_expansion(t_tokens *tokens_list, t_env *env)
 {
 	t_tokens	*current_token;
-	
+
 	current_token = tokens_list;
 	while (current_token)
 	{
 		if (current_token->content && ft_strchr(current_token->content, '$'))
-			current_token->content = handle_dollar_sign(current_token->content, env);
+			current_token->content = handle_dollar_sign(current_token->content,
+					env);
 		current_token = current_token->next;
 	}
 	return (tokens_list);
 }
-
 
 // char	*get_env_copy(char *name, t_env *copy_env)
 // {
@@ -588,27 +429,4 @@ t_tokens	*dollar_expansion(t_tokens *tokens_list, t_env *env)
 // 			i++;
 // 	}
 // 	return (remove_char(input, '$'));
-	}
-	if (result == NULL)
-		return (input);
-	free(input);
-	return (result);
-}
-
-// t_tokens	*dollar_expansion(t_tokens *tokens_list, t_env *env)
-// {
-// 	char		*str;
-// 	t_tokens	*current_token;
-	
-// 	current_token = tokens_list;
-// 	while (current_token)
-// 	{
-// 		if (current_token->content && ft_strchr(current_token->content, '$'))
-// 		{
-// 			str = ft_strdup(current_token->content);
-// 			free(current_token->content);
-// 			current_token->content = handle_dollar_sign(str, data);
-// 		}current_token = current_token->next;
-// 	}
-// 	return (tokens_list);
 // }

@@ -3,11 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executepipe.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/22 18:12:48 by mkraytem         ###   ########.fr       */
-/*   Updated: 2024/08/23 00:15:54 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/26 13:04:52 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +26,8 @@ void	close_pipes(int *pipes, int num_pipes)
 	}
 }
 
-void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds, t_env *envp_lsit)
+void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
+		t_env *envp_lsit)
 {
 	char	**args;
 	int		arg_count;
@@ -96,7 +96,7 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds, t_env *env
 		path = get_path(args[0], envp_lsit);
 		execve(path, args, environ);
 		if (access(get_path(path, envp_lsit), X_OK))
-				printf("bash: %s: command not found\n",path);
+			printf("bash: %s: command not found\n", path);
 		if (path != args[0])
 			free(path);
 		free(args);
@@ -110,7 +110,10 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	int			num_cmds;
 	int			i;
 	t_command	*current;
+	int			sig;
 
+	sig = 0;
+	signalint = 0;
 	num_cmds = 0;
 	current = cmds;
 	while (current)
@@ -136,10 +139,10 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	current = cmds;
 	while (current)
 	{
-		if (access(get_path(current->args->arg, environ), X_OK))
+		if (access(get_path(current->args->arg, data->env_list), X_OK))
 		{
 			printf("bash: %s: command not found\n", current->args->arg);
-			singalint = 127;
+			signalint = 127;
 			break ;
 		}
 		execute_command(current, pipes, i, num_cmds, data->env_list);
@@ -150,8 +153,10 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	i = 0;
 	while (i < num_cmds)
 	{
-		waitpid(-1, &singalint, 0);
+		waitpid(-1, &sig, 0);
 		i++;
 	}
+	if (signalint != 130)
+		signalint = sig;
 	free(pipes);
 }

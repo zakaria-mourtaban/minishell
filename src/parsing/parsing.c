@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 16:05:11 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/22 18:04:26 by mkraytem         ###   ########.fr       */
+/*   Updated: 2024/08/26 13:50:53 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,19 +79,43 @@ void	append_command_node(t_command **cmd_list, t_command *new_cmd)
 
 int	hasaccess(t_tokens *token, t_data *data)
 {
-	if (access(get_path(token->content ,data->env_list), X_OK))
+	if (access(get_path(token->content, data->env_list), X_OK))
 		return (1);
-	printf("bash: %s: command not found\n",token->content);
+	printf("bash: %s: command not found\n", token->content);
 	return (0);
 }
 
-t_command	*parse_tokens(t_tokens *tokens,t_data *data)
+t_tokens	*nexttoken(t_tokens *tokens)
+{
+	while (tokens != NULL && tokens->id != TOKEN_PIPE)
+		tokens = tokens->next;
+	return (tokens);
+}
+
+t_command	*parse_tokens(t_tokens *tokens, t_data *data)
 {
 	t_command	*cmd_list;
 	t_command	*current_cmd;
+	t_tokens	*prev;
 
+	prev = NULL;
 	cmd_list = NULL;
 	current_cmd = NULL;
+	if (tokens->id == TOKEN_WORD || tokens->id == TOKEN_COMMAND)
+	{
+		if (!current_cmd)
+		{
+			current_cmd = create_command_node();
+			if (!current_cmd)
+			{
+				fprintf(stderr, "Failed to create a new command node.\n");
+				return (NULL);
+			}
+		}
+		add_argument(current_cmd, tokens->content);
+	}
+	prev = tokens;
+	tokens = tokens->next;
 	while (tokens)
 	{
 		if (tokens->id == TOKEN_WORD || tokens->id == TOKEN_COMMAND)
@@ -105,7 +129,9 @@ t_command	*parse_tokens(t_tokens *tokens,t_data *data)
 					return (NULL);
 				}
 			}
-			add_argument(current_cmd, tokens->content);
+			if ((prev->id == TOKEN_WORD || prev->id == TOKEN_COMMAND
+					|| prev->id == TOKEN_SPACE))
+				add_argument(current_cmd, tokens->content);
 		}
 		else if (tokens->id == TOKEN_PIPE)
 		{
@@ -117,7 +143,9 @@ t_command	*parse_tokens(t_tokens *tokens,t_data *data)
 		}
 		else if (tokens->id == TOKEN_IN_FILE)
 		{
-			tokens = tokens->next; // Move to the next token,
+			tokens = tokens->next;
+			if (tokens->id == TOKEN_SPACE)
+				tokens = tokens->next; // Move to the next token,
 			if (tokens && (tokens->id == TOKEN_WORD
 					|| tokens->id == TOKEN_COMMAND) && current_cmd)
 			{
@@ -127,10 +155,13 @@ t_command	*parse_tokens(t_tokens *tokens,t_data *data)
 				else
 					printf("Set input file to: %s\n", tokens->content);
 			}
+			tokens = nexttoken(tokens);
 		}
 		else if (tokens->id == TOKEN_OUT_FILE)
 		{
-			tokens = tokens->next; // Move to the next token,
+			tokens = tokens->next;
+			if (tokens->id == TOKEN_SPACE)
+				tokens = tokens->next; // Move to the next token,
 			if (tokens && (tokens->id == TOKEN_WORD
 					|| tokens->id == TOKEN_COMMAND) && current_cmd)
 			{
@@ -142,10 +173,13 @@ t_command	*parse_tokens(t_tokens *tokens,t_data *data)
 				else
 					printf("Set output file to: %s\n", tokens->content);
 			}
+			tokens = nexttoken(tokens);
 		}
 		else if (tokens->id == TOKEN_OUT_A_FILE)
 		{
-			tokens = tokens->next; // Move to the next token,
+			tokens = tokens->next;
+			if (tokens->id == TOKEN_SPACE)
+				tokens = tokens->next; // Move to the next token,
 			if (tokens && (tokens->id == TOKEN_WORD
 					|| tokens->id == TOKEN_COMMAND) && current_cmd)
 			{
@@ -157,6 +191,7 @@ t_command	*parse_tokens(t_tokens *tokens,t_data *data)
 				else
 					printf("Set append output file to: %s\n", tokens->content);
 			}
+			tokens = nexttoken(tokens);
 		}
 		if (tokens != NULL)
 			tokens = tokens->next;

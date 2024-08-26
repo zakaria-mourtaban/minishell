@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 00:00:34 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/23 00:15:54 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/26 13:05:43 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,11 @@ void	handlesignal(t_data *data)
 
 void	interactivehandle_sigint(int sig)
 {
-	signalint = 1;
 	printf("\n");
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
+	signalint = 130;
 	(void)sig;
 }
 
@@ -37,8 +37,8 @@ void	interactivehandle_sigquit(int sig)
 
 void	noninteractivehandle_sigint(int sig)
 {
-	signalint = 1;
 	printf("\n");
+	signalint = 130;
 	(void)sig;
 }
 
@@ -48,15 +48,28 @@ void	noninteractivehandle_sigquit(int sig)
 	(void)sig;
 }
 
+char	*getinfo(t_data *data)
+{
+	char	*info;
+
+	info = ft_strdup("");
+	info = ft_strjoingnl(info, BLUE_BRIGHT);
+	info = ft_strjoingnl(info, get_env(data->env_list, "PWD"));
+	info = ft_strjoingnl(info, RESET);
+	info = ft_strjoingnl(info, BG_RED_BRIGHT);
+	info = ft_strjoingnl(info, ft_itoa(signalint));
+	info = ft_strjoingnl(info, RESET);
+	info = ft_strjoingnl(info, GREEN "⫤ " RESET);
+	return (info);
+}
+
 void	interactivemode(t_data *data, char **input)
 {
 	signal(SIGINT, interactivehandle_sigint);
 	signal(SIGQUIT, interactivehandle_sigquit);
 	while (1)
 	{
-		printf(BLUE_BRIGHT "%s" RESET BG_RED_BRIGHT "%d" RESET,
-			get_env(data->env_list, "PWD"), singalint);
-		*input = readline(GREEN "⫤ " RESET);
+		*input = readline(getinfo(data));
 		if (input != NULL)
 			break ;
 		if (ft_strlen(*input) != 0)
@@ -71,9 +84,9 @@ void	noninteractivemode(t_data *data, char **input)
 {
 	signal(SIGINT, noninteractivehandle_sigint);
 	signal(SIGQUIT, noninteractivehandle_sigint);
-	while (data->cmd.running == 1 && signalint != 1)
+	while (data->cmd.running == 1 && signalint != 130)
 	{
-		if (signalint == 1)
+		if (signalint == 130)
 		{
 			handlesignal(data);
 			printf("\n");

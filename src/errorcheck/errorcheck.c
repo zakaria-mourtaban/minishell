@@ -1,7 +1,8 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   checksyntaxerror.c                                       :+:      :+:    :+:   */
+/*   checksyntaxerror.c                                       :+:      :+: :+:
+ */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -118,7 +119,7 @@ int	checksyntaxerror(t_data *data)
 	{
 		if (tmp->id == TOKEN_PIPE)
 		{
-			singalint = 2;
+			signalint =7;
 			if (checkpipe(tmp))
 			{
 				printerror(tmp);
@@ -132,7 +133,7 @@ int	checksyntaxerror(t_data *data)
 	{
 		if (tmp->id == TOKEN_HEREDOC_EOF && checkheredoc(tmp))
 		{
-			singalint = 2;
+			signalint = 8;
 			printerror(tmp);
 			return (1);
 		}
@@ -143,7 +144,7 @@ int	checksyntaxerror(t_data *data)
 	{
 		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
 		{
-			singalint = 2;
+			signalint = 9;
 			printerror(tmp);
 			return (1);
 		}
@@ -155,7 +156,7 @@ int	checksyntaxerror(t_data *data)
 		if ((tmp->id == TOKEN_OUT_FILE || tmp->id == TOKEN_OUT_A_FILE)
 			&& checkfileout(tmp))
 		{
-			singalint = 2;
+			signalint = 11;
 			printerror(tmp);
 			return (1);
 		}
@@ -166,7 +167,7 @@ int	checksyntaxerror(t_data *data)
 	{
 		if (tmp->id == TOKEN_COMMAND && isdirectory(tmp))
 		{
-			singalint = 126;
+			signalint = 126;
 			printerror(tmp);
 			return (1);
 		}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execveutils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 23:10:31 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/22 18:03:19 by mkraytem         ###   ########.fr       */
+/*   Updated: 2024/08/25 23:37:16 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ char	*get_env(t_env *head, const char *key)
 {
 	while (head)
 	{
-		if (ft_strcmp(head->key, key) == 0) 
+		if (ft_strcmp(head->key, key) == 0 && ft_strlen(key) == ft_strlen(head->key)) 
 			return head->value;
 		head = head->next;
 	}

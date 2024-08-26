@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 16:05:11 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/26 13:50:53 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/26 22:45:50 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ int	hasaccess(t_tokens *token, t_data *data)
 	if (access(get_path(token->content, data->env_list), X_OK))
 		return (1);
 	printf("bash: %s: command not found\n", token->content);
+	signalint = 127;
 	return (0);
 }
 
@@ -97,11 +98,13 @@ t_command	*parse_tokens(t_tokens *tokens, t_data *data)
 	t_command	*cmd_list;
 	t_command	*current_cmd;
 	t_tokens	*prev;
+	t_tokens	*tmp;
 
+	tmp = tokens;
 	prev = NULL;
 	cmd_list = NULL;
 	current_cmd = NULL;
-	if (tokens->id == TOKEN_WORD || tokens->id == TOKEN_COMMAND)
+	if (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
 	{
 		if (!current_cmd)
 		{
@@ -144,7 +147,7 @@ t_command	*parse_tokens(t_tokens *tokens, t_data *data)
 		else if (tokens->id == TOKEN_IN_FILE)
 		{
 			tokens = tokens->next;
-			if (tokens->id == TOKEN_SPACE)
+			if (tokens && tokens->id == TOKEN_SPACE)
 				tokens = tokens->next; // Move to the next token,
 			if (tokens && (tokens->id == TOKEN_WORD
 					|| tokens->id == TOKEN_COMMAND) && current_cmd)
@@ -210,7 +213,8 @@ void	free_arg_list(t_arg *head)
 	{
 		tmp = head;
 		head = head->next;
-		free(tmp->arg);
+		if (tmp->arg != NULL)
+			free(tmp->arg);
 		free(tmp);
 	}
 }

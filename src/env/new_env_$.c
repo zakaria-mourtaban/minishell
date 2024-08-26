@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 23:30:14 by odib              #+#    #+#             */
-/*   Updated: 2024/08/26 12:16:14 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/26 22:21:57 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,6 +169,7 @@ void	handle_normal_variable(char *input, int *i, char **result, t_env *env)
 
 	(*i)++;
 	start = *i;
+	free(*result);
 	while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
 		(*i)++;
 	end = *i;
@@ -176,12 +177,15 @@ void	handle_normal_variable(char *input, int *i, char **result, t_env *env)
 	{
 		sub_env = ft_substr(input, start, end - start);
 		env_value = get_env(env, sub_env);
-		if (env_value)
-			*result = ft_strjoin(*result, env_value);
+		if (env_value && *result != NULL)
+			*result = ft_strjoingnl(*result, env_value);
+		else 
+			*result = ft_strdup(env_value);
+		free(env_value);
 		free(sub_env);
 	}
 	else
-		*result = ft_strjoin(*result, "$");
+		*result = ft_strjoingnl(*result, "$");
 }
 
 void	handle_two_dollar(char **result, int *i)
@@ -189,7 +193,7 @@ void	handle_two_dollar(char **result, int *i)
 	char	*num_str;
 
 	num_str = ft_itoa(getpid());
-	*result = ft_strjoin(*result, num_str);
+	*result = ft_strjoingnl(*result, num_str);
 	*i += 2;
 	free(num_str);
 }
@@ -221,7 +225,7 @@ char	*handle_dollar_sign(char *input, t_env *env)
 		else
 		{
 			ft_strlcpy(tmp, input + i, 2);
-			result = ft_strjoin(result, tmp);
+			result = ft_strjoingnl(result, tmp);
 			i++;
 		}
 	free(input);

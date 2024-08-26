@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   new_env_$.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 23:30:14 by odib              #+#    #+#             */
-/*   Updated: 2024/08/26 22:21:57 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/27 11:51:40 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,7 +169,7 @@ void	handle_normal_variable(char *input, int *i, char **result, t_env *env)
 
 	(*i)++;
 	start = *i;
-	free(*result);
+	//free(*result);
 	while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
 		(*i)++;
 	end = *i;

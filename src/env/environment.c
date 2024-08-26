@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   environment.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkraytem <mkraytem@student.42.fr>          +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/08 23:43:26 by odib              #+#    #+#             */
-/*   Updated: 2024/08/22 18:26:25 by mkraytem         ###   ########.fr       */
+/*   Created: 2024/08/27 06:10:13 by odib              #+#    #+#             */
+/*   Updated: 2024/08/27 06:39:55 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "../../includes/minishell.h"
 
@@ -22,6 +23,8 @@ t_env	*create_envp_node(char *key, char *value)
 	new_node->key = ft_strdup(key);
 	new_node->value = ft_strdup(value);
 	new_node->next = NULL;
+	//free(key);
+	//free(value);
 	return (new_node);
 }
 t_env	*create_envp_list_node(char *envp_str)
@@ -95,8 +98,10 @@ t_env	*init_copy_envp(char **envp)
     }
 	// add_uid_to_envp_list(head);
 	free(UID);
+	// free_env_list(current);
 	return (head);
 }
+
 int	set_env(t_env **head, const char *key, const char *value)
 {
 	t_env *current;
@@ -117,6 +122,10 @@ int	set_env(t_env **head, const char *key, const char *value)
 		return (-1);
 	new_node->next = *head;
 	*head = new_node;
+	free_env_list(current);
+	free(current);
+	// free((char *)key);
+	// free((char *)value);
 	return (0);
 }
 

@@ -20,6 +20,7 @@ void	runcmd(const char *input, char **env, t_data *data)
 				data->cmd.cmd, env);
 		if (status != 0)
 		{
+			signalint = 127;
 			printf("%s: command not found\n", data->cmd.cmd[0]);
 			exit(status);
 		}

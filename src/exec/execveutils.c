@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 23:10:31 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/25 23:37:16 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/26 22:50:25 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,11 +52,12 @@ char	*get_env(t_env *head, const char *key)
 {
 	while (head)
 	{
-		if (ft_strcmp(head->key, key) == 0 && ft_strlen(key) == ft_strlen(head->key)) 
-			return head->value;
+		if (ft_strcmp(head->key, key) == 0
+			&& ft_strlen(key) == ft_strlen(head->key))
+			return (ft_strdup(head->value));
 		head = head->next;
 	}
-	return NULL;
+	return (NULL);
 }
 
 char	*get_path(char *cmd, t_env *envp_list)
@@ -68,7 +69,9 @@ char	*get_path(char *cmd, t_env *envp_list)
 	char	**s_cmd;
 
 	i = -1;
-	allpath = ft_split(get_env(envp_list, "PATH"), ':');
+	path_part = get_env(envp_list, "PATH");
+	allpath = ft_split(path_part, ':');
+	free(path_part);
 	s_cmd = ft_split(cmd, ' ');
 	while (allpath[++i])
 	{
@@ -77,6 +80,7 @@ char	*get_path(char *cmd, t_env *envp_list)
 		free(path_part);
 		if (access(exec, F_OK | X_OK) == 0)
 		{
+			ft_free_tab(allpath);
 			ft_free_tab(s_cmd);
 			return (exec);
 		}
@@ -84,5 +88,5 @@ char	*get_path(char *cmd, t_env *envp_list)
 	}
 	ft_free_tab(allpath);
 	ft_free_tab(s_cmd);
-	return (cmd);
+	return (ft_strdup(cmd));
 }

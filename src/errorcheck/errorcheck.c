@@ -119,7 +119,7 @@ int	checksyntaxerror(t_data *data)
 	{
 		if (tmp->id == TOKEN_PIPE)
 		{
-			signalint =7;
+			signalint = 2;
 			if (checkpipe(tmp))
 			{
 				printerror(tmp);
@@ -133,7 +133,7 @@ int	checksyntaxerror(t_data *data)
 	{
 		if (tmp->id == TOKEN_HEREDOC_EOF && checkheredoc(tmp))
 		{
-			signalint = 8;
+			signalint = 2;
 			printerror(tmp);
 			return (1);
 		}
@@ -144,7 +144,7 @@ int	checksyntaxerror(t_data *data)
 	{
 		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
 		{
-			signalint = 9;
+			signalint = 2;
 			printerror(tmp);
 			return (1);
 		}
@@ -156,7 +156,7 @@ int	checksyntaxerror(t_data *data)
 		if ((tmp->id == TOKEN_OUT_FILE || tmp->id == TOKEN_OUT_A_FILE)
 			&& checkfileout(tmp))
 		{
-			signalint = 11;
+			signalint = 2;
 			printerror(tmp);
 			return (1);
 		}

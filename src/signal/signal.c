@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 00:00:34 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/26 13:05:43 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/26 22:09:52 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,25 +51,36 @@ void	noninteractivehandle_sigquit(int sig)
 char	*getinfo(t_data *data)
 {
 	char	*info;
+	char	*sig;
+	char	*pwd;
 
+	pwd = get_env(data->env_list, "PWD");
+	sig = ft_itoa(signalint);
 	info = ft_strdup("");
 	info = ft_strjoingnl(info, BLUE_BRIGHT);
-	info = ft_strjoingnl(info, get_env(data->env_list, "PWD"));
+	info = ft_strjoingnl(info, pwd);
 	info = ft_strjoingnl(info, RESET);
 	info = ft_strjoingnl(info, BG_RED_BRIGHT);
-	info = ft_strjoingnl(info, ft_itoa(signalint));
+	info = ft_strjoingnl(info, sig);
 	info = ft_strjoingnl(info, RESET);
 	info = ft_strjoingnl(info, GREEN "⫤ " RESET);
+	if (sig)
+		free(sig);
+	if (pwd != NULL)
+		free(pwd);
 	return (info);
 }
 
 void	interactivemode(t_data *data, char **input)
 {
+	char	*info;
 	signal(SIGINT, interactivehandle_sigint);
 	signal(SIGQUIT, interactivehandle_sigquit);
 	while (1)
 	{
-		*input = readline(getinfo(data));
+		info = getinfo(data);
+		*input = readline(info);
+		free(info);
 		if (input != NULL)
 			break ;
 		if (ft_strlen(*input) != 0)

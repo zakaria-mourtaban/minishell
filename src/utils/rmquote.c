@@ -120,13 +120,14 @@ char	*processstr(char *input, t_data *data)
 		l++;
 	if (l != 0)
 	{
-		singalint = 2;
+		signalint = 2;
 		printf("error syntax should be erroring properly%d,%d\n", l,
 			numchar(buffer, '\"'));
 		return (NULL);
 	}
 	if (numchar(buffer, '\"') != 0)
 		buffer = loopquote(buffer, '\"');
+	(void)data;
 	return (buffer);
 }
 

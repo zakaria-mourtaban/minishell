@@ -16,7 +16,8 @@ void	runcmd(const char *input, char **env, t_data *data)
 		printf("error in fork should be doing something here");
 	if (pid == 0)
 	{
-		status = execve(get_path(data->cmd.cmd[0], data->env_list), data->cmd.cmd, env);
+		status = execve(get_path(data->cmd.cmd[0], data->env_list),
+				data->cmd.cmd, env);
 		if (status != 0)
 		{
 			printf("%s: command not found\n", data->cmd.cmd[0]);
@@ -36,33 +37,67 @@ void	runcmd(const char *input, char **env, t_data *data)
 // 	tokens = rmquote((char *)input, data);
 // }cd , echo , unset , exit
 
-
-void free_tokens(t_tokens *head)
+void	free_tokens(t_tokens *head)
 {
-    t_tokens *current;
-    t_tokens *next;
+	t_tokens *current;
+	t_tokens *next;
 
-    current = head;
-    while (current != NULL)
-    {
-        next = current->next;  // Save the next node
-        free(current->content);  // Free the content of the current node
-        free(current);  // Free the current node
-        current = next;  // Move to the next node
-    }
+	current = head;
+	while (current != NULL)
+	{
+		next = current->next;   // Save the next node
+		free(current->content); // Free the content of the current node
+		free(current);          // Free the current node
+		current = next;         // Move to the next node
+	}
+}
+
+int	check_quotes(const char *str)
+{
+	int single_quote_count = 0;
+	int double_quote_count = 0;
+
+	while (*str)
+	{
+		if (*str == '\'')
+		{
+			single_quote_count++;
+		}
+		else if (*str == '"')
+		{
+			double_quote_count++;
+		}
+		str++;
+	}
+
+	// Check if both counts are even
+	if (single_quote_count % 2 == 0 && double_quote_count % 2 == 0)
+	{
+		return (0);
+	}
+	else
+	{
+		return (1);
+	}
 }
 
 void	initcmd(char *input, char **env, t_data *data)
 {
 	// check quote closed
 	t_command *command;
+
 	tokenizer(input, data);
+
 	concatenvtoken(data);
+
 	remove_quotes(data->cmdchain);
+
 	command = parse_tokens(data->cmdchain, data);
-	// printcmds(data);
-	// print_command_list(command);
+	printcmds(data);
+	print_command_list(command);
 	if (!checksyntaxerror(data) && command != NULL)
 		execute_pipeline(command, data);
 	(void)env;
+	(void)command;
+	(void)data;
 }

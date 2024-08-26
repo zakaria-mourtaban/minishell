@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   concatenv.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 14:42:27 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/25 23:25:57 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/27 06:09:36 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ char	*envvaluestr(char *key, t_data *data)
 		// 	valuestr = ft_strjoingnl(valuestr, ":");
 		// value = value->next;
 	}
-	// free(key);
+	free(key);
 	return (valuestr);
 }
 
@@ -149,18 +149,20 @@ int	dollarcount(char *input)
 	return (count);
 }
 
-char	*concatenv(char *input, t_data *data)
-{
-	char	*out;
+char *concatenv(char *input, t_data *data) {
+    char *out;
 
-	out = ft_strdup(input);
-	while (dollarcount(out) != 0)
-	{
-		out = concatenvloop(out, data);
-		printf("out:%s\n", out);
-		// sleep(1);
-	}
-	return (out);
+    out = ft_strdup(input);
+    while (dollarcount(out) != 0) {
+        char *temp_out = out;
+        out = concatenvloop(out, data);
+        
+        // Free the previous 'out' to prevent memory leaks
+        free(temp_out);
+        
+        printf("out:%s\n", out);
+    }
+    return (out);
 }
 
 void	concatenvtoken(t_data *data)
@@ -173,4 +175,8 @@ void	concatenvtoken(t_data *data)
 		tmp->content = handle_dollar_sign(tmp->content, data->env_list);
 		tmp = tmp->next;
 	}
+	free_cmdchain(tmp);
+	// Free the cmdchain after processing all tokens
+    //free_cmdchain(data->cmdchain);
+    //data->cmdchain = NULL;  // Avoid dangling pointer
 }

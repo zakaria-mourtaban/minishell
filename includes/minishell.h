@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/26 12:16:14 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/27 05:54:40 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,11 +119,15 @@ typedef struct s_data
 }						t_data;
 
 extern int		signalint;
-void					free_cmdchain(t_tokens *cmdchain);
 int						hasaccess(t_tokens *token, t_data *data);
 void					execute_pipeline(t_command *cmds, t_data *data);
 void					art(void);
+void					free_cmdchain(t_tokens *cmdchain);
 void					free_data(t_data *data);
+void					free_command_list(t_command *head);
+void					free_list(t_env *head);
+void					free_tab(char **tab);
+void					free_env_list(t_env *env_list);
 void					tokenizer(char *input, t_data *data);
 void					printcmds(t_data *data);
 char					*get_path(char *cmd, t_env *envp_list);
@@ -138,7 +142,6 @@ void					noninteractivemode(t_data *data, char **input);
 char					*rmquote(char *input, t_data *data);
 void					handlesignal(t_data *data);
 t_command				*parse_tokens(t_tokens *tokens, t_data *data);
-void					free_command_list(t_command *head);
 void					print_command_list(t_command *cmd_list);
 int						checksyntaxerror(t_data *data);
 void					remove_quotes(t_tokens *tokens);
@@ -155,8 +158,6 @@ char					*handle_dollar_sign(char *input, t_env *env);
 /***** for ENVP *****/
 void					concatenvtoken(t_data *data);
 t_env					*init_copy_envp(char **envp);
-void					free_list(t_env *head);
-void					free_tab(char **tab);
 void					append_node(t_env **head, char *key, char *value);
 t_env					*create_node(char *key, char *value);
 void					print_list(t_env *head);
@@ -166,7 +167,6 @@ char					*concatenv(char *input, t_data *data);
 int						numchar(char *input, char c);
 
 // envp
-void					free_env_list(t_env *env_list);
 char					*get_env(t_env *head, const char *key);
 int						set_env(t_env **head, const char *key,
 							const char *value);

@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/26 21:59:26 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/27 18:22:28 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int	main(int ac, char **av, char **env)
 		initcmd(input, env, &data);
 	}
 	// Clean up before exiting
-	free_data(&data);
+	free_env_list(data.env_list);
 	(void)ac;
 	(void)av;
 	return (0);

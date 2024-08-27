@@ -16,7 +16,6 @@ t_tokens	*newnode(char *data, int type)
 	if (ptr == NULL)
 		return (NULL);
 	ptr->content = ft_strdup(data);
-	//
 	if (ptr->content == NULL) {
         free(ptr);
         return NULL;
@@ -33,10 +32,9 @@ void	append(t_tokens **cmds, char *data, int type)
 	t_tokens	*tmp;
 
 	new_node = NULL;
-	new_node = newnode(data, type);
-	// printf("%s\n", data);a
 	if (*cmds == NULL)
 	{
+		new_node = newnode(data, type);
 		*cmds = new_node;
 		return ;
 	}
@@ -46,12 +44,12 @@ void	append(t_tokens **cmds, char *data, int type)
 	if ((tmp->id == TOKEN_COMMAND || tmp->id == TOKEN_WORD)
 		&& (type == TOKEN_WORD || type == TOKEN_COMMAND))
 		{
-
 			tmp->content = ft_strjoingnl(tmp->content, data);
-		
 		}
 	else
 	{
+		if (new_node == NULL)
+			new_node = newnode(data, type);;
 		tmp->next = new_node;
 		new_node->previous = tmp;
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   new_env_$.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 23:30:14 by odib              #+#    #+#             */
-/*   Updated: 2024/08/27 11:51:40 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/27 17:33:23 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,8 +208,6 @@ char	*handle_dollar_sign(char *input, t_env *env)
 	while (i < ft_strlen1(input) && input[i])
 		if (input[i] == '$')
 		{
-			// if (input[i + 1] == '?')
-			// handle_exit..
 			if (input[i + 1] == '$')
 				handle_two_dollar(&result, &i);
 			else if (input[i + 1] == '?')

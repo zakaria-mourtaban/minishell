@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 23:38:08 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/26 22:19:37 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/27 17:51:00 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,8 @@ void	free_cmdchain(t_tokens *cmdchain)
 	while (current != NULL)
 	{
 		next = current->next;
-		if (current->content != NULL)
-			free(current->content);
-		if (current != NULL)
-			free(current);
+		free(current->content);
+		free(current);
 		current = next;
 	}
 }

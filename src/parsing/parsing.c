@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 16:05:11 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/27 11:59:41 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/27 17:31:41 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ t_tokens	*nexttoken(t_tokens *tokens)
 	return (tokens);
 }
 
-t_command	*parse_tokens(t_tokens *tokens, t_data *data)
+t_command	*parse_tokens(t_tokens *tokens)
 {
 	t_command	*cmd_list;
 	t_command	*current_cmd;
@@ -104,7 +104,7 @@ t_command	*parse_tokens(t_tokens *tokens, t_data *data)
 	prev = NULL;
 	cmd_list = NULL;
 	current_cmd = NULL;
-	if (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
+	if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND))
 	{
 		if (!current_cmd)
 		{
@@ -115,13 +115,13 @@ t_command	*parse_tokens(t_tokens *tokens, t_data *data)
 				return (NULL);
 			}
 		}
-		add_argument(current_cmd, tokens->content);
+		add_argument(current_cmd, tmp->content);
 	}
-	prev = tokens;
-	tokens = tokens->next;
-	while (tokens)
+	prev = tmp;
+	tmp = tmp->next;
+	while (tmp)
 	{
-		if (tokens->id == TOKEN_WORD || tokens->id == TOKEN_COMMAND)
+		if (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
 		{
 			if (!current_cmd)
 			{
@@ -134,9 +134,9 @@ t_command	*parse_tokens(t_tokens *tokens, t_data *data)
 			}
 			if ((prev->id == TOKEN_WORD || prev->id == TOKEN_COMMAND
 					|| prev->id == TOKEN_SPACE))
-				add_argument(current_cmd, tokens->content);
+				add_argument(current_cmd, tmp->content);
 		}
-		else if (tokens->id == TOKEN_PIPE)
+		else if (tmp->id == TOKEN_PIPE)
 		{
 			if (current_cmd)
 			{
@@ -144,64 +144,66 @@ t_command	*parse_tokens(t_tokens *tokens, t_data *data)
 				current_cmd = NULL;
 			}
 		}
-		else if (tokens->id == TOKEN_IN_FILE)
+		else if (tmp->id == TOKEN_IN_FILE)
 		{
-			tokens = tokens->next;
-			if (tokens && tokens->id == TOKEN_SPACE)
-				tokens = tokens->next; // Move to the next token,
-			if (tokens && (tokens->id == TOKEN_WORD
-					|| tokens->id == TOKEN_COMMAND) && current_cmd)
+			tmp = tmp->next;
+			if (tmp && tmp->id == TOKEN_SPACE)
+				tmp = tmp->next; // Move to the next token,
+			if (tmp && (tmp->id == TOKEN_WORD
+					|| tmp->id == TOKEN_COMMAND) && current_cmd)
 			{
-				current_cmd->infile = open(tokens->content, O_RDONLY);
+				current_cmd->infile = open(tmp->content, O_RDONLY);
 				if (current_cmd->infile < 0)
 					perror("Failed to open input file");
 				else
-					printf("Set input file to: %s\n", tokens->content);
+					printf("Set input file to: %s\n", tmp->content);
 			}
-			tokens = nexttoken(tokens);
+			tmp = nexttoken(tmp);
 		}
-		else if (tokens->id == TOKEN_OUT_FILE)
+		else if (tmp->id == TOKEN_OUT_FILE)
 		{
-			tokens = tokens->next;
-			if (tokens->id == TOKEN_SPACE)
-				tokens = tokens->next; // Move to the next token,
-			if (tokens && (tokens->id == TOKEN_WORD
-					|| tokens->id == TOKEN_COMMAND) && current_cmd)
+			tmp = tmp->next;
+			if (tmp->id == TOKEN_SPACE)
+				tmp = tmp->next; // Move to the next token,
+			if (tmp && (tmp->id == TOKEN_WORD
+					|| tmp->id == TOKEN_COMMAND) && current_cmd)
 			{
-				current_cmd->outfile = open(tokens->content,
+				current_cmd->outfile = open(tmp->content,
 						O_WRONLY | O_CREAT | O_TRUNC, 0644);
 				current_cmd->append = 0;
 				if (current_cmd->outfile < 0)
 					perror("Failed to open output file");
 				else
-					printf("Set output file to: %s\n", tokens->content);
+					printf("Set output file to: %s\n", tmp->content);
 			}
-			tokens = nexttoken(tokens);
+			tmp = nexttoken(tmp);
 		}
-		else if (tokens->id == TOKEN_OUT_A_FILE)
+		else if (tmp->id == TOKEN_OUT_A_FILE)
 		{
-			tokens = tokens->next;
-			if (tokens->id == TOKEN_SPACE)
-				tokens = tokens->next; // Move to the next token,
-			if (tokens && (tokens->id == TOKEN_WORD
-					|| tokens->id == TOKEN_COMMAND) && current_cmd)
+			tmp = tmp->next;
+			if (tmp->id == TOKEN_SPACE)
+				tmp = tmp->next; // Move to the next token,
+			if (tmp && (tmp->id == TOKEN_WORD
+					|| tmp->id == TOKEN_COMMAND) && current_cmd)
 			{
-				current_cmd->outfile = open(tokens->content,
+				current_cmd->outfile = open(tmp->content,
 						O_WRONLY | O_CREAT | O_APPEND, 0644);
 				current_cmd->append = 1;
 				if (current_cmd->outfile < 0)
 					perror("Failed to open append output file");
 				else
-					printf("Set append output file to: %s\n", tokens->content);
+					printf("Set append output file to: %s\n", tmp->content);
 			}
-			tokens = nexttoken(tokens);
+			tmp = nexttoken(tmp);
 		}
-		if (tokens != NULL)
-			tokens = tokens->next;
+		if (tmp != NULL)
+		{
+			prev = tmp;
+			tmp = tmp->next;
+		}
 	}
 	if (current_cmd)
 		append_command_node(&cmd_list, current_cmd);
-	(void)data;
 	return (cmd_list);
 }
 

@@ -87,18 +87,21 @@ void	initcmd(char *input, char **env, t_data *data)
 	// check quote closed
 	t_command *command;
 
+	if (ft_strlen(input) == 0)
+		return;
 	tokenizer(input, data);
 
-	concatenvtoken(data);
+	// concatenvtoken(data);
 
 	remove_quotes(data->cmdchain);
 
-	command = parse_tokens(data->cmdchain, data);
+	command = parse_tokens(data->cmdchain);
 	printcmds(data);
 	print_command_list(command);
 	if (!checksyntaxerror(data) && command != NULL)
 		execute_pipeline(command, data);
 	free(input);
+	free_cmdchain(data->cmdchain);
 	free_command_list(command);
 	(void)env;
 	(void)command;

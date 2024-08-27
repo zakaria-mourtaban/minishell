@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/27 05:54:40 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/27 17:29:58 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ void					interactivemode(t_data *data, char **input);
 void					noninteractivemode(t_data *data, char **input);
 char					*rmquote(char *input, t_data *data);
 void					handlesignal(t_data *data);
-t_command				*parse_tokens(t_tokens *tokens, t_data *data);
+t_command				*parse_tokens(t_tokens *tokens);
 void					print_command_list(t_command *cmd_list);
 int						checksyntaxerror(t_data *data);
 void					remove_quotes(t_tokens *tokens);

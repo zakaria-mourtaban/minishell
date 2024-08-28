@@ -84,7 +84,7 @@ int	checkfilein(t_tokens *token)
 
 void	printerror(t_tokens *token)
 {
-	if (getnext(token) == NULL)
+	if (token == NULL)
 		printf("bash: syntax error near unexpected token `newline'\n");
 	else if (token->id == TOKEN_DIRECTORY)
 		printf("bash: %s: Is a directory\n", getnext(token)->content);
@@ -135,7 +135,7 @@ void	check_path(const char *path, t_data *data)
 	struct stat	statbuf;
 	char		*str;
 
-	str = get_env(data->env_list, path);
+	str = get_path((char *)path, data->env_list);
 	if (access(str, X_OK) != 0 && !contains_dot_or_slash(path))
 	{
 		signalint = 127;
@@ -146,79 +146,78 @@ void	check_path(const char *path, t_data *data)
 		signalint = 126;
 		printf("bash: %s: is a directory\n", path);
 	}
-	else
+	else if (access(str, X_OK) != 0 && !S_ISDIR(statbuf.st_mode))
 	{
 		signalint = 127;
 		printf("bash: %s: No such file or directory\n", path);
 	}
+	free(str);
 }
 
 int	checksyntaxerror(t_data *data)
 {
 	t_tokens	*tmp;
-	int			cnt;
 
-	cnt = 0;
 	tmp = data->cmdchain;
 	while (tmp)
 	{
-		if (tmp->id == TOKEN_COMMAND)
-		{
-			check_path(tmp->content, data);
-			tmp = tmp->next;
-			cnt++;
-			continue ;
-		}
 		if (tmp->id == TOKEN_PIPE && checkpipe(tmp))
 		{
 			signalint = 2;
 			printerror(tmp);
-			cnt++;
+			tmp->error = 1;
 			tmp = tmp->next;
-			continue ;
+			return (1);
 			// return (1);
 		}
 		if (tmp->id == TOKEN_HEREDOC_EOF && checkheredoc(tmp))
 		{
 			signalint = 2;
-			printerror(tmp);
+			printerror(tmp->next);
+			tmp->error = 1;
 			tmp = tmp->next;
-			cnt++;
-			continue ;
+			return (1);
 			// return (1);
 		}
 		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
 		{
 			signalint = 2;
-			printerror(tmp);
+			printerror(tmp->next);
+			tmp->error = 1;
 			tmp = tmp->next;
-			cnt++;
-			continue ;
+			return (1);
 			// return (1);
 		}
 		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
 		{
 			signalint = 2;
-			printerror(tmp);
-			cnt++;
+			printerror(tmp->next);
+			tmp->error = 1;
 			tmp = tmp->next;
-			continue ;
+			return (1);
 			// return (1);
 		}
 		if ((tmp->id == TOKEN_OUT_FILE || tmp->id == TOKEN_OUT_A_FILE)
 			&& checkfileout(tmp))
 		{
 			signalint = 2;
-			printerror(tmp);
+			printerror(tmp->next);
+			tmp->error = 1;
 			tmp = tmp->next;
-			cnt++;
-			continue ;
+			return (1);
 			// return (1);
+		}
+		if (tmp->id == TOKEN_COMMAND)
+		{
+			check_path(tmp->content, data);
+			tmp->error = 1;
+			tmp = tmp->next;
+			continue ;
 		}
 		// printf("%s\n", tmp->content);
 		tmp = tmp->next;
 	}
-	return (cnt > 0);
+	return (0);
 }
 // tmp = data->cmdchain;
 // while (tmp)

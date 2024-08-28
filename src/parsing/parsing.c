@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 16:05:11 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/28 04:15:05 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/28 21:56:17 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,13 +103,16 @@ t_command	*parse_tokens(t_tokens *tokens)
 	t_command	*current_cmd;
 	t_tokens	*prev;
 	t_tokens	*tmp;
+	int			iserror;
 
 	tmp = tokens;
+	iserror = 0;
 	prev = NULL;
 	cmd_list = NULL;
 	current_cmd = NULL;
 	if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND))
 	{
+		iserror = tmp->error;
 		if (!current_cmd)
 		{
 			current_cmd = create_command_node();
@@ -125,6 +128,8 @@ t_command	*parse_tokens(t_tokens *tokens)
 	tmp = tmp->next;
 	while (tmp)
 	{
+		if (tmp->error)
+			iserror = 1;
 		if (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
 		{
 			if (!current_cmd)
@@ -142,6 +147,7 @@ t_command	*parse_tokens(t_tokens *tokens)
 		}
 		else if (tmp->id == TOKEN_PIPE)
 		{
+			iserror = 0;
 			if (current_cmd)
 			{
 				append_command_node(&cmd_list, current_cmd);
@@ -154,7 +160,7 @@ t_command	*parse_tokens(t_tokens *tokens)
 			if (tmp && tmp->id == TOKEN_SPACE)
 				tmp = tmp->next; // Move to the next token,
 			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
-				&& current_cmd)
+				&& current_cmd && !iserror)
 			{
 				current_cmd->infile = open(tmp->content, O_RDONLY);
 				if (current_cmd->infile < 0)
@@ -170,7 +176,7 @@ t_command	*parse_tokens(t_tokens *tokens)
 			if (tmp->id == TOKEN_SPACE)
 				tmp = tmp->next; // Move to the next token,
 			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
-				&& current_cmd)
+				&& current_cmd && !iserror)
 			{
 				current_cmd->outfile = open(tmp->content,
 						O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -188,7 +194,7 @@ t_command	*parse_tokens(t_tokens *tokens)
 			if (tmp->id == TOKEN_SPACE)
 				tmp = tmp->next; // Move to the next token,
 			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
-				&& current_cmd)
+				&& current_cmd && !iserror)
 			{
 				current_cmd->outfile = open(tmp->content,
 						O_WRONLY | O_CREAT | O_APPEND, 0644);
@@ -241,9 +247,9 @@ void	free_command_list(t_command *head)
 
 void	print_command_list(t_command *cmd_list)
 {
-	t_command	*cmd;
-	t_arg		*arg;
-	int			cmd_num;
+	t_command *cmd;
+	t_arg *arg;
+	int cmd_num;
 
 	cmd = cmd_list;
 	cmd_num = 1;
@@ -266,6 +272,5 @@ void	print_command_list(t_command *cmd_list)
 			printf("  Output File: STDOUT\n");
 		cmd = cmd->next;
 		cmd_num++;
-		printf("\n");
 	}
 }

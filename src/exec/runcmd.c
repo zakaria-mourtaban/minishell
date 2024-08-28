@@ -95,11 +95,11 @@ void	initcmd(char *input, char **env, t_data *data)
 
 	remove_quotes(data->cmdchain);
 
+	printcmds(data);
 	if (!checksyntaxerror(data))
 	{
-		command = parse_tokens(data->cmdchain);
-		// printcmds(data);
 		// print_command_list(command);
+		command = parse_tokens(data->cmdchain);
 		execute_pipeline(command, data);
 		free_command_list(command);
 	}

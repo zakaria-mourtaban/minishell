@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/26 22:23:34 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/28 15:21:50 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,6 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 		path = get_path(current->args->arg, data->env_list);
 		if (access(path, X_OK))
 		{
-			printf("bash: %s: command not found\n", current->args->arg);
 			signalint = 127;
 			free(path);
 			break ;

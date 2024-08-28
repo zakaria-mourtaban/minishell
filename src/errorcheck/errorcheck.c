@@ -94,86 +94,131 @@ void	printerror(t_tokens *token)
 			getnext(token)->content);
 	}
 }
+int	is_command(t_tokens *token)
+{
+	// Check if the file exists and is executable
+	return (access(token->content, F_OK) == 0 && access(token->content,
+			X_OK) == 0);
+}
 
 int	isdirectory(t_tokens *token)
 {
 	DIR	*dir;
 
+	printf("%s\n", token->content);
 	dir = opendir(token->content);
-	if (dir)
+	if (dir && (ft_strcmp(token->content, "/") || ft_strcmp(token->content,
+				".")))
 	{
 		token->id = TOKEN_DIRECTORY;
 		closedir(dir);
 		return (1);
 	}
+	return (0);
+}
+
+int	contains_dot_or_slash(const char *str)
+{
+	while (*str)
+	{ // Iterate through the string
+		if (*str == '.' || *str == '/')
+		{
+			return (1); // Return 1 if '.' or '/' is found
+		}
+		str++;
+	}
+	return (0); // Return 0 if neither '.' nor '/' is found
+}
+
+void	check_path(const char *path, t_data *data)
+{
+	struct stat	statbuf;
+	char		*str;
+
+	str = get_env(data->env_list, path);
+	if (access(str, X_OK) != 0 && !contains_dot_or_slash(path))
+	{
+		signalint = 127;
+		printf("bash: %s: command not found\n", path);
+	}
+	else if (stat(path, &statbuf) == 0 && S_ISDIR(statbuf.st_mode))
+	{
+		signalint = 126;
+		printf("bash: %s: is a directory\n", path);
+	}
 	else
-		return (0);
+	{
+		signalint = 127;
+		printf("bash: %s: No such file or directory\n", path);
+	}
 }
 
 int	checksyntaxerror(t_data *data)
 {
 	t_tokens	*tmp;
+	int			cnt;
 
+	cnt = 0;
 	tmp = data->cmdchain;
 	while (tmp)
 	{
-		if (tmp->id == TOKEN_PIPE)
+		if (tmp->id == TOKEN_COMMAND)
+		{
+			check_path(tmp->content, data);
+			tmp = tmp->next;
+			cnt++;
+			continue ;
+		}
+		if (tmp->id == TOKEN_PIPE && checkpipe(tmp))
 		{
 			signalint = 2;
-			if (checkpipe(tmp))
-			{
-				printerror(tmp);
-				return (1);
-			}
+			printerror(tmp);
+			cnt++;
+			tmp = tmp->next;
+			continue ;
+			// return (1);
 		}
-		tmp = tmp->next;
-	}
-	tmp = data->cmdchain;
-	while (tmp)
-	{
 		if (tmp->id == TOKEN_HEREDOC_EOF && checkheredoc(tmp))
 		{
 			signalint = 2;
 			printerror(tmp);
-			return (1);
+			tmp = tmp->next;
+			cnt++;
+			continue ;
+			// return (1);
 		}
-		tmp = tmp->next;
-	}
-	tmp = data->cmdchain;
-	while (tmp)
-	{
 		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
 		{
 			signalint = 2;
 			printerror(tmp);
-			return (1);
+			tmp = tmp->next;
+			cnt++;
+			continue ;
+			// return (1);
 		}
-		tmp = tmp->next;
-	}
-	tmp = data->cmdchain;
-	while (tmp)
-	{
+		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
+		{
+			signalint = 2;
+			printerror(tmp);
+			cnt++;
+			tmp = tmp->next;
+			continue ;
+			// return (1);
+		}
 		if ((tmp->id == TOKEN_OUT_FILE || tmp->id == TOKEN_OUT_A_FILE)
 			&& checkfileout(tmp))
 		{
 			signalint = 2;
 			printerror(tmp);
-			return (1);
+			tmp = tmp->next;
+			cnt++;
+			continue ;
+			// return (1);
 		}
+		// printf("%s\n", tmp->content);
 		tmp = tmp->next;
 	}
-	tmp = data->cmdchain;
-	while (tmp)
-	{
-		if (tmp->id == TOKEN_COMMAND && isdirectory(tmp))
-		{
-			signalint = 126;
-			printerror(tmp);
-			return (1);
-		}
-		tmp = tmp->next;
-	}
-	return (0);
+	return (cnt > 0);
 }
 // tmp = data->cmdchain;
 // while (tmp)

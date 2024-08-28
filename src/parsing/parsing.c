@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 16:05:11 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/27 17:31:41 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/28 04:15:05 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,10 @@ void	append_command_node(t_command **cmd_list, t_command *new_cmd)
 
 int	hasaccess(t_tokens *token, t_data *data)
 {
+	if (!ft_strcmp(token->content, "/"))
+		return (1);
+	if (!ft_strcmp(token->content, "."))
+		return (1);
 	if (access(get_path(token->content, data->env_list), X_OK))
 		return (1);
 	printf("bash: %s: command not found\n", token->content);
@@ -149,8 +153,8 @@ t_command	*parse_tokens(t_tokens *tokens)
 			tmp = tmp->next;
 			if (tmp && tmp->id == TOKEN_SPACE)
 				tmp = tmp->next; // Move to the next token,
-			if (tmp && (tmp->id == TOKEN_WORD
-					|| tmp->id == TOKEN_COMMAND) && current_cmd)
+			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
+				&& current_cmd)
 			{
 				current_cmd->infile = open(tmp->content, O_RDONLY);
 				if (current_cmd->infile < 0)
@@ -165,8 +169,8 @@ t_command	*parse_tokens(t_tokens *tokens)
 			tmp = tmp->next;
 			if (tmp->id == TOKEN_SPACE)
 				tmp = tmp->next; // Move to the next token,
-			if (tmp && (tmp->id == TOKEN_WORD
-					|| tmp->id == TOKEN_COMMAND) && current_cmd)
+			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
+				&& current_cmd)
 			{
 				current_cmd->outfile = open(tmp->content,
 						O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -183,8 +187,8 @@ t_command	*parse_tokens(t_tokens *tokens)
 			tmp = tmp->next;
 			if (tmp->id == TOKEN_SPACE)
 				tmp = tmp->next; // Move to the next token,
-			if (tmp && (tmp->id == TOKEN_WORD
-					|| tmp->id == TOKEN_COMMAND) && current_cmd)
+			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
+				&& current_cmd)
 			{
 				current_cmd->outfile = open(tmp->content,
 						O_WRONLY | O_CREAT | O_APPEND, 0644);

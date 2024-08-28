@@ -88,21 +88,23 @@ void	initcmd(char *input, char **env, t_data *data)
 	t_command *command;
 
 	if (ft_strlen(input) == 0)
-		return;
+		return ;
 	tokenizer(input, data);
 
 	// concatenvtoken(data);
 
 	remove_quotes(data->cmdchain);
 
-	command = parse_tokens(data->cmdchain);
-	printcmds(data);
-	print_command_list(command);
-	if (!checksyntaxerror(data) && command != NULL)
+	if (!checksyntaxerror(data))
+	{
+		command = parse_tokens(data->cmdchain);
+		// printcmds(data);
+		// print_command_list(command);
 		execute_pipeline(command, data);
+		free_command_list(command);
+	}
 	free(input);
 	free_cmdchain(data->cmdchain);
-	free_command_list(command);
 	(void)env;
 	(void)command;
 	(void)data;

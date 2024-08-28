@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   concatenv.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 14:42:27 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/27 06:09:36 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/27 17:01:27 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,10 +172,11 @@ void	concatenvtoken(t_data *data)
 	tmp = data->cmdchain;
 	while (tmp)
 	{
+		
 		tmp->content = handle_dollar_sign(tmp->content, data->env_list);
 		tmp = tmp->next;
 	}
-	free_cmdchain(tmp);
+	// free_cmdchain(tmp);
 	// Free the cmdchain after processing all tokens
     //free_cmdchain(data->cmdchain);
     //data->cmdchain = NULL;  // Avoid dangling pointer

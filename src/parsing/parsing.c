@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 16:05:11 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/26 13:50:53 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/28 21:56:17 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,9 +79,14 @@ void	append_command_node(t_command **cmd_list, t_command *new_cmd)
 
 int	hasaccess(t_tokens *token, t_data *data)
 {
+	if (!ft_strcmp(token->content, "/"))
+		return (1);
+	if (!ft_strcmp(token->content, "."))
+		return (1);
 	if (access(get_path(token->content, data->env_list), X_OK))
 		return (1);
 	printf("bash: %s: command not found\n", token->content);
+	signalint = 127;
 	return (0);
 }
 
@@ -92,17 +97,22 @@ t_tokens	*nexttoken(t_tokens *tokens)
 	return (tokens);
 }
 
-t_command	*parse_tokens(t_tokens *tokens, t_data *data)
+t_command	*parse_tokens(t_tokens *tokens)
 {
 	t_command	*cmd_list;
 	t_command	*current_cmd;
 	t_tokens	*prev;
+	t_tokens	*tmp;
+	int			iserror;
 
+	tmp = tokens;
+	iserror = 0;
 	prev = NULL;
 	cmd_list = NULL;
 	current_cmd = NULL;
-	if (tokens->id == TOKEN_WORD || tokens->id == TOKEN_COMMAND)
+	if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND))
 	{
+		iserror = tmp->error;
 		if (!current_cmd)
 		{
 			current_cmd = create_command_node();
@@ -112,13 +122,15 @@ t_command	*parse_tokens(t_tokens *tokens, t_data *data)
 				return (NULL);
 			}
 		}
-		add_argument(current_cmd, tokens->content);
+		add_argument(current_cmd, tmp->content);
 	}
-	prev = tokens;
-	tokens = tokens->next;
-	while (tokens)
+	prev = tmp;
+	tmp = tmp->next;
+	while (tmp)
 	{
-		if (tokens->id == TOKEN_WORD || tokens->id == TOKEN_COMMAND)
+		if (tmp->error)
+			iserror = 1;
+		if (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
 		{
 			if (!current_cmd)
 			{
@@ -131,74 +143,77 @@ t_command	*parse_tokens(t_tokens *tokens, t_data *data)
 			}
 			if ((prev->id == TOKEN_WORD || prev->id == TOKEN_COMMAND
 					|| prev->id == TOKEN_SPACE))
-				add_argument(current_cmd, tokens->content);
+				add_argument(current_cmd, tmp->content);
 		}
-		else if (tokens->id == TOKEN_PIPE)
+		else if (tmp->id == TOKEN_PIPE)
 		{
+			iserror = 0;
 			if (current_cmd)
 			{
 				append_command_node(&cmd_list, current_cmd);
 				current_cmd = NULL;
 			}
 		}
-		else if (tokens->id == TOKEN_IN_FILE)
+		else if (tmp->id == TOKEN_IN_FILE)
 		{
-			tokens = tokens->next;
-			if (tokens->id == TOKEN_SPACE)
-				tokens = tokens->next; // Move to the next token,
-			if (tokens && (tokens->id == TOKEN_WORD
-					|| tokens->id == TOKEN_COMMAND) && current_cmd)
+			tmp = tmp->next;
+			if (tmp && tmp->id == TOKEN_SPACE)
+				tmp = tmp->next; // Move to the next token,
+			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
+				&& current_cmd && !iserror)
 			{
-				current_cmd->infile = open(tokens->content, O_RDONLY);
+				current_cmd->infile = open(tmp->content, O_RDONLY);
 				if (current_cmd->infile < 0)
 					perror("Failed to open input file");
 				else
-					printf("Set input file to: %s\n", tokens->content);
+					printf("Set input file to: %s\n", tmp->content);
 			}
-			tokens = nexttoken(tokens);
+			tmp = nexttoken(tmp);
 		}
-		else if (tokens->id == TOKEN_OUT_FILE)
+		else if (tmp->id == TOKEN_OUT_FILE)
 		{
-			tokens = tokens->next;
-			if (tokens->id == TOKEN_SPACE)
-				tokens = tokens->next; // Move to the next token,
-			if (tokens && (tokens->id == TOKEN_WORD
-					|| tokens->id == TOKEN_COMMAND) && current_cmd)
+			tmp = tmp->next;
+			if (tmp->id == TOKEN_SPACE)
+				tmp = tmp->next; // Move to the next token,
+			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
+				&& current_cmd && !iserror)
 			{
-				current_cmd->outfile = open(tokens->content,
+				current_cmd->outfile = open(tmp->content,
 						O_WRONLY | O_CREAT | O_TRUNC, 0644);
 				current_cmd->append = 0;
 				if (current_cmd->outfile < 0)
 					perror("Failed to open output file");
 				else
-					printf("Set output file to: %s\n", tokens->content);
+					printf("Set output file to: %s\n", tmp->content);
 			}
-			tokens = nexttoken(tokens);
+			tmp = nexttoken(tmp);
 		}
-		else if (tokens->id == TOKEN_OUT_A_FILE)
+		else if (tmp->id == TOKEN_OUT_A_FILE)
 		{
-			tokens = tokens->next;
-			if (tokens->id == TOKEN_SPACE)
-				tokens = tokens->next; // Move to the next token,
-			if (tokens && (tokens->id == TOKEN_WORD
-					|| tokens->id == TOKEN_COMMAND) && current_cmd)
+			tmp = tmp->next;
+			if (tmp->id == TOKEN_SPACE)
+				tmp = tmp->next; // Move to the next token,
+			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
+				&& current_cmd && !iserror)
 			{
-				current_cmd->outfile = open(tokens->content,
+				current_cmd->outfile = open(tmp->content,
 						O_WRONLY | O_CREAT | O_APPEND, 0644);
 				current_cmd->append = 1;
 				if (current_cmd->outfile < 0)
 					perror("Failed to open append output file");
 				else
-					printf("Set append output file to: %s\n", tokens->content);
+					printf("Set append output file to: %s\n", tmp->content);
 			}
-			tokens = nexttoken(tokens);
+			tmp = nexttoken(tmp);
 		}
-		if (tokens != NULL)
-			tokens = tokens->next;
+		if (tmp != NULL)
+		{
+			prev = tmp;
+			tmp = tmp->next;
+		}
 	}
 	if (current_cmd)
 		append_command_node(&cmd_list, current_cmd);
-	(void)data;
 	return (cmd_list);
 }
 
@@ -210,7 +225,8 @@ void	free_arg_list(t_arg *head)
 	{
 		tmp = head;
 		head = head->next;
-		free(tmp->arg);
+		if (tmp->arg != NULL)
+			free(tmp->arg);
 		free(tmp);
 	}
 }
@@ -231,9 +247,9 @@ void	free_command_list(t_command *head)
 
 void	print_command_list(t_command *cmd_list)
 {
-	t_command	*cmd;
-	t_arg		*arg;
-	int			cmd_num;
+	t_command *cmd;
+	t_arg *arg;
+	int cmd_num;
 
 	cmd = cmd_list;
 	cmd_num = 1;
@@ -256,6 +272,5 @@ void	print_command_list(t_command *cmd_list)
 			printf("  Output File: STDOUT\n");
 		cmd = cmd->next;
 		cmd_num++;
-		printf("\n");
 	}
 }

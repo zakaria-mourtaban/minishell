@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/26 13:04:52 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/28 15:21:50 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	int			i;
 	t_command	*current;
 	int			sig;
+	char		*path;
 
 	sig = 0;
 	signalint = 0;
@@ -139,15 +140,17 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	current = cmds;
 	while (current)
 	{
-		if (access(get_path(current->args->arg, data->env_list), X_OK))
+		path = get_path(current->args->arg, data->env_list);
+		if (access(path, X_OK))
 		{
-			printf("bash: %s: command not found\n", current->args->arg);
 			signalint = 127;
+			free(path);
 			break ;
 		}
 		execute_command(current, pipes, i, num_cmds, data->env_list);
 		current = current->next;
 		i++;
+		free(path);
 	}
 	close_pipes(pipes, (num_cmds - 1) * 2);
 	i = 0;

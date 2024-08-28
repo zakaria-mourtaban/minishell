@@ -84,7 +84,7 @@ int	checkfilein(t_tokens *token)
 
 void	printerror(t_tokens *token)
 {
-	if (getnext(token) == NULL)
+	if (token == NULL)
 		printf("bash: syntax error near unexpected token `newline'\n");
 	else if (token->id == TOKEN_DIRECTORY)
 		printf("bash: %s: Is a directory\n", getnext(token)->content);
@@ -94,20 +94,64 @@ void	printerror(t_tokens *token)
 			getnext(token)->content);
 	}
 }
+int	is_command(t_tokens *token)
+{
+	// Check if the file exists and is executable
+	return (access(token->content, F_OK) == 0 && access(token->content,
+			X_OK) == 0);
+}
 
 int	isdirectory(t_tokens *token)
 {
 	DIR	*dir;
 
+	printf("%s\n", token->content);
 	dir = opendir(token->content);
-	if (dir)
+	if (dir && (ft_strcmp(token->content, "/") || ft_strcmp(token->content,
+				".")))
 	{
 		token->id = TOKEN_DIRECTORY;
 		closedir(dir);
 		return (1);
 	}
-	else
-		return (0);
+	return (0);
+}
+
+int	contains_dot_or_slash(const char *str)
+{
+	while (*str)
+	{ // Iterate through the string
+		if (*str == '.' || *str == '/')
+		{
+			return (1); // Return 1 if '.' or '/' is found
+		}
+		str++;
+	}
+	return (0); // Return 0 if neither '.' nor '/' is found
+}
+
+void	check_path(const char *path, t_data *data)
+{
+	struct stat	statbuf;
+	char		*str;
+
+	str = get_path((char *)path, data->env_list);
+	if (access(str, X_OK) != 0 && !contains_dot_or_slash(path))
+	{
+		signalint = 127;
+		printf("bash: %s: command not found\n", path);
+	}
+	else if (stat(path, &statbuf) == 0 && S_ISDIR(statbuf.st_mode))
+	{
+		signalint = 126;
+		printf("bash: %s: is a directory\n", path);
+	}
+	else if (access(str, X_OK) != 0 && !S_ISDIR(statbuf.st_mode))
+	{
+		signalint = 127;
+		printf("bash: %s: No such file or directory\n", path);
+	}
+	free(str);
 }
 
 int	checksyntaxerror(t_data *data)
@@ -117,60 +161,60 @@ int	checksyntaxerror(t_data *data)
 	tmp = data->cmdchain;
 	while (tmp)
 	{
-		if (tmp->id == TOKEN_PIPE)
+		if (tmp->id == TOKEN_PIPE && checkpipe(tmp))
 		{
-			signalint =7;
-			if (checkpipe(tmp))
-			{
-				printerror(tmp);
-				return (1);
-			}
+			signalint = 2;
+			printerror(tmp);
+			tmp->error = 1;
+			tmp = tmp->next;
+			return (1);
+			// return (1);
 		}
-		tmp = tmp->next;
-	}
-	tmp = data->cmdchain;
-	while (tmp)
-	{
 		if (tmp->id == TOKEN_HEREDOC_EOF && checkheredoc(tmp))
 		{
-			signalint = 8;
-			printerror(tmp);
+			signalint = 2;
+			printerror(tmp->next);
+			tmp->error = 1;
+			tmp = tmp->next;
 			return (1);
+			// return (1);
 		}
-		tmp = tmp->next;
-	}
-	tmp = data->cmdchain;
-	while (tmp)
-	{
 		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
 		{
-			signalint = 9;
-			printerror(tmp);
+			signalint = 2;
+			printerror(tmp->next);
+			tmp->error = 1;
+			tmp = tmp->next;
 			return (1);
+			// return (1);
 		}
-		tmp = tmp->next;
-	}
-	tmp = data->cmdchain;
-	while (tmp)
-	{
+		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
+		{
+			signalint = 2;
+			printerror(tmp->next);
+			tmp->error = 1;
+			tmp = tmp->next;
+			return (1);
+			// return (1);
+		}
 		if ((tmp->id == TOKEN_OUT_FILE || tmp->id == TOKEN_OUT_A_FILE)
 			&& checkfileout(tmp))
 		{
-			signalint = 11;
-			printerror(tmp);
+			signalint = 2;
+			printerror(tmp->next);
+			tmp->error = 1;
+			tmp = tmp->next;
 			return (1);
+			// return (1);
 		}
-		tmp = tmp->next;
-	}
-	tmp = data->cmdchain;
-	while (tmp)
-	{
-		if (tmp->id == TOKEN_COMMAND && isdirectory(tmp))
+		if (tmp->id == TOKEN_COMMAND)
 		{
-			signalint = 126;
-			printerror(tmp);
-			return (1);
+			check_path(tmp->content, data);
+			tmp->error = 1;
+			tmp = tmp->next;
+			continue ;
 		}
+		// printf("%s\n", tmp->content);
 		tmp = tmp->next;
 	}
 	return (0);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/27 05:54:40 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/27 23:56:36 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ typedef enum s_token
 typedef struct s_tokens
 {
 	e_token				id;
+	int					error;
 	char				*content;
 	struct s_tokens		*next;
 	struct s_tokens		*previous;
@@ -118,7 +119,7 @@ typedef struct s_data
 	char				**env;
 }						t_data;
 
-extern int		signalint;
+extern int				signalint;
 int						hasaccess(t_tokens *token, t_data *data);
 void					execute_pipeline(t_command *cmds, t_data *data);
 void					art(void);
@@ -141,7 +142,7 @@ void					interactivemode(t_data *data, char **input);
 void					noninteractivemode(t_data *data, char **input);
 char					*rmquote(char *input, t_data *data);
 void					handlesignal(t_data *data);
-t_command				*parse_tokens(t_tokens *tokens, t_data *data);
+t_command				*parse_tokens(t_tokens *tokens);
 void					print_command_list(t_command *cmd_list);
 int						checksyntaxerror(t_data *data);
 void					remove_quotes(t_tokens *tokens);

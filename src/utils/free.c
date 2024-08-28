@@ -6,59 +6,61 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 23:38:08 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/22 23:57:02 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/27 17:51:00 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void free_cmdchain(t_tokens *cmdchain)
+void	free_cmdchain(t_tokens *cmdchain)
 {
-    t_tokens *current;
-    t_tokens *next;
+	t_tokens	*current;
+	t_tokens	*next;
 
-    current = cmdchain;
-    while (current != NULL)
-    {
-        next = current->next;
-		if (current->content != NULL)
-        	free(current->content);
+	current = cmdchain;
+	while (current != NULL)
+	{
+		next = current->next;
+		free(current->content);
+		free(current);
+		current = next;
+	}
+}
+
+void	free_env_list(t_env *env_list)
+{
+	t_env	*current;
+	t_env	*next;
+
+	current = env_list;
+	while (current != NULL)
+	{
+		next = current->next;
+		// Free any dynamically allocated members of t_env
+		// For example, if t_env has a 'name' and 'value' char pointer:
+		// free(current->name);
+		// free(current->value);
+		if (current->key)
+			free(current->key);
+		if (current->value)
+			free(current->value);
 		if (current != NULL)
-        	free(current);
-        current = next;
-    }
+			free(current);
+		current = next;
+	}
 }
 
-void free_env_list(t_env *env_list)
+void	free_data(t_data *data)
 {
-    t_env *current;
-    t_env *next;
-
-    current = env_list;
-    while (current != NULL)
-    {
-        next = current->next;
-        // Free any dynamically allocated members of t_env
-        // For example, if t_env has a 'name' and 'value' char pointer:
-        // free(current->name);
-        // free(current->value);
-        free(current);
-        current = next;
-    }
-}
-
-void free_data(t_data *data)
-{
-    if (data != NULL)
-    {
+	if (data != NULL)
+	{
 		if (data->cmdchain != NULL)
-        	free_cmdchain(data->cmdchain);
-		if (data->env_list != NULL)
-        	free_env_list(data->env_list);
-        // Free any other dynamically allocated members of t_data
-        // For example:
-        // free(data->cmd.command);
-        // free(data->cmd.args);
-        // etc.
-    }
+			free_cmdchain(data->cmdchain);
+		free_env_list(data->env_list);
+		// Free any other dynamically allocated members of t_data
+		// For example:
+		// free(data->cmd.command);
+		// free(data->cmd.args);
+		// etc.
+	}
 }

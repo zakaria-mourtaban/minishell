@@ -20,6 +20,7 @@ void	runcmd(const char *input, char **env, t_data *data)
 				data->cmd.cmd, env);
 		if (status != 0)
 		{
+			signalint = 127;
 			printf("%s: command not found\n", data->cmd.cmd[0]);
 			exit(status);
 		}
@@ -86,19 +87,24 @@ void	initcmd(char *input, char **env, t_data *data)
 	// check quote closed
 	t_command *command;
 
+	if (ft_strlen(input) == 0)
+		return ;
 	tokenizer(input, data);
 
-	concatenvtoken(data);
+	// concatenvtoken(data);
 
 	remove_quotes(data->cmdchain);
 
-	command = parse_tokens(data->cmdchain, data);
 	printcmds(data);
-	print_command_list(command);
-	if (!checksyntaxerror(data) && command != NULL)
+	if (!checksyntaxerror(data))
+	{
+		// print_command_list(command);
+		command = parse_tokens(data->cmdchain);
 		execute_pipeline(command, data);
+		free_command_list(command);
+	}
 	free(input);
-	free_command_list(command);
+	free_cmdchain(data->cmdchain);
 	(void)env;
 	(void)command;
 	(void)data;

@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/27 23:56:36 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/29 15:25:13 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ typedef enum s_token
 	TOKEN_PIPE = 8,
 	TOKEN_SPACE = 9,
 	TOKEN_DIRECTORY = 10,
+	TOKEN_START = 11,
 }						e_token;
 
 typedef struct s_tokens
@@ -120,6 +121,7 @@ typedef struct s_data
 }						t_data;
 
 extern int				signalint;
+void					check_path(const char *path, t_data *data);
 int						hasaccess(t_tokens *token, t_data *data);
 void					execute_pipeline(t_command *cmds, t_data *data);
 void					art(void);

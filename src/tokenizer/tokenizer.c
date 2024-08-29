@@ -16,10 +16,11 @@ t_tokens	*newnode(char *data, int type)
 	if (ptr == NULL)
 		return (NULL);
 	ptr->content = ft_strdup(data);
-	if (ptr->content == NULL) {
-        free(ptr);
-        return NULL;
-    }
+	if (ptr->content == NULL)
+	{
+		free(ptr);
+		return (NULL);
+	}
 	ptr->id = type;
 	ptr->next = NULL;
 	ptr->previous = NULL;
@@ -35,6 +36,7 @@ void	append(t_tokens **cmds, char *data, int type)
 	if (*cmds == NULL)
 	{
 		new_node = newnode(data, type);
+		new_node->previous = newnode("START", TOKEN_START);
 		*cmds = new_node;
 		return ;
 	}
@@ -43,13 +45,13 @@ void	append(t_tokens **cmds, char *data, int type)
 		tmp = tmp->next;
 	if ((tmp->id == TOKEN_COMMAND || tmp->id == TOKEN_WORD)
 		&& (type == TOKEN_WORD || type == TOKEN_COMMAND))
-		{
-			tmp->content = ft_strjoingnl(tmp->content, data);
-		}
+	{
+		tmp->content = ft_strjoingnl(tmp->content, data);
+	}
 	else
 	{
 		if (new_node == NULL)
-			new_node = newnode(data, type);;
+			new_node = newnode(data, type);
 		tmp->next = new_node;
 		new_node->previous = tmp;
 	}
@@ -123,7 +125,8 @@ void	tokenizer(char *input, t_data *data)
 			if (buf_i > 0)
 			{
 				buffer[buf_i] = '\0';
-				if (!foundcmd)
+				if (!foundcmd && data->cmdchain->previous->id != TOKEN_START
+					&& data->cmdchain->previous->id != TOKEN_COMMAND)
 				{
 					append(&data->cmdchain, buffer, TOKEN_COMMAND);
 					foundcmd = 1;

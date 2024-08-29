@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/28 15:21:50 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/29 15:25:51 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
 		{
 			close(pipes[j]);
 		}
+		// printf("executing %s %d %d\n", cmd->args->arg, cmd->infile,
+		// 	cmd->outfile);
 		// Construct the arguments array
 		arg_count = 0;
 		current = cmd->args;
@@ -95,8 +97,6 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
 		// Execute the command
 		path = get_path(args[0], envp_lsit);
 		execve(path, args, environ);
-		if (access(get_path(path, envp_lsit), X_OK))
-			printf("bash: %s: command not found\n", path);
 		if (path != args[0])
 			free(path);
 		free(args);
@@ -141,12 +141,6 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	while (current)
 	{
 		path = get_path(current->args->arg, data->env_list);
-		if (access(path, X_OK))
-		{
-			signalint = 127;
-			free(path);
-			break ;
-		}
 		execute_command(current, pipes, i, num_cmds, data->env_list);
 		current = current->next;
 		i++;

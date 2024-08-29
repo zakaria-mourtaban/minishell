@@ -91,15 +91,15 @@ void	initcmd(char *input, char **env, t_data *data)
 		return ;
 	tokenizer(input, data);
 
-	// concatenvtoken(data);
+	concatenvtoken(data);
 
 	remove_quotes(data->cmdchain);
 
 	printcmds(data);
 	if (!checksyntaxerror(data))
 	{
-		// print_command_list(command);
 		command = parse_tokens(data->cmdchain);
+		print_command_list(command);
 		execute_pipeline(command, data);
 		free_command_list(command);
 	}

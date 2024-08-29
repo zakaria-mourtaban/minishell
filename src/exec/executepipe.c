@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/29 15:25:51 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/29 16:21:44 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,92 @@ void	close_pipes(int *pipes, int num_pipes)
 		close(pipes[i]);
 		i++;
 	}
+}
+
+#include <stdbool.h>
+#include <string.h>
+
+bool	is_builtin_command(const char *command)
+{
+	if (command == NULL)
+		return (false);
+	// Compare both length and content of the command
+	switch (ft_strlen(command))
+	{
+	case 4:
+		if (ft_ft_strcmp(command, "echo") == 0)
+			return (true);
+		if (ft_strcmp(command, "exit") == 0)
+			return (true);
+		break ;
+	case 3:
+		if (ft_strcmp(command, "pwd") == 0)
+			return (true);
+		if (ft_strcmp(command, "env") == 0)
+			return (true);
+		break ;
+	case 6:
+		if (ft_strcmp(command, "export") == 0)
+			return (true);
+		break ;
+	case 5:
+		if (ft_strcmp(command, "unset") == 0)
+			return (true);
+		break ;
+	default:
+		break ;
+	}
+	return (false);
+}
+
+void	execute_builtin_command(const char *command, char *argv[])
+{
+	if (command == NULL)
+		return ;
+	switch (ft_strlen(command))
+	{
+	case 4:
+		if (ft_strcmp(command, "echo") == 0)
+		{
+			echo_command(argv);
+			return ;
+		}
+		if (ft_strcmp(command, "exit") == 0)
+		{
+			exit_command(argv);
+			return ;
+		}
+		break ;
+	case 3:
+		if (ft_strcmp(command, "pwd") == 0)
+		{
+			pwd_command(argv);
+			return ;
+		}
+		if (ft_strcmp(command, "env") == 0)
+		{
+			env_command(argv);
+			return ;
+		}
+		break ;
+	case 5:
+		if (ft_strcmp(command, "unset") == 0)
+		{
+			unset_command(argv);
+			return ;
+		}
+		break ;
+	case 6:
+		if (ft_strcmp(command, "export") == 0)
+		{
+			export_command(argv);
+			return ;
+		}
+		break ;
+	default:
+		break ;
+	}
+	fprintf(stderr, "Unknown command: %s\n", command);
 }
 
 void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
@@ -95,7 +181,12 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
 		}
 		args[j] = NULL;
 		// Execute the command
-		path = get_path(args[0], envp_lsit);
+		if (args[0])
+			path = get_path(args[0], envp_lsit);
+		if (is_builtin_command(args[0]))
+		{
+			execute_builtin_command(args[0], args)
+		}
 		execve(path, args, environ);
 		if (path != args[0])
 			free(path);

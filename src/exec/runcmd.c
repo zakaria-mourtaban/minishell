@@ -93,13 +93,13 @@ void	initcmd(char *input, char **env, t_data *data)
 
 	concatenvtoken(data);
 
+	printcmds(data);
 	remove_quotes(data->cmdchain);
 
-	printcmds(data);
 	if (!checksyntaxerror(data))
 	{
 		command = parse_tokens(data->cmdchain);
-		print_command_list(command);
+		// print_command_list(command);
 		execute_pipeline(command, data);
 		free_command_list(command);
 	}

@@ -27,34 +27,36 @@ t_tokens	*newnode(char *data, int type)
 	return (ptr);
 }
 
-void	append(t_tokens **cmds, char *data, int type)
-{
-	t_tokens	*new_node;
-	t_tokens	*tmp;
+void append(t_tokens **cmds, char *data, int type) {
+    t_tokens *new_node;
+    t_tokens *tmp;
 
-	new_node = NULL;
-	if (*cmds == NULL)
-	{
-		new_node = newnode(data, type);
-		new_node->previous = newnode("START", TOKEN_START);
-		*cmds = new_node;
-		return ;
-	}
-	tmp = *cmds;
-	while (tmp->next != NULL)
-		tmp = tmp->next;
-	if ((tmp->id == TOKEN_COMMAND || tmp->id == TOKEN_WORD)
-		&& (type == TOKEN_WORD || type == TOKEN_COMMAND))
-	{
-		tmp->content = ft_strjoingnl(tmp->content, data);
-	}
-	else
-	{
-		if (new_node == NULL)
-			new_node = newnode(data, type);
-		tmp->next = new_node;
-		new_node->previous = tmp;
-	}
+    new_node = NULL;
+
+    // If the list is empty, create the first node
+    if (*cmds == NULL) {
+        new_node = newnode(data, type);
+        new_node->previous = newnode("START", TOKEN_START);
+        *cmds = new_node;
+        return;
+    }
+
+    tmp = *cmds;
+    // Traverse to the last node
+    while (tmp->next != NULL) {
+        tmp = tmp->next;
+    }
+
+    // Handle the appending logic based on type
+    if ((tmp->id == TOKEN_COMMAND || tmp->id == TOKEN_WORD) && (type == TOKEN_WORD || type == TOKEN_COMMAND)) {
+        // Concatenate content if the previous node is of type COMMAND or WORD
+        tmp->content = ft_strjoingnl(tmp->content, data);
+    } else {
+        // Create a new node and link it to the previous one
+        new_node = newnode(data, type);
+        tmp->next = new_node;
+        new_node->previous = tmp;
+    }
 }
 
 void	printcmds(t_data *data)

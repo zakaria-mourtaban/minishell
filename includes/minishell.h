@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/30 15:36:00 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/31 06:20:00 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,6 +194,6 @@ char	*ft_strndup(const char *s, size_t n);
 char	*ft_strncpy(char *dest, const char *src, size_t n);
 size_t	ft_strnlen(const char *str, size_t n);
 void exit_command(char **args);
-char **tokens_to_args(t_tokens *tokens);
+char **tokens_to_args(char *tokens);
 void free_args(char **args);
 #endif

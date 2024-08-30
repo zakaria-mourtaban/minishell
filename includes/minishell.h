@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/29 15:25:13 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/30 14:46:38 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ typedef struct s_env
 {
 	char				*key;
 	char				*value;
+	int					hidden;
 	struct s_env		*next;
 }						t_env;
 
@@ -161,8 +162,10 @@ char					*handle_dollar_sign(char *input, t_env *env);
 /***** for ENVP *****/
 void					concatenvtoken(t_data *data);
 t_env					*init_copy_envp(char **envp);
-void					append_node(t_env **head, char *key, char *value);
+
 t_env					*create_node(char *key, char *value);
+t_env					*create_envp_list_node(char *envp_str, int hidden);
+t_env					*create_envp_node(char *key, char *value,int hidden);
 void					print_list(t_env *head);
 // char					**ft_split_env(char *str, char del);
 char					*envvaluestr(char *key, t_data *data);
@@ -171,11 +174,24 @@ int						numchar(char *input, char c);
 
 // envp
 char					*get_env(t_env *head, const char *key);
-int						set_env(t_env **head, const char *key,
-							const char *value);
+int	set_env(t_env **head, const char *key, const char *value, int hidden);
 void					ft_split_env(char *envp_str, char **key, char **value);
 int						unset_env(t_env **head, const char *key);
 void					print_list(t_env *env_head);
 pid_t					ft_getuid(void);
 
+//builtin
+void pwd_command();
+void exit_command(char **args);
+void echo_command(char **args);
+void    env_command(t_env *env_list);
+void	export_command(t_env **env_list, char **input);
+void	split_envp(char *envp_str, char **key, char **value);
+int	ft_strlen1(const char *s);
+char	*ft_strndup(const char *s, size_t n);
+char	*ft_strncpy(char *dest, const char *src, size_t n);
+size_t	ft_strnlen(const char *str, size_t n);
+void exit_command(char **args);
+char **tokens_to_args(t_tokens *tokens);
+void free_args(char **args);
 #endif

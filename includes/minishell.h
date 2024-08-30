@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/30 14:46:38 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/30 15:36:00 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ typedef struct s_arg
 	struct s_arg		*next;
 }						t_arg;
 
+//!THIS IS THE STRUCTURE FOR EACH COMMAND IN THE PIPELINE
 typedef struct s_command
 {
 	t_arg				*args;
@@ -105,6 +106,7 @@ typedef struct s_command
 // 	char *value;
 // 	struct s_env *next;
 // } t_env;
+//!THIS IS A STRUCTURE FOR THE SIGNALS
 typedef struct s_cmd
 {
 	char				**cmd;

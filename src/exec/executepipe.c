@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executepipe.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/29 17:01:36 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/30 14:27:19 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	close_pipes(int *pipes, int num_pipes)
 //     // Compare both length and content of the command
 //     switch (ft_strlen(command)) {
 //         case 4:
-//             if (ft_ft_strcmp(command, "echo") == 0) return true;
+//             if (ft_strcmp(command, "echo") == 0) return true;
 //             if (ft_strcmp(command, "exit") == 0) return true;
 //             break;
 //         case 3:
@@ -55,39 +55,41 @@ void	close_pipes(int *pipes, int num_pipes)
 //     return false;
 // }
 
-// void execute_builtin_command(const char *command, int argc, char *argv[]) {
+// void execute_builtin_command(const char *command, char *argv[],t_env *env_list,t_tokens *tokens)
+// {
 //     if (command == NULL) return;
 
 //     switch (strlen(command)) {
 //         case 4:
 //             if (ft_strcmp(command, "echo") == 0) {
-//                 echo_command(argc, argv);
+//                 echo_command(argv);
 //                 return;
 //             }
 //             if (ft_strcmp(command, "exit") == 0) {
-//                 exit_command(argc, argv);
+//                 exit_command(argv);
 //                 return;
 //             }
 //             break;
 //         case 3:
 //             if (ft_strcmp(command, "pwd") == 0) {
-//                 pwd_command(argc, argv);
+//                 pwd_command();
 //                 return;
 //             }
 //             if (ft_strcmp(command, "env") == 0) {
-//                 env_command(argc, argv);
+//                 print_env(env_list);
 //                 return;
 //             }
 //             break;
-//         case 5:
-//             if (ft_strcmp(command, "unset") == 0) {
-//                 unset_command(argc, argv);
-//                 return;
-//             }
-//             break;
+//         // case 5:
+//         //     if (ft_strcmp(command, "unset") == 0) {
+//         //         unset_command( argv);
+//         //         return;
+//         //     }
+//         //     break;
 //         case 6:
 //             if (ft_strcmp(command, "export") == 0) {
-//                 export_command(argc, argv);
+// 				argv = tokens_to_args(*argv);
+//                 handle_export(&env_list,argv);
 //                 return;
 //             }
 //             break;
@@ -100,7 +102,7 @@ void	close_pipes(int *pipes, int num_pipes)
 
 
 void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
-		t_env *envp_lsit)
+		t_env *env_list)
 {
 	char	**args;
 	int		arg_count;
@@ -169,8 +171,14 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
 		args[j] = NULL;
 		// Execute the command
 		if (args[0])
-		path = get_path(args[0], envp_lsit);
-		execve(path, args, environ);
+		path = get_path(args[0], env_list);
+		// if (is_builtin_command(args[0]))
+		// {
+		// 	execute_builtin_command(args[0],args,env_list);
+		// }
+		// else
+		
+		execve(path, args, environ);	
 		if (path != args[0])
 			free(path);
 		free(args);
@@ -215,6 +223,7 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	while (current)
 	{
 		path = get_path(current->args->arg, data->env_list);
+		
 		execute_command(current, pipes, i, num_cmds, data->env_list);
 		current = current->next;
 		i++;

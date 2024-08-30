@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   new_env_$.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 23:30:14 by odib              #+#    #+#             */
-/*   Updated: 2024/08/27 17:33:23 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/30 13:34:18 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,58 +22,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
-size_t	ft_strnlen(const char *str, size_t n)
-{
-	size_t	length;
-
-	length = 0;
-	while (length < n && str[length] != '\0')
-		length++;
-	return (length);
-}
-
-char	*ft_strncpy(char *dest, const char *src, size_t n)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < n)
-	{
-		if (src[i] != '\0')
-			dest[i] = src[i];
-		else
-			dest[i] = '\0';
-		i++;
-	}
-	return (dest);
-}
-
-char	*ft_strndup(const char *s, size_t n)
-{
-	size_t	len;
-	char	*new_str;
-
-	len = ft_strnlen(s, n);
-	new_str = malloc(len + 1);
-	if (!new_str)
-		return (NULL);
-	ft_strncpy(new_str, s, len);
-	new_str[len] = '\0';
-	return (new_str);
-}
-
-int	ft_strlen1(const char *s)
-{
-	int	len;
-
-	len = 0;
-	while (s[len] != '\0')
-	{
-		len++;
-	}
-	return (len);
-}
 
 char	*read_pid_line(int fd)
 {

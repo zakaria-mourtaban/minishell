@@ -6,14 +6,14 @@
 /*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 06:10:13 by odib              #+#    #+#             */
-/*   Updated: 2024/08/27 06:39:55 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/30 13:15:19 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "../../includes/minishell.h"
 
-t_env	*create_envp_node(char *key, char *value)
+t_env	*create_envp_node(char *key, char *value,int hidden)
 {
 	t_env	*new_node;
 
@@ -22,19 +22,20 @@ t_env	*create_envp_node(char *key, char *value)
 		return (NULL);
 	new_node->key = ft_strdup(key);
 	new_node->value = ft_strdup(value);
+	new_node->hidden = hidden;
 	new_node->next = NULL;
 	//free(key);
 	//free(value);
 	return (new_node);
 }
-t_env	*create_envp_list_node(char *envp_str)
+t_env	*create_envp_list_node(char *envp_str, int hidden)
 {
 	char	*key;
 	char	*value;
 	t_env	*new_node;
 
 	ft_split_env(envp_str, &key, &value);
-	new_node = create_envp_node(key, value);
+	new_node = create_envp_node(key, value, hidden);
 	free(key);
 	free(value);
 	return (new_node);
@@ -48,28 +49,28 @@ void	add_node_to_envp_list(t_env **head, t_env **current, t_env *new_node)
 	*current = new_node;
 }
 
-void	append_node(t_env **head, char *key, char *value)
-{
-	t_env *current;
-	t_env *new_node;
+// void	append_node(t_env **head, char *key, char *value,int hidden)
+// {
+// 	t_env *current;
+// 	t_env *new_node;
 
-	current = *head;
-	while (current)
-	{
-		if (ft_strcmp(current->key, key) == 0) {
-			free(current->value);
-			current->value = ft_strdup(value);
-			return ;
-		}
-		current = current->next;
-	}
-	new_node = create_envp_node((char *)key, (char *)value);
-	if (!new_node)
-		return ;
-	new_node->next = *head;
-	*head = new_node;
-	return ;
-}
+// 	current = *head;
+// 	while (current)
+// 	{
+// 		if (ft_strcmp(current->key, key) == 0) {
+// 			free(current->value);
+// 			current->value = ft_strdup(value);
+// 			return ;
+// 		}
+// 		current = current->next;
+// 	}
+// 	new_node = create_envp_node((char *)key, (char *)value,hidden);
+// 	if (!new_node)
+// 		return ;
+// 	new_node->next = *head;
+// 	*head = new_node;
+// 	return ;
+// }
 
 t_env	*init_copy_envp(char **envp)
 {
@@ -85,13 +86,13 @@ t_env	*init_copy_envp(char **envp)
 	current = NULL;
 	while (*envp)
 	{
-		new_node = create_envp_list_node(*envp);
+		new_node = create_envp_list_node(*envp, 0);
 		if (!new_node)
 			free_env_list(head);
 		add_node_to_envp_list(&head, &current, new_node);
 		envp++;
 	}
-	if (set_env(&head, "UID", UID) != 0)
+	if (set_env(&head, "UID", UID, 0) != 0)
     {
         free_env_list(head);
         return NULL;
@@ -102,7 +103,7 @@ t_env	*init_copy_envp(char **envp)
 	return (head);
 }
 
-int	set_env(t_env **head, const char *key, const char *value)
+int	set_env(t_env **head, const char *key, const char *value, int hidden)
 {
 	t_env *current;
 	t_env *new_node;
@@ -117,7 +118,7 @@ int	set_env(t_env **head, const char *key, const char *value)
 		}
 		current = current->next;
 	}
-	new_node = create_envp_node((char *)key, (char *)value);
+	new_node = create_envp_node((char *)key, (char *)value, hidden);
 	if (!new_node)
 		return (-1);
 	new_node->next = *head;

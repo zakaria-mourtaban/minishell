@@ -6,12 +6,11 @@
 /*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:24:52 by odib              #+#    #+#             */
-/*   Updated: 2024/08/30 14:35:28 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/31 07:33:44 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
 void swap_nodes(t_env *a, t_env *b)
 {
     char *temp_key = a->key;
@@ -112,26 +111,6 @@ void	print_sorted_env_list(t_env *head)
 	}
 }
 
-// int	update_env_value(t_env *head, const char *key, const char *new_value)
-//{
-//	t_env	*current;
-
-//	current = head;
-//	// Traverse the list to find the node with the matching key
-//	while (current)
-//	{
-//		if (strcmp(current->key, key) == 0) // If the key matches
-//		{
-//			free(current->value);               // Free the old value
-//			current->value = strdup(new_value); // Update with the new value
-//			if (!current->value)
-//				return (-1); // Memory allocation failure
-//			return (0);      // Success
-//		}
-//		current = current->next;
-//	}
-//	return (-1); // Key not found
-//}
 
 int	is_input_null(char **input)
 {
@@ -177,15 +156,35 @@ void	export_command(t_env **env_list, char **input)
 		}
 		if (!value)
         {
-            printf("fuck1\n");
 			set_env(env_list, key, value, 1);
         }
 		else
         {
-            printf("fuck1\n");
+            
 			set_env(env_list, key, value, 0);
         }
 		free_resources(key, value);
 		i++;
 	}
 }
+
+// int	update_env_value(t_env *head, const char *key, const char *new_value)
+//{
+//	t_env	*current;
+
+//	current = head;
+//	// Traverse the list to find the node with the matching key
+//	while (current)
+//	{
+//		if (strcmp(current->key, key) == 0) // If the key matches
+//		{
+//			free(current->value);               // Free the old value
+//			current->value = strdup(new_value); // Update with the new value
+//			if (!current->value)
+//				return (-1); // Memory allocation failure
+//			return (0);      // Success
+//		}
+//		current = current->next;
+//	}
+//	return (-1); // Key not found
+//}

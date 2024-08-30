@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/30 15:32:59 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/31 06:48:20 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,35 +57,35 @@ int	main(int ac, char **av, char **env)
 		// Non-interactive mode processing
 		noninteractivemode(&data, &input);
 		initcmd(input, env, &data);
-		if (data.cmdchain && ft_strcmp(data.cmdchain->content, "echo") == 0)
-         {
-             char **args = tokens_to_args(data.cmdchain);
-             echo_command(args);
-             free_args(args);
-         }
-         else if (data.cmdchain && ft_strcmp(data.cmdchain->content,"env") == 0)
-         {
-             char **args = tokens_to_args(data.cmdchain);
-             env_command(data.env_list);
-             free_args(args);
-         }
+		// if (data.cmdchain && ft_strcmp(data.cmdchain->content, "echo") == 0)
+        //  {
+        //      char **args = tokens_to_args(data.cmdchain);
+        //      echo_command(args);
+        //      free_args(args);
+        //  }
+        //  else if (data.cmdchain && ft_strcmp(data.cmdchain->content,"env") == 0)
+        //  {
+        //      char **args = tokens_to_args(data.cmdchain);
+        //      env_command(data.env_list);
+        //      free_args(args);
+        //  }
         //  else if (data.cmdchain && ft_strcmp(data.cmd.cmd[1], "export") == 0)
         //  {
         //      char **args = tokens_to_args(data.cmdchain);
         //      export_command(&data.env_list, args);
         //      free_args(args);
         //  }
-         else if (data.cmdchain && ft_strcmp(data.cmdchain->content, "pwd") == 0)
-         {
-             char **args = tokens_to_args(data.cmdchain);
-             pwd_command();
-             free_args(args);
-         } else if (data.cmdchain && ft_strcmp(data.cmdchain->content, "exit") == 0)
-         {
-             char **args = tokens_to_args(data.cmdchain);
-             exit_command(args);
-             free_args(args);
-         }
+        //  else if (data.cmdchain && ft_strcmp(data.cmdchain->content, "pwd") == 0)
+        //  {
+        //      char **args = tokens_to_args(data.cmdchain);
+        //      pwd_command();
+        //      free_args(args);
+        //  } else if (data.cmdchain && ft_strcmp(data.cmdchain->content, "exit") == 0)
+        //  {
+        //      char **args = tokens_to_args(data.cmdchain);
+        //      exit_command(args);
+        //      free_args(args);
+        //  }
         //  else if (tokens && strcmp(tokens->value, "unset") == 0)
         //  {
         //      char **args = tokens_to_args(tokens);

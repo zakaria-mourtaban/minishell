@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 12:12:30 by odib              #+#    #+#             */
-/*   Updated: 2024/08/30 14:36:25 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/31 22:31:00 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ void    env_command(t_env *env_list)
 	{
 		if (temp->hidden == 0)
 		{
-			/* code */
 			printf("%s=\"%s\"\n", temp->key, temp->value);
 		}
 		temp = temp->next;

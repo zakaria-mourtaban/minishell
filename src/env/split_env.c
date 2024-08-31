@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   split_env.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 23:43:08 by odib              #+#    #+#             */
-/*   Updated: 2024/08/30 13:34:31 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/31 14:37:22 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
 
 size_t	ft_strnlen(const char *str, size_t n)
 {
@@ -65,7 +64,6 @@ int	ft_strlen1(const char *s)
 	return (len);
 }
 
-
 void	split_envp(char *envp_str, char **key, char **value)
 {
 	char	*equal_sign;
@@ -79,10 +77,9 @@ void	split_envp(char *envp_str, char **key, char **value)
 	else
 	{
 		*key = ft_strdup(envp_str);
-		*value = NULL;
+		*value = ft_strdup("");
 	}
 }
-
 
 // static char	**allocate_result_array(void)
 // {

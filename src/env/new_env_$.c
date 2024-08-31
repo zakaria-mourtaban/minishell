@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   new_env_$.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 23:30:14 by odib              #+#    #+#             */
-/*   Updated: 2024/08/30 13:34:18 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/31 23:06:39 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,7 @@ void	handle_two_dollar(char **result, int *i)
 	*i += 2;
 	free(num_str);
 }
-char	*handle_dollar_sign(char *input, t_env *env)
+char	*handle_dollar_sign(char *input, t_data *data)
 {
 	int		i;
 	char	*result;
@@ -160,13 +160,13 @@ char	*handle_dollar_sign(char *input, t_env *env)
 				handle_two_dollar(&result, &i);
 			else if (input[i + 1] == '?')
 			{
-				result = ft_strjoingnl(result, ft_itoa(signalint));
+				result = ft_strjoingnl(result, ft_itoa(data->cmd.status));
 				i += 2;
 			}
 			else if (ft_isdigit(input[i + 1]))
 				i += 2;
 			else
-				handle_normal_variable(input, &i, &result, env);
+				handle_normal_variable(input, &i, &result, data->env_list);
 		}
 		else
 		{
@@ -178,7 +178,7 @@ char	*handle_dollar_sign(char *input, t_env *env)
 	return (result);
 }
 
-t_tokens	*dollar_expansion(t_tokens *tokens_list, t_env *env)
+t_tokens	*dollar_expansion(t_tokens *tokens_list, t_data *data)
 {
 	t_tokens	*current_token;
 
@@ -187,7 +187,7 @@ t_tokens	*dollar_expansion(t_tokens *tokens_list, t_env *env)
 	{
 		if (current_token->content && ft_strchr(current_token->content, '$'))
 			current_token->content = handle_dollar_sign(current_token->content,
-					env);
+					data);
 		current_token = current_token->next;
 	}
 	return (tokens_list);

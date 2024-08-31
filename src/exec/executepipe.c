@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executepipe.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/30 14:27:19 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/31 23:30:37 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,77 +29,82 @@ void	close_pipes(int *pipes, int num_pipes)
 #include <stdbool.h>
 #include <string.h>
 
-// bool is_builtin_command(const char *command) {
-//     if (command == NULL) return false;
+bool	is_builtin_command(const char *command)
+{
+	if (command == NULL)
+		return (false);
+	// Compare both length and content of the command
+	switch (ft_strlen(command))
+	{
+	case 2:
+		if (ft_strcmp(command, "cd") == 0)
+			return (true);
+		break ;
+	case 4:
+		if (ft_strcmp(command, "echo") == 0)
+			return (true);
+		if (ft_strcmp(command, "exit") == 0)
+			return (true);
+		break ;
+	case 3:
+		if (ft_strcmp(command, "pwd") == 0)
+			return (true);
+		if (ft_strcmp(command, "env") == 0)
+			return (true);
+		break ;
+	case 6:
+		if (ft_strcmp(command, "export") == 0)
+			return (true);
+		break ;
+	case 5:
+		if (ft_strcmp(command, "unset") == 0)
+			return (true);
+		break ;
+	default:
+		break ;
+	}
+	return (false);
+}
 
-//     // Compare both length and content of the command
-//     switch (ft_strlen(command)) {
-//         case 4:
-//             if (ft_strcmp(command, "echo") == 0) return true;
-//             if (ft_strcmp(command, "exit") == 0) return true;
-//             break;
-//         case 3:
-//             if (ft_strcmp(command, "pwd") == 0) return true;
-//             if (ft_strcmp(command, "env") == 0) return true;
-//             break;
-//         case 6:
-//             if (ft_strcmp(command, "export") == 0) return true;
-//             break;
-//         case 5:
-//             if (ft_strcmp(command, "unset") == 0) return true;
-//             break;
-//         default:
-//             break;
-//     }
-
-//     return false;
-// }
-
-// void execute_builtin_command(const char *command, char *argv[],t_env *env_list,t_tokens *tokens)
-// {
-//     if (command == NULL) return;
-
-//     switch (strlen(command)) {
-//         case 4:
-//             if (ft_strcmp(command, "echo") == 0) {
-//                 echo_command(argv);
-//                 return;
-//             }
-//             if (ft_strcmp(command, "exit") == 0) {
-//                 exit_command(argv);
-//                 return;
-//             }
-//             break;
-//         case 3:
-//             if (ft_strcmp(command, "pwd") == 0) {
-//                 pwd_command();
-//                 return;
-//             }
-//             if (ft_strcmp(command, "env") == 0) {
-//                 print_env(env_list);
-//                 return;
-//             }
-//             break;
-//         // case 5:
-//         //     if (ft_strcmp(command, "unset") == 0) {
-//         //         unset_command( argv);
-//         //         return;
-//         //     }
-//         //     break;
-//         case 6:
-//             if (ft_strcmp(command, "export") == 0) {
-// 				argv = tokens_to_args(*argv);
-//                 handle_export(&env_list,argv);
-//                 return;
-//             }
-//             break;
-//         default:
-//             break;
-//     }
-
-//     fprintf(stderr, "Unknown command: %s\n", command);
-// }
-
+void	execute_builtin_command(t_command *command, t_env *env_list)
+{
+	if (command == NULL)
+		return ;
+	if (strcmp(command->args->arg, "echo") == 0)
+	{
+		// echo_command(argv);
+		return ;
+	}
+	if (strcmp(command->args->arg, "exit") == 0)
+	{
+		// exit_command(argv);
+		return ;
+	}
+	if (strcmp(command->args->arg, "pwd") == 0)
+	{
+		pwd_command();
+		return ;
+	}
+	if (strcmp(command->args->arg, "env") == 0)
+	{
+		env_command(env_list);
+		return ;
+	}
+	if (strcmp(command->args->arg, "export") == 0)
+	{
+		printf("%s\n", command->args->arg);
+		// argv = tokens_to_args(command->args->arg);
+		// printf("%s",*argv);
+		export_command(&env_list, command->args);
+		return ;
+	}
+	// Uncomment and implement if needed
+	// if (strcmp(command, "unset") == 0) {
+	//     unset_command(argv);
+	//     return ;
+	// }
+	// fprintf(stderr, "Unknown command: %s\n", command);
+}
 
 void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
 		t_env *env_list)
@@ -171,14 +176,8 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
 		args[j] = NULL;
 		// Execute the command
 		if (args[0])
-		path = get_path(args[0], env_list);
-		// if (is_builtin_command(args[0]))
-		// {
-		// 	execute_builtin_command(args[0],args,env_list);
-		// }
-		// else
-		
-		execve(path, args, environ);	
+			path = get_path(args[0], env_list);
+		execve(path, args, environ);
 		if (path != args[0])
 			free(path);
 		free(args);
@@ -192,10 +191,8 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	int			num_cmds;
 	int			i;
 	t_command	*current;
-	int			sig;
 	char		*path;
 
-	sig = 0;
 	signalint = 0;
 	num_cmds = 0;
 	current = cmds;
@@ -222,9 +219,18 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	current = cmds;
 	while (current)
 	{
+		if (ft_strlen(current->args->arg) == 0)
+		{
+			current = current->next;
+			continue ;
+		}
 		path = get_path(current->args->arg, data->env_list);
-		
-		execute_command(current, pipes, i, num_cmds, data->env_list);
+		if (is_builtin_command(current->args->arg))
+		{
+			execute_builtin_command(current, data->env_list);
+		}
+		else
+			execute_command(current, pipes, i, num_cmds, data->env_list);
 		current = current->next;
 		i++;
 		free(path);
@@ -233,10 +239,10 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	i = 0;
 	while (i < num_cmds)
 	{
-		waitpid(-1, &sig, 0);
+		waitpid(-1, &data->cmd.status, 0);
 		i++;
 	}
-	if (signalint != 130)
-		signalint = sig;
+	if (signalint == 130)
+		data->cmd.status = 130;
 	free(pipes);
 }

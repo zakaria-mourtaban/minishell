@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   environment.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 06:10:13 by odib              #+#    #+#             */
-/*   Updated: 2024/08/30 13:15:19 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/31 22:55:31 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../../includes/minishell.h"
 
-t_env	*create_envp_node(char *key, char *value,int hidden)
+t_env	*create_envp_node(char *key, char *value, int hidden)
 {
 	t_env	*new_node;
 
@@ -24,8 +23,8 @@ t_env	*create_envp_node(char *key, char *value,int hidden)
 	new_node->value = ft_strdup(value);
 	new_node->hidden = hidden;
 	new_node->next = NULL;
-	//free(key);
-	//free(value);
+	// free(key);
+	// free(value);
 	return (new_node);
 }
 t_env	*create_envp_list_node(char *envp_str, int hidden)
@@ -77,11 +76,11 @@ t_env	*init_copy_envp(char **envp)
 	t_env	*head;
 	t_env	*current;
 	t_env	*new_node;
-	char *UID;
- 	pid_t uid;
+	char	*UID;
+	pid_t	uid;
 
 	uid = ft_getuid();
- 	UID = ft_itoa((int)uid);
+	UID = ft_itoa((int)uid);
 	head = NULL;
 	current = NULL;
 	while (*envp)
@@ -93,10 +92,10 @@ t_env	*init_copy_envp(char **envp)
 		envp++;
 	}
 	if (set_env(&head, "UID", UID, 0) != 0)
-    {
-        free_env_list(head);
-        return NULL;
-    }
+	{
+		free_env_list(head);
+		return (NULL);
+	}
 	// add_uid_to_envp_list(head);
 	free(UID);
 	// free_env_list(current);
@@ -105,26 +104,33 @@ t_env	*init_copy_envp(char **envp)
 
 int	set_env(t_env **head, const char *key, const char *value, int hidden)
 {
-	t_env *current;
-	t_env *new_node;
+	t_env	*current;
+	t_env	*prev;
+	t_env	*new_node;
 
 	current = *head;
 	while (current)
 	{
-		if (ft_strcmp(current->key, key) == 0) {
+		if (ft_strcmp(current->key, key) == 0
+			&& ft_strlen(current->key) == ft_strlen(key))
+		{
 			free(current->value);
 			current->value = ft_strdup(value);
+			current->hidden = hidden;
 			return (0);
 		}
+		prev = current;
 		current = current->next;
 	}
 	new_node = create_envp_node((char *)key, (char *)value, hidden);
+	printf("newnodehidden:%d\n", new_node->hidden);
 	if (!new_node)
 		return (-1);
-	new_node->next = *head;
-	*head = new_node;
-	free_env_list(current);
-	free(current);
+	prev->next = new_node;
+	// new_node->next = *head;
+	// head = new_node;
+	// free_env_list(current);
+	// free(current);
 	// free((char *)key);
 	// free((char *)value);
 	return (0);
@@ -142,11 +148,11 @@ void	free_tab(char **tab)
 	}
 	free(tab);
 }
-//to delete a node from envp
+// to delete a node from envp
 int	unset_env(t_env **head, const char *key)
 {
-	t_env *current;
-	t_env *previous;
+	t_env	*current;
+	t_env	*previous;
 
 	current = *head;
 	previous = NULL;
@@ -154,7 +160,7 @@ int	unset_env(t_env **head, const char *key)
 	{
 		if (ft_strcmp(current->key, key) == 0)
 		{
-			if (previous) 
+			if (previous)
 				previous->next = current->next;
 			else
 				*head = current->next;
@@ -170,8 +176,8 @@ int	unset_env(t_env **head, const char *key)
 }
 void	free_list(t_env *head)
 {
-	t_env *current;
-	
+	t_env	*current;
+
 	while (head)
 	{
 		current = head->next;
@@ -181,7 +187,6 @@ void	free_list(t_env *head)
 		head = current;
 	}
 }
-
 
 // for testing
 

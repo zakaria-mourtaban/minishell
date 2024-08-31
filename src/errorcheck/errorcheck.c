@@ -136,19 +136,22 @@ void	check_path(const char *path, t_data *data)
 	char		*str;
 
 	str = get_path((char *)path, data->env_list);
-	if (access(str, X_OK) != 0 && !contains_dot_or_slash(path))
+	if (access(str, X_OK) != 0 && !contains_dot_or_slash(path)
+		&& !is_builtin_command(str))
 	{
-		signalint = 127;
+		data->cmd.status = 127;
 		printf("bash: %s: command not found\n", path);
 	}
-	else if (stat(path, &statbuf) == 0 && S_ISDIR(statbuf.st_mode))
+	else if (stat(path, &statbuf) == 0 && S_ISDIR(statbuf.st_mode)
+		&& !is_builtin_command(str))
 	{
-		signalint = 126;
+		data->cmd.status = 126;
 		printf("bash: %s: is a directory\n", path);
 	}
-	else if (access(str, X_OK) != 0 && !S_ISDIR(statbuf.st_mode))
+	else if (access(str, X_OK) != 0 && !S_ISDIR(statbuf.st_mode)
+		&& !is_builtin_command(str))
 	{
-		signalint = 127;
+		data->cmd.status = 127;
 		printf("bash: %s: No such file or directory\n", path);
 	}
 	free(str);
@@ -163,7 +166,7 @@ int	checksyntaxerror(t_data *data)
 	{
 		if (tmp->id == TOKEN_PIPE && checkpipe(tmp))
 		{
-			signalint = 2;
+			data->cmd.status = 2;
 			printerror(tmp);
 			tmp->error = 1;
 			tmp = tmp->next;
@@ -172,7 +175,7 @@ int	checksyntaxerror(t_data *data)
 		}
 		if (tmp->id == TOKEN_HEREDOC_EOF && checkheredoc(tmp))
 		{
-			signalint = 2;
+			data->cmd.status = 2;
 			printerror(tmp->next);
 			tmp->error = 1;
 			tmp = tmp->next;
@@ -181,7 +184,7 @@ int	checksyntaxerror(t_data *data)
 		}
 		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
 		{
-			signalint = 2;
+			data->cmd.status = 2;
 			printerror(tmp->next);
 			tmp->error = 1;
 			tmp = tmp->next;
@@ -190,7 +193,7 @@ int	checksyntaxerror(t_data *data)
 		}
 		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
 		{
-			signalint = 2;
+			data->cmd.status = 2;
 			printerror(tmp->next);
 			tmp->error = 1;
 			tmp = tmp->next;
@@ -200,7 +203,7 @@ int	checksyntaxerror(t_data *data)
 		if ((tmp->id == TOKEN_OUT_FILE || tmp->id == TOKEN_OUT_A_FILE)
 			&& checkfileout(tmp))
 		{
-			signalint = 2;
+			data->cmd.status = 2;
 			printerror(tmp->next);
 			tmp->error = 1;
 			tmp = tmp->next;

@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/31 21:52:34 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/31 23:06:55 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,10 +187,8 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	int			num_cmds;
 	int			i;
 	t_command	*current;
-	int			sig;
 	char		*path;
 
-	sig = 0;
 	signalint = 0;
 	num_cmds = 0;
 	current = cmds;
@@ -232,10 +230,10 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	i = 0;
 	while (i < num_cmds)
 	{
-		waitpid(-1, &sig, 0);
+		waitpid(-1, &data->cmd.status, 0);
 		i++;
 	}
-	if (signalint != 130)
-		signalint = sig;
+	if (signalint == 130)
+		data->cmd.status = 130;
 	free(pipes);
 }

@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/31 21:15:09 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/31 23:02:35 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ int	main(int ac, char **av, char **env)
 	data.env_list = NULL;
 	data.cmdchain = NULL;
 	data.env = env;
+	data.cmd.status = 0;
 	data.cmd.running = 0;
 	data.env_list = init_copy_envp(env);
 	

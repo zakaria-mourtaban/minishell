@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/31 21:51:37 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/31 23:04:54 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,7 @@ pid_t					ft_getpid(void);
 char					*handle_double_dollar(char *input);
 char					*remove_char(char *str, char char_to_remove);
 int						ft_is_delimiter(char c);
-char					*handle_dollar_sign(char *input, t_env *env);
+char					*handle_dollar_sign(char *input, t_data *data);
 
 /***** for ENVP *****/
 void					concatenvtoken(t_data *data);

@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 00:00:34 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/30 15:34:49 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/31 22:59:22 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ char	*getinfo(t_data *data)
 	char	*pwd;
 
 	pwd = get_env(data->env_list, "PWD");
-	sig = ft_itoa(signalint);
+	sig = ft_itoa(data->cmd.status);
 	info = ft_strdup("");
 	info = ft_strjoingnl(info, BLUE_BRIGHT);
 	info = ft_strjoingnl(info, pwd);

@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:24:52 by odib              #+#    #+#             */
-/*   Updated: 2024/08/31 22:30:14 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/31 22:50:15 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	sort_env_list(t_env *head)
 		ptr1 = head;
 		while (ptr1->next != lptr)
 		{
-			if (strcmp(ptr1->key, ptr1->next->key) > 0)
+			if (ft_strcmp(ptr1->key, ptr1->next->key) > 0)
 			{
 				swap_nodes(ptr1, ptr1->next);
 				swapped = 1;

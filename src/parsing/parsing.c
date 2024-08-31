@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 16:05:11 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/29 17:35:10 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/31 23:04:19 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ int	hasaccess(t_tokens *token, t_data *data)
 	if (access(get_path(token->content, data->env_list), X_OK))
 		return (1);
 	printf("bash: %s: command not found\n", token->content);
-	signalint = 127;
+	data->cmd.status = 127;
 	return (0);
 }
 

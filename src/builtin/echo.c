@@ -6,44 +6,32 @@
 /*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 12:07:09 by odib              #+#    #+#             */
-/*   Updated: 2024/08/31 07:01:44 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/01 11:51:14 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "../../includes/minishell.h"
 
-bool is_valid_n_flag(const char *arg)
+void echo_command(t_arg *args)
 {
-    if (arg[0] != '-' || arg[1] != 'n')
-        return false;
-
-    for (int i = 1; arg[i] != '\0'; i++)
-    {
-        if (arg[i] != 'n')
-            return false;
-    }
-
-    return true;
-}
-void echo_command(char **args)
-{
-    bool newline = true;
-    int i = 1;
-
-    // printf("test");
-    while (args[i] && is_valid_n_flag(args[i]))
-    {
-        newline = false;
-        i++;
-    }
+    int newline = 1;  
+    t_arg *current = args->next;
     
-    while (args[i])
+    if (current != NULL && strcmp(current->arg, "-n") == 0)
     {
-        printf("%s", args[i]);
-        if (args[i + 1])
-            printf(" ");
-        i++;
+        newline = 0; 
+        current = current->next;
+    }
+
+    
+    while (current)
+    {
+        printf("%s", current->arg);
+        if (current->next)
+            printf(" "); 
+
+        current = current->next;
     }
 
     if (newline)

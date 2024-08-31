@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execveutils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 23:10:31 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/26 22:50:25 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 11:12:25 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ char	*get_env(t_env *head, const char *key)
 			return (ft_strdup(head->value));
 		head = head->next;
 	}
-	return (NULL);
+	return (ft_strdup(""));
 }
 
 char	*get_path(char *cmd, t_env *envp_list)

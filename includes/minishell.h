@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/31 23:11:10 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 11:39:17 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,8 +187,8 @@ pid_t					ft_getuid(void);
 // builtin
 bool					is_builtin_command(const char *command);
 void					pwd_command(void);
-void					exit_command(char **args);
-void					echo_command(char **args);
+void exit_command(t_arg *args);
+void echo_command(t_arg *args);
 void					env_command(t_env *env_list);
 void					export_command(t_env **env_list, t_arg *arg);
 void					split_envp(char *envp_str, char **key, char **value);
@@ -196,7 +196,8 @@ int						ft_strlen1(const char *s);
 char					*ft_strndup(const char *s, size_t n);
 char					*ft_strncpy(char *dest, const char *src, size_t n);
 size_t					ft_strnlen(const char *str, size_t n);
-void					exit_command(char **args);
+int						change_dir(t_arg *args, t_env *env_list);
 char					**tokens_to_args(char *tokens);
 void					free_args(char **args);
+int unset_command(t_arg *args, t_env **env_list);
 #endif

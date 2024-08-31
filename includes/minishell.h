@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/31 06:20:00 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/31 14:49:00 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,7 @@ void pwd_command();
 void exit_command(char **args);
 void echo_command(char **args);
 void    env_command(t_env *env_list);
-void	export_command(t_env **env_list, char **input);
+void	export_command(t_env **env_list, t_arg *arg);
 void	split_envp(char *envp_str, char **key, char **value);
 int	ft_strlen1(const char *s);
 char	*ft_strndup(const char *s, size_t n);

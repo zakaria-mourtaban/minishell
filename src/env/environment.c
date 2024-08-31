@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   environment.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 06:10:13 by odib              #+#    #+#             */
-/*   Updated: 2024/08/30 13:15:19 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/31 14:49:06 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ int	set_env(t_env **head, const char *key, const char *value, int hidden)
 	current = *head;
 	while (current)
 	{
-		if (ft_strcmp(current->key, key) == 0) {
+		if (ft_strcmp(current->key, key) == 0 && ft_strlen(current->key) == ft_strlen(key)) {
 			free(current->value);
 			current->value = ft_strdup(value);
 			return (0);
@@ -123,8 +123,8 @@ int	set_env(t_env **head, const char *key, const char *value, int hidden)
 		return (-1);
 	new_node->next = *head;
 	*head = new_node;
-	free_env_list(current);
-	free(current);
+	// free_env_list(current);
+	// free(current);
 	// free((char *)key);
 	// free((char *)value);
 	return (0);

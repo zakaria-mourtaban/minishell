@@ -136,17 +136,20 @@ void	check_path(const char *path, t_data *data)
 	char		*str;
 
 	str = get_path((char *)path, data->env_list);
-	if (access(str, X_OK) != 0 && !contains_dot_or_slash(path))
+	if (access(str, X_OK) != 0 && !contains_dot_or_slash(path)
+		&& !is_builtin_command(str))
 	{
 		data->cmd.status = 127;
 		printf("bash: %s: command not found\n", path);
 	}
-	else if (stat(path, &statbuf) == 0 && S_ISDIR(statbuf.st_mode))
+	else if (stat(path, &statbuf) == 0 && S_ISDIR(statbuf.st_mode)
+		&& !is_builtin_command(str))
 	{
 		data->cmd.status = 126;
 		printf("bash: %s: is a directory\n", path);
 	}
-	else if (access(str, X_OK) != 0 && !S_ISDIR(statbuf.st_mode))
+	else if (access(str, X_OK) != 0 && !S_ISDIR(statbuf.st_mode)
+		&& !is_builtin_command(str))
 	{
 		data->cmd.status = 127;
 		printf("bash: %s: No such file or directory\n", path);

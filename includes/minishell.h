@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/31 23:04:54 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/31 23:11:10 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +159,7 @@ pid_t					ft_getpid(void);
 char					*handle_double_dollar(char *input);
 char					*remove_char(char *str, char char_to_remove);
 int						ft_is_delimiter(char c);
+
 char					*handle_dollar_sign(char *input, t_data *data);
 
 /***** for ENVP *****/
@@ -183,8 +184,8 @@ void					ft_split_env(char *envp_str, char **key, char **value);
 int						unset_env(t_env **head, const char *key);
 void					print_list(t_env *env_head);
 pid_t					ft_getuid(void);
-
 // builtin
+bool					is_builtin_command(const char *command);
 void					pwd_command(void);
 void					exit_command(char **args);
 void					echo_command(char **args);

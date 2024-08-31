@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/31 23:06:55 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/31 23:30:37 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,10 @@ bool	is_builtin_command(const char *command)
 	// Compare both length and content of the command
 	switch (ft_strlen(command))
 	{
+	case 2:
+		if (ft_strcmp(command, "cd") == 0)
+			return (true);
+		break ;
 	case 4:
 		if (ft_strcmp(command, "echo") == 0)
 			return (true);
@@ -215,6 +219,11 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	current = cmds;
 	while (current)
 	{
+		if (ft_strlen(current->args->arg) == 0)
+		{
+			current = current->next;
+			continue ;
+		}
 		path = get_path(current->args->arg, data->env_list);
 		if (is_builtin_command(current->args->arg))
 		{

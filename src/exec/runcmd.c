@@ -96,13 +96,13 @@ void	initcmd(char *input, char **env, t_data *data)
 	printcmds(data);
 	remove_quotes(data->cmdchain);
 
-	// if (!checksyntaxerror(data))
-	// {
+	if (!checksyntaxerror(data))
+	{
 		command = parse_tokens(data->cmdchain);
 		// print_command_list(command);
 		execute_pipeline(command, data);
 		free_command_list(command);
-	// }
+	}
 	free(input);
 	free_cmdchain(data->cmdchain);
 	(void)env;

@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:24:52 by odib              #+#    #+#             */
-/*   Updated: 2024/08/31 15:01:41 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/31 22:30:14 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,15 @@ void	swap_nodes(t_env *a, t_env *b)
 {
 	char	*temp_key;
 	char	*temp_value;
+	int		temphidden;
 
 	temp_key = a->key;
 	temp_value = a->value;
+	temphidden = a->hidden;
+	a->hidden = b->hidden;
 	a->key = b->key;
 	a->value = b->value;
+	b->hidden = temphidden;
 	b->key = temp_key;
 	b->value = temp_value;
 }
@@ -102,7 +106,6 @@ void	print_sorted_env_list(t_env *head)
 	t_env	*current;
 
 	current = head;
-	sort_env_list(current);
 	while (current)
 	{
 		printf("%s=\"%s\"\n", current->key, current->value);
@@ -159,19 +162,33 @@ char	**argtochar(t_arg *arg)
 	args[i] = NULL;
 	return (args);
 }
+int	getac(t_arg *arg)
+{
+	t_arg	*tmp;
+	int		i;
+
+	tmp = arg;
+	i = 0;
+	while (tmp)
+	{
+		tmp = tmp->next;
+		i++;
+	}
+	return (i);
+}
 
 void	export_command(t_env **env_list, t_arg *arg)
 {
 	char	*key;
 	char	*value;
 	t_arg	*tmparg;
-	t_env	**tmp;
+	int		i;
 
 	tmparg = arg;
+	i = 0;
 	tmparg = tmparg->next;
 	while (tmparg)
 	{
-		tmp = env_list;
 		split_envp(tmparg->arg, &key, &value);
 		if (is_key_invalid(key))
 		{
@@ -182,20 +199,19 @@ void	export_command(t_env **env_list, t_arg *arg)
 		if (ft_strlen(value) == 0)
 		{
 			printf("setting env\n");
-			set_env(tmp, key, value, 1);
+			set_env(env_list, key, value, 1);
 		}
 		else
 		{
-			set_env(tmp, key, value, 0);
+			set_env(env_list, key, value, 0);
 		}
 		free_resources(key, value);
 		tmparg = tmparg->next;
+		i++;
 	}
-	if (arg->next->next == NULL)
-	{
+	sort_env_list(*env_list);
+	if (i == 0)
 		print_sorted_env_list(*env_list);
-		return ;
-	}
 }
 
 // int	update_env_value(t_env *head, const char *key, const char *new_value)

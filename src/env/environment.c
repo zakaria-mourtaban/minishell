@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 06:10:13 by odib              #+#    #+#             */
-/*   Updated: 2024/08/31 14:49:06 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/08/31 22:28:34 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,11 +114,13 @@ int	set_env(t_env **head, const char *key, const char *value, int hidden)
 		if (ft_strcmp(current->key, key) == 0 && ft_strlen(current->key) == ft_strlen(key)) {
 			free(current->value);
 			current->value = ft_strdup(value);
+			current->hidden = hidden;
 			return (0);
 		}
 		current = current->next;
 	}
 	new_node = create_envp_node((char *)key, (char *)value, hidden);
+	printf("newnodehidden:%d\n",new_node->hidden);
 	if (!new_node)
 		return (-1);
 	new_node->next = *head;

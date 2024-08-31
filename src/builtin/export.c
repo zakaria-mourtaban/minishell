@@ -3,53 +3,52 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:24:52 by odib              #+#    #+#             */
-/*   Updated: 2024/08/31 07:33:44 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/31 15:01:41 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-void swap_nodes(t_env *a, t_env *b)
+
+void	swap_nodes(t_env *a, t_env *b)
 {
-    char *temp_key = a->key;
-    char *temp_value = a->value;
+	char	*temp_key;
+	char	*temp_value;
 
-    a->key = b->key;
-    a->value = b->value;
-
-    b->key = temp_key;
-    b->value = temp_value;
+	temp_key = a->key;
+	temp_value = a->value;
+	a->key = b->key;
+	a->value = b->value;
+	b->key = temp_key;
+	b->value = temp_value;
 }
 
-
-void sort_env_list(t_env *head)
+void	sort_env_list(t_env *head)
 {
-    int swapped;
-    t_env *ptr1;
-    t_env *lptr = NULL;
+	int		swapped;
+	t_env	*ptr1;
+	t_env	*lptr;
 
-    if (head == NULL)
-        return;
-
-    do
-    {
-        swapped = 0;
-        ptr1 = head;
-
-        while (ptr1->next != lptr)
-        {
-            if (strcmp(ptr1->key, ptr1->next->key) > 0)
-            {
-                swap_nodes(ptr1, ptr1->next);
-                swapped = 1;
-            }
-            ptr1 = ptr1->next;
-        }
-        lptr = ptr1;
-    }
-    while (swapped);
+	lptr = NULL;
+	if (head == NULL)
+		return ;
+	do
+	{
+		swapped = 0;
+		ptr1 = head;
+		while (ptr1->next != lptr)
+		{
+			if (strcmp(ptr1->key, ptr1->next->key) > 0)
+			{
+				swap_nodes(ptr1, ptr1->next);
+				swapped = 1;
+			}
+			ptr1 = ptr1->next;
+		}
+		lptr = ptr1;
+	} while (swapped);
 }
 
 void	remove_quotes_from_str(char *str)
@@ -111,7 +110,6 @@ void	print_sorted_env_list(t_env *head)
 	}
 }
 
-
 int	is_input_null(char **input)
 {
 	return (input[1] == NULL);
@@ -122,9 +120,9 @@ int	is_key_invalid(char *key)
 	if (check_key(key) == 0)
 	{
 		printf("Invalid key: %s\n", key); // Debugging
-		return 1;
+		return (1);
 	}
-	return 0;
+	return (0);
 }
 
 void	free_resources(char *key, char *value)
@@ -133,38 +131,70 @@ void	free_resources(char *key, char *value)
 	free(key);
 }
 
-void	export_command(t_env **env_list, char **input)
+char	**argtochar(t_arg *arg)
 {
-	char *key;
-	char *value;
-	int i;
+	t_arg	*tmp;
+	char	**args;
+	int		i;
 
-	i = 1;
-	if (is_input_null(input))
+	i = 0;
+	tmp = arg;
+	while (tmp != NULL)
 	{
-		print_sorted_env_list(*env_list);
-		return;
+		i++;
+		tmp = tmp->next;
 	}
-	while (input[i])
+	args = (char **)malloc((i + 1) * sizeof(char *));
+	if (args == NULL)
+		return (NULL);
+	tmp = arg;
+	i = 0;
+	while (tmp != NULL)
 	{
-		split_envp(input[i], &key, &value);
+		args[i] = ft_strdup(tmp->arg);
+		printf("args[i]:%s\n", args[i]);
+		tmp = tmp->next;
+		i++;
+	}
+	args[i] = NULL;
+	return (args);
+}
+
+void	export_command(t_env **env_list, t_arg *arg)
+{
+	char	*key;
+	char	*value;
+	t_arg	*tmparg;
+	t_env	**tmp;
+
+	tmparg = arg;
+	tmparg = tmparg->next;
+	while (tmparg)
+	{
+		tmp = env_list;
+		split_envp(tmparg->arg, &key, &value);
 		if (is_key_invalid(key))
 		{
 			free_resources(key, value);
-			i++;
-			continue;
+			tmparg = tmparg->next;
+			continue ;
 		}
-		if (!value)
-        {
-			set_env(env_list, key, value, 1);
-        }
+		if (ft_strlen(value) == 0)
+		{
+			printf("setting env\n");
+			set_env(tmp, key, value, 1);
+		}
 		else
-        {
-            
-			set_env(env_list, key, value, 0);
-        }
+		{
+			set_env(tmp, key, value, 0);
+		}
 		free_resources(key, value);
-		i++;
+		tmparg = tmparg->next;
+	}
+	if (arg->next->next == NULL)
+	{
+		print_sorted_env_list(*env_list);
+		return ;
 	}
 }
 

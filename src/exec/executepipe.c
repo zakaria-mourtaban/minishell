@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executepipe.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/31 07:28:21 by odib             ###   ########.fr       */
+/*   Updated: 2024/08/31 13:38:24 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,10 @@ void execute_builtin_command(t_command *command, char *argv[], t_env *env_list) 
         return;
     }
     if (strcmp(command->args->arg, "export") == 0) {
-		 printf("%s\n",command->args->arg);
+		//  printf("%s\n",command->args->arg);
 		// argv = tokens_to_args(command->args->arg);
         // printf("%s",*argv);
-		// export_command(&env_list, &command->args->arg);
+		export_command(&env_list, command->args);
         return;
     }
     // Uncomment and implement if needed

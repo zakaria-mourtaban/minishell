@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 13:31:59 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 17:04:37 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,11 @@ int		signalint;
 
 char	*envtostr(t_env *envs)
 {
-	char *out;
+	char	*out;
 
 	out = ft_strdup(envs->key);
-	out = ft_strjoin(out,"=");
-	out = ft_strjoin(out,envs->value);
+	out = ft_strjoin(out, "=");
+	out = ft_strjoin(out, envs->value);
 	return (out);
 }
 
@@ -40,19 +40,20 @@ char	**createenv(t_env *env)
 	out = malloc((i + 1) * sizeof(char *));
 	tmp = env;
 	i = 0;
-	while(tmp)
+	while (tmp)
 	{
 		out[i] = envtostr(tmp);
 		tmp = tmp->next;
 		i++;
 	}
 	out[i] = NULL;
-	return out;
+	return (out);
 }
 
 t_env	*get_tenv(t_env *head, const char *key)
 {
-	t_env *tmp;
+	t_env	*tmp;
+
 	tmp = head;
 	while (tmp)
 	{
@@ -64,32 +65,32 @@ t_env	*get_tenv(t_env *head, const char *key)
 	return (NULL);
 }
 
+void	init(t_data *data, char **env)
+{
+	t_env	*tmp;
+
+	art(); // can be removed for norm
+	signalint = 0;
+	data->env_list = NULL;
+	data->cmdchain = NULL;
+	data->env = env;
+	data->cmd.status = 0;
+	data->cmd.running = 0;
+	data->env_list = init_copy_envp(env);
+	tmp = get_tenv(data->env_list, "SHLVL");
+	if (tmp == NULL)
+		set_env(&data->env_list, "SHLVL", "1", 0);
+	else
+		tmp->value = ft_itoa(ft_atoi(tmp->value) + 1);
+}
+
 int	main(int ac, char **av, char **env)
 {
 	char	*input;
 	t_data	data;
 
-	signalint = 0;
-	art();
 	using_history();
-	data.env_list = NULL;
-	data.cmdchain = NULL;
-	data.env = env;
-	data.cmd.status = 0;
-	data.cmd.running = 0;
-	data.env_list = init_copy_envp(env);
-	get_tenv(data.env_list,"SHLVL")->value = ft_itoa(ft_atoi(get_tenv(data.env_list,"SHLVL")->value) + 1);
-	// print_list(data.env_list);
-	// printf("#############\n");
-	// Initial test input to tokenize, parse, and run
-	// tokenizer(concatenv(ft_strdup("test $123 $ $ $ \"$HOME $HOME\" \"'$HOME'\" test | < >> << >"),&data),
-	// &data);
-	// tokenizer(concatenv(handle_dollar_sign(ft_strdup("test $123 $ $ $ \"$HOME $HOME\" \"'$HOME'\" test | < >> << >"),
-	// copy_env),&data),&data);
-	// remove_quotes(data.cmdchain);
-	// printcmds(&data);
-	// Parse the tokens into command structures
-	// You can now print or execute commands here for debugging
+	init(&data, env);
 	while (1)
 	{
 		data.env = createenv(data.env_list);
@@ -100,61 +101,12 @@ int	main(int ac, char **av, char **env)
 			break ;
 		}
 		if (ft_strlen(input) != 0)
-		{
 			add_history(input);
-			// printf("%s\n", input);
-		}
-		// Non-interactive mode processing
 		noninteractivemode(&data, &input);
 		initcmd(input, env, &data);
-		// if (data.cmdchain && ft_strcmp(data.cmdchain->content, "echo") == 0)
-		//  {
-		//      char **args = tokens_to_args(data.cmdchain);
-		//      echo_command(args);
-		//      free_args(args);
-		//  }
-		//  else if (data.cmdchain
-			// && ft_strcmp(data.cmdchain->content,"env") == 0)
-		//  {
-		//      char **args = tokens_to_args(data.cmdchain);
-		//      env_command(data.env_list);
-		//      free_args(args);
-		//  }
-		//  else if (data.cmdchain && ft_strcmp(data.cmd.cmd[1], "export") == 0)
-		//  {
-		//      char **args = tokens_to_args(data.cmdchain);
-		//      export_command(&data.env_list, args);
-		//      free_args(args);
-		//  }
-		//  else if (data.cmdchain && ft_strcmp(data.cmdchain->content,
-				// "pwd") == 0)
-		//  {
-		//      char **args = tokens_to_args(data.cmdchain);
-		//      pwd_command();
-		//      free_args(args);
-		//  } else if (data.cmdchain && ft_strcmp(data.cmdchain->content,
-				// "exit") == 0)
-		//  {
-		//      char **args = tokens_to_args(data.cmdchain);
-		//      exit_command(args);
-		//      free_args(args);
-		//  }
-		//  else if (tokens && strcmp(tokens->value, "unset") == 0)
-		//  {
-		//      char **args = tokens_to_args(tokens);
-		//      unset_env(&envp_list, args[1]);
-		//      free_args(args);
-		//  }
-		//  else if (tokens && strcmp(tokens->value, "cd") == 0)
-		//  {
-		//      char **args = tokens_to_args(tokens);
-		//      change_dir(args, envp_list);
-		//      free_args(args);
-		//  }
 	}
-	// Clean up before exiting
 	free_env_list(data.env_list);
+	return (0);
 	(void)ac;
 	(void)av;
-	return (0);
 }

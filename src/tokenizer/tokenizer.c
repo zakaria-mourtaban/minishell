@@ -1,12 +1,16 @@
-#include "../../includes/minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenizer.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/01 17:07:10 by zmourtab          #+#    #+#             */
+/*   Updated: 2024/09/01 17:11:25 by zmourtab         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-// #define TOKEN_CMD 0
-// #define TOKEN_PIPE 1
-// #define TOKEN_DLESS 2
-// #define TOKEN_DGREAT 3
-// #define TOKEN_LESS 4
-// #define TOKEN_GREAT 5
-// #define TOKEN_SPACE 6
+#include "../../includes/minishell.h"
 
 t_tokens	*newnode(char *data, int type)
 {
@@ -27,36 +31,33 @@ t_tokens	*newnode(char *data, int type)
 	return (ptr);
 }
 
-void append(t_tokens **cmds, char *data, int type) {
-    t_tokens *new_node;
-    t_tokens *tmp;
+void	append(t_tokens **cmds, char *data, int type)
+{
+	t_tokens	*new_node;
+	t_tokens	*tmp;
 
-    new_node = NULL;
-
-    // If the list is empty, create the first node
-    if (*cmds == NULL) {
-        new_node = newnode(data, type);
-        new_node->previous = newnode("START", TOKEN_START);
-        *cmds = new_node;
-        return;
-    }
-
-    tmp = *cmds;
-    // Traverse to the last node
-    while (tmp->next != NULL) {
-        tmp = tmp->next;
-    }
-
-    // Handle the appending logic based on type
-    if ((tmp->id == TOKEN_COMMAND || tmp->id == TOKEN_WORD) && (type == TOKEN_WORD || type == TOKEN_COMMAND)) {
-        // Concatenate content if the previous node is of type COMMAND or WORD
-        tmp->content = ft_strjoingnl(tmp->content, data);
-    } else {
-        // Create a new node and link it to the previous one
-        new_node = newnode(data, type);
-        tmp->next = new_node;
-        new_node->previous = tmp;
-    }
+	new_node = NULL;
+	if (*cmds == NULL)
+	{
+		new_node = newnode(data, type);
+		new_node->previous = newnode("START", TOKEN_START);
+		*cmds = new_node;
+		return ;
+	}
+	tmp = *cmds;
+	while (tmp->next != NULL)
+	{
+		tmp = tmp->next;
+	}
+	if ((tmp->id == TOKEN_COMMAND || tmp->id == TOKEN_WORD)
+		&& (type == TOKEN_WORD || type == TOKEN_COMMAND))
+		tmp->content = ft_strjoingnl(tmp->content, data);
+	else
+	{
+		new_node = newnode(data, type);
+		tmp->next = new_node;
+		new_node->previous = tmp;
+	}
 }
 
 void	printcmds(t_data *data)
@@ -90,133 +91,298 @@ e_token	get_delimiter_type(char *str)
 	return (TOKEN_WORD);
 }
 
-void	tokenizer(char *input, t_data *data)
+// void	tokenizer(char *input, t_data *data)
+// {
+// 	int		i;
+// 	char	*buffer;
+// 	int		buf_i;
+// 	char	quote;
+// 	int		last_was_space;
+// 	int		foundcmd;
+
+// 	i = 0;
+// 	buf_i = 0;
+// 	quote = 0;
+// 	last_was_space = 0;
+// 	foundcmd = 0;
+// 	data->cmdchain = NULL;
+// 	buffer = ft_calloc(ft_strlen(input) + 1, sizeof(char));
+// 	while (input[i] != '\0')
+// 	{
+// 		if (quote)
+// 		{
+// 			buffer[buf_i++] = input[i];
+// 			if (input[i] == quote)
+// 			{
+// 				quote = 0;
+// 				buffer[buf_i] = '\0';
+// 				if (!foundcmd)
+// 				{
+// 					append(&data->cmdchain, buffer, TOKEN_COMMAND);
+// 					foundcmd = 1;
+// 				}
+// 				else
+// 					append(&data->cmdchain, buffer, TOKEN_WORD);
+// 				buf_i = 0;
+// 			}
+// 			last_was_space = 0;
+// 		}
+// 		else if (input[i] == '\'' || input[i] == '\"')
+// 		{
+// 			if (buf_i > 0)
+// 			{
+// 				buffer[buf_i] = '\0';
+// 				if (!foundcmd && data->cmdchain->previous->id != TOKEN_START
+// 					&& data->cmdchain->previous->id != TOKEN_COMMAND)
+// 				{
+// 					append(&data->cmdchain, buffer, TOKEN_COMMAND);
+// 					foundcmd = 1;
+// 				}
+// 				else
+// 					append(&data->cmdchain, buffer, TOKEN_WORD);
+// 				buf_i = 0;
+// 			}
+// 			quote = input[i];
+// 			buffer[buf_i++] = input[i];
+// 			last_was_space = 0;
+// 		}
+// 		else if (ft_strchr("|<> ", input[i]))
+// 		{
+// 			if (buf_i > 0)
+// 			{
+// 				buffer[buf_i] = '\0';
+// 				if (!foundcmd)
+// 				{
+// 					append(&data->cmdchain, buffer, TOKEN_COMMAND);
+// 					foundcmd = 1;
+// 				}
+// 				else
+// 					append(&data->cmdchain, buffer, TOKEN_WORD);
+// 				buf_i = 0;
+// 			}
+// 			if (input[i] == '<' && input[i + 1] == '<')
+// 			{
+// 				append(&data->cmdchain, "<<", TOKEN_HEREDOC_EOF);
+// 				i++;
+// 				last_was_space = 0;
+// 			}
+// 			else if (input[i] == '>' && input[i + 1] == '>')
+// 			{
+// 				append(&data->cmdchain, ">>", TOKEN_OUT_A_FILE);
+// 				i++;
+// 				last_was_space = 0;
+// 			}
+// 			else if (input[i] == '>')
+// 			{
+// 				append(&data->cmdchain, ">", TOKEN_OUT_FILE);
+// 				last_was_space = 0;
+// 			}
+// 			else if (input[i] == '<')
+// 			{
+// 				append(&data->cmdchain, "<", TOKEN_IN_FILE);
+// 				last_was_space = 0;
+// 			}
+// 			else if (input[i] == '|')
+// 			{
+// 				append(&data->cmdchain, "|", TOKEN_PIPE);
+// 				last_was_space = 0;
+// 			}
+// 			else if (input[i] == ' ')
+// 			{
+// 				append(&data->cmdchain, " ", TOKEN_SPACE);
+// 				last_was_space = 0;
+// 			}
+// 		}
+// 		else
+// 		{
+// 			if (last_was_space)
+// 			{
+// 				buffer[0] = input[i];
+// 				buffer[1] = '\0';
+// 				append(&data->cmdchain, buffer, get_delimiter_type(buffer));
+// 			}
+// 			else
+// 			{
+// 				buffer[buf_i++] = input[i];
+// 			}
+// 			last_was_space = (input[i] == ' ');
+// 		}
+// 		if (input[i] == '|')
+// 			foundcmd = 0;
+// 		i++;
+// 	}
+// 	if (buf_i > 0)
+// 	{
+// 		buffer[buf_i] = '\0';
+// 		if (!foundcmd)
+// 		{
+// 			append(&data->cmdchain, buffer, TOKEN_COMMAND);
+// 			foundcmd = 1;
+// 		}
+// 		else
+// 			append(&data->cmdchain, buffer, TOKEN_WORD);
+// 	}
+// 	free(buffer);
+// }
+
+typedef struct s_tokenizer_state
 {
-	int i = 0;
-	char *buffer;
-	int buf_i = 0;
-	char quote = 0;
-	int last_was_space = 0;
-	int foundcmd = 0;
+    char *buffer;
+    int buf_i;
+    char quote;
+    int last_was_space;
+    int foundcmd;
+    t_data *data;
+    char *input;
+    int i;
+} t_tokenizer_state;
 
-	data->cmdchain = NULL;
-	buffer = ft_calloc(ft_strlen(input) + 1, sizeof(char));
+// Utility function declarations
+void handle_quote(t_tokenizer_state *state);
+void handle_special_characters(t_tokenizer_state *state);
+void handle_regular_characters(t_tokenizer_state *state);
+void finalize_buffer(t_tokenizer_state *state);
 
-	while (input[i] != '\0')
-	{
-		if (quote)
-		{
-			buffer[buf_i++] = input[i];
-			if (input[i] == quote)
-			{
-				quote = 0;
-				buffer[buf_i] = '\0';
-				if (!foundcmd)
-				{
-					append(&data->cmdchain, buffer, TOKEN_COMMAND);
-					foundcmd = 1;
-				}
-				else
-					append(&data->cmdchain, buffer, TOKEN_WORD);
-				buf_i = 0;
-			}
-			last_was_space = 0;
-		}
-		else if (input[i] == '\'' || input[i] == '\"')
-		{
-			if (buf_i > 0)
-			{
-				buffer[buf_i] = '\0';
-				if (!foundcmd && data->cmdchain->previous->id != TOKEN_START
-					&& data->cmdchain->previous->id != TOKEN_COMMAND)
-				{
-					append(&data->cmdchain, buffer, TOKEN_COMMAND);
-					foundcmd = 1;
-				}
-				else
-					append(&data->cmdchain, buffer, TOKEN_WORD);
-				buf_i = 0;
-			}
-			quote = input[i];
-			buffer[buf_i++] = input[i];
-			last_was_space = 0;
-		}
-		else if (ft_strchr("|<> ", input[i]))
-		{
-			if (buf_i > 0)
-			{
-				buffer[buf_i] = '\0';
-				if (!foundcmd)
-				{
-					append(&data->cmdchain, buffer, TOKEN_COMMAND);
-					foundcmd = 1;
-				}
-				else
-					append(&data->cmdchain, buffer, TOKEN_WORD);
-				buf_i = 0;
-			}
+// Main tokenizer function
+void tokenizer(char *input, t_data *data)
+{
+    t_tokenizer_state state;
+    
+    state.buffer = ft_calloc(ft_strlen(input) + 1, sizeof(char));
+    state.buf_i = 0;
+    state.quote = 0;
+    state.last_was_space = 0;
+    state.foundcmd = 0;
+    state.data = data;
+    state.input = input;
+    state.i = 0;
 
-			if (input[i] == '<' && input[i + 1] == '<')
-			{
-				append(&data->cmdchain, "<<", TOKEN_HEREDOC_EOF);
-				i++;
-				last_was_space = 0;
-			}
-			else if (input[i] == '>' && input[i + 1] == '>')
-			{
-				append(&data->cmdchain, ">>", TOKEN_OUT_A_FILE);
-				i++;
-				last_was_space = 0;
-			}
-			else if (input[i] == '>')
-			{
-				append(&data->cmdchain, ">", TOKEN_OUT_FILE);
-				last_was_space = 0;
-			}
-			else if (input[i] == '<')
-			{
-				append(&data->cmdchain, "<", TOKEN_IN_FILE);
-				last_was_space = 0;
-			}
-			else if (input[i] == '|')
-			{
-				append(&data->cmdchain, "|", TOKEN_PIPE);
-				last_was_space = 0;
-			}
-			else if (input[i] == ' ')
-			{
-				append(&data->cmdchain, " ", TOKEN_SPACE);
-				last_was_space = 0;
-			}
-		}
-		else
-		{
-			if (last_was_space)
-			{
-				buffer[0] = input[i];
-				buffer[1] = '\0';
-				append(&data->cmdchain, buffer, get_delimiter_type(buffer));
-			}
-			else
-			{
-				buffer[buf_i++] = input[i];
-			}
-			last_was_space = (input[i] == ' ');
-		}
-		if (input[i] == '|')
-			foundcmd = 0;
-		i++;
-	}
-	if (buf_i > 0)
-	{
-		buffer[buf_i] = '\0';
-		if (!foundcmd)
-		{
-			append(&data->cmdchain, buffer, TOKEN_COMMAND);
-			foundcmd = 1;
-		}
-		else
-			append(&data->cmdchain, buffer, TOKEN_WORD);
-	}
-	free(buffer);
+    data->cmdchain = NULL;
+
+    while (input[state.i] != '\0')
+    {
+        if (state.quote)
+        {
+            handle_quote(&state);
+        }
+        else if (input[state.i] == '\'' || input[state.i] == '\"')
+        {
+            handle_quote(&state);
+        }
+        else if (ft_strchr("|<> ", input[state.i]))
+        {
+            handle_special_characters(&state);
+        }
+        else
+        {
+            handle_regular_characters(&state);
+        }
+        if (input[state.i] == '|')
+            state.foundcmd = 0;
+        state.i++;
+    }
+
+    finalize_buffer(&state);
+    free(state.buffer);
+}
+
+// Function to handle quoted strings
+void handle_quote(t_tokenizer_state *state)
+{
+    state->buffer[state->buf_i++] = state->input[state->i];
+    if (state->input[state->i] == state->quote)
+    {
+        state->quote = 0;
+        state->buffer[state->buf_i] = '\0';
+        if (!state->foundcmd)
+        {
+            append(&state->data->cmdchain, state->buffer, TOKEN_COMMAND);
+            state->foundcmd = 1;
+        }
+        else
+            append(&state->data->cmdchain, state->buffer, TOKEN_WORD);
+        state->buf_i = 0;
+    }
+    state->last_was_space = 0;
+}
+
+// Function to handle special characters like '|', '<', '>', and spaces
+void handle_special_characters(t_tokenizer_state *state)
+{
+    if (state->buf_i > 0)
+    {
+        state->buffer[state->buf_i] = '\0';
+        if (!state->foundcmd)
+        {
+            append(&state->data->cmdchain, state->buffer, TOKEN_COMMAND);
+            state->foundcmd = 1;
+        }
+        else
+            append(&state->data->cmdchain, state->buffer, TOKEN_WORD);
+        state->buf_i = 0;
+    }
+    if (state->input[state->i] == '<' && state->input[state->i + 1] == '<')
+    {
+        append(&state->data->cmdchain, "<<", TOKEN_HEREDOC_EOF);
+        state->i++;
+        state->last_was_space = 0;
+    }
+    else if (state->input[state->i] == '>' && state->input[state->i + 1] == '>')
+    {
+        append(&state->data->cmdchain, ">>", TOKEN_OUT_A_FILE);
+        state->i++;
+        state->last_was_space = 0;
+    }
+    else if (state->input[state->i] == '>')
+    {
+        append(&state->data->cmdchain, ">", TOKEN_OUT_FILE);
+        state->last_was_space = 0;
+    }
+    else if (state->input[state->i] == '<')
+    {
+        append(&state->data->cmdchain, "<", TOKEN_IN_FILE);
+        state->last_was_space = 0;
+    }
+    else if (state->input[state->i] == '|')
+    {
+        append(&state->data->cmdchain, "|", TOKEN_PIPE);
+        state->last_was_space = 0;
+    }
+    else if (state->input[state->i] == ' ')
+    {
+        append(&state->data->cmdchain, " ", TOKEN_SPACE);
+        state->last_was_space = 0;
+    }
+}
+
+// Function to handle regular characters and spaces
+void handle_regular_characters(t_tokenizer_state *state)
+{
+    if (state->last_was_space)
+    {
+        state->buffer[0] = state->input[state->i];
+        state->buffer[1] = '\0';
+        append(&state->data->cmdchain, state->buffer, get_delimiter_type(state->buffer));
+    }
+    else
+    {
+        state->buffer[state->buf_i++] = state->input[state->i];
+    }
+    state->last_was_space = (state->input[state->i] == ' ');
+}
+
+// Function to finalize buffer processing
+void finalize_buffer(t_tokenizer_state *state)
+{
+    if (state->buf_i > 0)
+    {
+        state->buffer[state->buf_i] = '\0';
+        if (!state->foundcmd)
+        {
+            append(&state->data->cmdchain, state->buffer, TOKEN_COMMAND);
+            state->foundcmd = 1;
+        }
+        else
+            append(&state->data->cmdchain, state->buffer, TOKEN_WORD);
+    }
 }

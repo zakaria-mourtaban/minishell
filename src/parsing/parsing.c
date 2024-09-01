@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 16:05:11 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 13:13:15 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 17:36:02 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,110 +109,134 @@ t_tokens	*getnextspace(t_tokens *token)
 	return (tmp);
 }
 
-t_command	*parse_tokens(t_tokens *tokens)
-{
-	t_command	*cmd_list;
-	t_command	*current_cmd;
-	t_tokens	*tmp;
+void handle_command_or_word(t_command **current_cmd, t_tokens *tmp);
+void handle_pipe(t_command **cmd_list, t_command **current_cmd);
+void handle_in_file(t_command *current_cmd, t_tokens **tmp);
+void handle_out_file(t_command *current_cmd, t_tokens **tmp);
+void handle_out_a_file(t_command *current_cmd, t_tokens **tmp);
 
-	tmp = tokens;
-	cmd_list = NULL;
-	current_cmd = NULL;
-	if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND))
-	{
-		if (!current_cmd)
-		{
-			current_cmd = create_command_node();
-			if (!current_cmd)
-			{
-				fprintf(stderr, "Failed to create a new command node.\n");
-				return (NULL);
-			}
-		}
-		add_argument(current_cmd, tmp->content);
-	}
-	tmp = tmp->next;
-	while (tmp)
-	{
-		if (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
-		{
-			if (!current_cmd)
-			{
-				current_cmd = create_command_node();
-				if (!current_cmd)
-				{
-					fprintf(stderr, "Failed to create a new command node.\n");
-					return (NULL);
-				}
-			}
-			add_argument(current_cmd, tmp->content);
-		}
-		else if (tmp->id == TOKEN_PIPE)
-		{
-			if (current_cmd)
-			{
-				append_command_node(&cmd_list, current_cmd);
-				current_cmd = NULL;
-			}
-		}
-		else if (tmp->id == TOKEN_IN_FILE)
-		{
-			tmp = tmp->next;
-			if (tmp && tmp->id == TOKEN_SPACE)
-				tmp = tmp->next; // Move to the next token,
-			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
-				&& current_cmd)
-			{
-				current_cmd->infile = open(tmp->content, O_RDONLY);
-				if (current_cmd->infile < 0)
-					perror("Failed to open input file");
-				else
-					printf("Set input file to: %s\n", tmp->content);
-			}
-			tmp = nexttoken(tmp);
-		}
-		else if (tmp->id == TOKEN_OUT_FILE)
-		{
-			tmp = tmp->next;
-			if (tmp->id == TOKEN_SPACE)
-				tmp = tmp->next; // Move to the next token,
-			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
-				&& current_cmd)
-			{
-				current_cmd->outfile = open(tmp->content,
-						O_WRONLY | O_CREAT | O_TRUNC, 0644);
-				current_cmd->append = 0;
-				if (current_cmd->outfile < 0)
-					perror("Failed to open output file");
-				else
-					printf("Set output file to: %s\n", tmp->content);
-			}
-			tmp = nexttoken(tmp);
-		}
-		else if (tmp->id == TOKEN_OUT_A_FILE)
-		{
-			tmp = tmp->next;
-			if (tmp->id == TOKEN_SPACE)
-				tmp = tmp->next; // Move to the next token,
-			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
-				&& current_cmd)
-			{
-				current_cmd->outfile = open(tmp->content,
-						O_WRONLY | O_CREAT | O_APPEND, 0644);
-				current_cmd->append = 1;
-				if (current_cmd->outfile < 0)
-					perror("Failed to open append output file");
-				else
-					printf("Set append output file to: %s\n", tmp->content);
-			}
-			tmp = nexttoken(tmp);
-		}
-		if (tmp != NULL)
-			tmp = tmp->next;
-	}
-	if (current_cmd)
-		append_command_node(&cmd_list, current_cmd);
-	return (cmd_list);
+t_command *parse_tokens(t_tokens *tokens)
+{
+    t_command *cmd_list = NULL;
+    t_command *current_cmd = NULL;
+    t_tokens *tmp = tokens;
+
+    while (tmp)
+    {
+        if (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
+        {
+            if (!current_cmd)
+            {
+                current_cmd = create_command_node();
+                if (!current_cmd)
+                {
+                    fprintf(stderr, "Failed to create a new command node.\n");
+                    return NULL;
+                }
+            }
+            add_argument(current_cmd, tmp->content);
+        }
+        else if (tmp->id == TOKEN_PIPE)
+        {
+            handle_pipe(&cmd_list, &current_cmd);
+        }
+        else if (tmp->id == TOKEN_IN_FILE)
+        {
+            handle_in_file(current_cmd, &tmp);
+        }
+        else if (tmp->id == TOKEN_OUT_FILE)
+        {
+            handle_out_file(current_cmd, &tmp);
+        }
+        else if (tmp->id == TOKEN_OUT_A_FILE)
+        {
+            handle_out_a_file(current_cmd, &tmp);
+        }
+
+        if (tmp)
+            tmp = tmp->next;
+    }
+
+    if (current_cmd)
+        append_command_node(&cmd_list, current_cmd);
+
+    return cmd_list;
+}
+
+void handle_command_or_word(t_command **current_cmd, t_tokens *tmp)
+{
+    if (!*current_cmd)
+    {
+        *current_cmd = create_command_node();
+        if (!*current_cmd)
+        {
+            fprintf(stderr, "Failed to create a new command node.\n");
+            return;
+        }
+    }
+    add_argument(*current_cmd, tmp->content);
+}
+
+void handle_pipe(t_command **cmd_list, t_command **current_cmd)
+{
+    if (*current_cmd)
+    {
+        append_command_node(cmd_list, *current_cmd);
+        *current_cmd = NULL;
+    }
+}
+
+void handle_in_file(t_command *current_cmd, t_tokens **tmp)
+{
+    *tmp = (*tmp)->next;
+    if (*tmp && (*tmp)->id == TOKEN_SPACE)
+        *tmp = (*tmp)->next; // Move to the next token
+
+    if (*tmp && ((*tmp)->id == TOKEN_WORD || (*tmp)->id == TOKEN_COMMAND) && current_cmd)
+    {
+        current_cmd->infile = open((*tmp)->content, O_RDONLY);
+        if (current_cmd->infile < 0)
+            perror("Failed to open input file");
+        else
+            printf("Set input file to: %s\n", (*tmp)->content);
+    }
+    *tmp = nexttoken(*tmp);
+}
+
+void handle_out_file(t_command *current_cmd, t_tokens **tmp)
+{
+    *tmp = (*tmp)->next;
+    if (*tmp && (*tmp)->id == TOKEN_SPACE)
+        *tmp = (*tmp)->next; // Move to the next token
+
+    if (*tmp && ((*tmp)->id == TOKEN_WORD || (*tmp)->id == TOKEN_COMMAND) && current_cmd)
+    {
+        current_cmd->outfile = open((*tmp)->content, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        current_cmd->append = 0;
+        if (current_cmd->outfile < 0)
+            perror("Failed to open output file");
+        else
+            printf("Set output file to: %s\n", (*tmp)->content);
+    }
+    *tmp = nexttoken(*tmp);
+}
+
+void handle_out_a_file(t_command *current_cmd, t_tokens **tmp)
+{
+    *tmp = (*tmp)->next;
+    if (*tmp && (*tmp)->id == TOKEN_SPACE)
+        *tmp = (*tmp)->next; // Move to the next token
+
+    if (*tmp && ((*tmp)->id == TOKEN_WORD || (*tmp)->id == TOKEN_COMMAND) && current_cmd)
+    {
+        current_cmd->outfile = open((*tmp)->content, O_WRONLY | O_CREAT | O_APPEND, 0644);
+        current_cmd->append = 1;
+        if (current_cmd->outfile < 0)
+            perror("Failed to open append output file");
+        else
+            printf("Set append output file to: %s\n", (*tmp)->content);
+    }
+    *tmp = nexttoken(*tmp);
 }
 
 void	free_arg_list(t_arg *head)

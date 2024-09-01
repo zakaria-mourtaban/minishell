@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 13:41:01 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 17:31:43 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ void	execute_builtin_command(t_command *command, t_env *env_list)
 	}
 	if (strcmp(command->args->arg, "env") == 0)
 	{
+		printf("running env\n");
 		env_command(env_list);
 		return ;
 	}
@@ -250,7 +251,7 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 		{
 			execute_builtin_command(current, data->env_list);
 		}
-		else
+		else if (current->error == 0)
 			execute_command(current, pipes, i, num_cmds, data);
 		current = current->next;
 		i++;

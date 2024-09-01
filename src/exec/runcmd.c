@@ -1,42 +1,16 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   runcmd.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/01 17:06:09 by zmourtab          #+#    #+#             */
+/*   Updated: 2024/09/01 17:06:09 by zmourtab         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-
-// runs cmd without any handling
-void	runcmd(const char *input, char **env, t_data *data)
-{
-	pid_t pid;
-	int status;
-
-	data->cmd.running = 1;
-	data->cmd.cmd = ft_split(input, ' ');
-	pid = fork();
-	if (pid == -1)
-		printf("error in fork should be doing something here");
-	if (pid == 0)
-	{
-		status = execve(get_path(data->cmd.cmd[0], data->env_list),
-				data->cmd.cmd, env);
-		if (status != 0)
-		{
-			data->cmd.status = 127;
-			printf("%s: command not found\n", data->cmd.cmd[0]);
-			exit(status);
-		}
-		exit(status);
-	}
-	else
-		data->cmd.pid = pid;
-}
-// handles cmd and executes,
-// can be modified for future implementation of signals
-
-// void	parsecmd(const char *input, t_data *data)
-// {
-// 	char *tokens;
-// 	tokens = rmquote((char *)input, data);
-// }cd , echo , unset , exit
 
 void	free_tokens(t_tokens *head)
 {
@@ -61,25 +35,15 @@ int	check_quotes(const char *str)
 	while (*str)
 	{
 		if (*str == '\'')
-		{
 			single_quote_count++;
-		}
 		else if (*str == '"')
-		{
 			double_quote_count++;
-		}
 		str++;
 	}
-
-	// Check if both counts are even
 	if (single_quote_count % 2 == 0 && double_quote_count % 2 == 0)
-	{
 		return (0);
-	}
 	else
-	{
 		return (1);
-	}
 }
 
 void	initcmd(char *input, char **env, t_data *data)
@@ -95,7 +59,6 @@ void	initcmd(char *input, char **env, t_data *data)
 
 	printcmds(data);
 	remove_quotes(data->cmdchain);
-
 	if (!checksyntaxerror(data))
 	{
 		command = parse_tokens(data->cmdchain);

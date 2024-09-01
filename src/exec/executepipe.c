@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 13:30:13 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 13:41:01 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,11 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
 		// Execute the command
 		if (args[0])
 			path = get_path(args[0], data->env_list);
-		if (!access(path, X_OK))
+		if (is_builtin_command(args[0]))
+		{
+			execute_builtin_command(cmd, data->env_list);
+		}
+		else if (!access(path, X_OK))
 			execve(path, args, data->env);
 		else
 		{
@@ -242,7 +246,7 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 			continue ;
 		}
 		path = get_path(current->args->arg, data->env_list);
-		if (is_builtin_command(current->args->arg))
+		if (is_builtin_command(current->args->arg) && current->next == NULL)
 		{
 			execute_builtin_command(current, data->env_list);
 		}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 12:07:09 by odib              #+#    #+#             */
-/*   Updated: 2024/09/01 11:51:14 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/01 13:35:05 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ void echo_command(t_arg *args)
         newline = 0; 
         current = current->next;
     }
-
     
     while (current)
     {

@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 18:32:32 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 19:49:07 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ typedef struct s_data
 
 extern int				signalint;
 void					free_tab(char **tab);
-void					check_path(const char *path, t_data *data);
+void					check_path(t_tokens *tokens, t_data *data);
 int						hasaccess(t_tokens *token, t_data *data);
 void					execute_pipeline(t_command *cmds, t_data *data);
 void					art(void);

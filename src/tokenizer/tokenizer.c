@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 17:07:10 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 18:17:52 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 19:24:22 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ t_tokens	*newnode(char *data, int type)
 	ptr->id = type;
 	ptr->next = NULL;
 	ptr->previous = NULL;
+	ptr->error = 0;
 	return (ptr);
 }
 

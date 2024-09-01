@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 18:35:16 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 19:50:47 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,46 +64,45 @@ bool	is_builtin_command(const char *command)
 	return (false);
 }
 
-void	execute_builtin_command(t_command *command, t_data *data)
+int	execute_builtin_command(t_command *command, t_data *data)
 {
 	if (command == NULL)
-		return ;
+		return (-1);
 	if (ft_strcmp(command->args->arg, "echo") == 0
 		&& ft_strlen(command->args->arg) == 4)
 	{
 		data->cmd.status = echo_command(command->args);
-		return ;
+		return (data->cmd.status);
 	}
 	if (ft_strcmp(command->args->arg, "cd") == 0
 		&& ft_strlen(command->args->arg) == 2)
 	{
 		data->cmd.status = change_dir(command->args, data->env_list);
-		return ;
+		return (data->cmd.status);
 	}
 	if (ft_strcmp(command->args->arg, "exit") == 0
 		&& ft_strlen(command->args->arg) == 4)
 	{
 		exit_command(command->args);
-		return ;
+		return (data->cmd.status);
 	}
 	if (ft_strcmp(command->args->arg, "unset") == 0
 		&& ft_strlen(command->args->arg) == 5)
 	{
 		data->cmd.status = unset_command(command->args, &data->env_list);
-		return ;
+		return (data->cmd.status);
 	}
 	if (ft_strcmp(command->args->arg, "pwd") == 0
 		&& ft_strlen(command->args->arg) == 3)
 	{
 		data->cmd.status = pwd_command();
-		return ;
+		return (data->cmd.status);
 	}
 	if (ft_strcmp(command->args->arg, "env") == 0
 		&& ft_strlen(command->args->arg) == 3)
 	{
-		printf("running env\n");
 		data->cmd.status = env_command(data->env_list);
-		return ;
+		return (data->cmd.status);
 	}
 	if (ft_strcmp(command->args->arg, "export") == 0
 		&& ft_strlen(command->args->arg) == 6)
@@ -112,7 +111,7 @@ void	execute_builtin_command(t_command *command, t_data *data)
 		// argv = tokens_to_args(command->args->arg);
 		// printf("%s",*argv);
 		data->cmd.status = export_command(&data->env_list, command->args);
-		return ;
+		return (data->cmd.status);
 	}
 	// Uncomment and implement if needed
 	// if (strcmp(command, "unset") == 0) {
@@ -120,6 +119,7 @@ void	execute_builtin_command(t_command *command, t_data *data)
 	//     return ;
 	// }
 	// fprintf(stderr, "Unknown command: %s\n", command);
+	return (-1);
 }
 
 void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
@@ -161,11 +161,11 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
 			dup2(cmd->infile, STDIN_FILENO);
 		}
 		// Close all pipe ends in child process
+		// printf("executing %s %d %d\n", cmd->args->arg, cmd->infile,
 		for (int j = 0; j < 2 * (num_cmds - 1); j++)
 		{
 			close(pipes[j]);
 		}
-		// printf("executing %s %d %d\n", cmd->args->arg, cmd->infile,
 		// 	cmd->outfile);
 		// Construct the arguments array
 		arg_count = 0;
@@ -194,10 +194,8 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
 		if (args[0])
 			path = get_path(args[0], data->env_list);
 		if (is_builtin_command(args[0]))
-		{
 			execute_builtin_command(cmd, data);
-		}
-		else if (!access(path, X_OK))
+		else if (!access(path, X_OK) && cmd->error == 0)
 			execve(path, args, data->env);
 		else
 		{

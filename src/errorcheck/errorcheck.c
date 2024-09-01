@@ -130,29 +130,32 @@ int	contains_dot_or_slash(const char *str)
 	return (0); // Return 0 if neither '.' nor '/' is found
 }
 
-void	check_path(const char *path, t_data *data)
+void	check_path(t_tokens *token, t_data *data)
 {
 	struct stat	statbuf;
 	char		*str;
 
-	str = get_path((char *)path, data->env_list);
-	if (access(str, X_OK) != 0 && !contains_dot_or_slash(path)
+	str = get_path((char *)token->content, data->env_list);
+	if (access(str, X_OK) != 0 && !contains_dot_or_slash(token->content)
 		&& !is_builtin_command(str))
 	{
 		data->cmd.status = 127;
-		printf("bash: %s: command not found\n", path);
+		token->error = 1;
+		printf("bash: %s: command not found\n", token->content);
 	}
-	else if (stat(path, &statbuf) == 0 && S_ISDIR(statbuf.st_mode)
+	else if (stat(token->content, &statbuf) == 0 && S_ISDIR(statbuf.st_mode)
 		&& !is_builtin_command(str))
 	{
 		data->cmd.status = 126;
-		printf("bash: %s: is a directory\n", path);
+		token->error = 1;
+		printf("bash: %s: is a directory\n", token->content);
 	}
 	else if (access(str, X_OK) != 0 && !S_ISDIR(statbuf.st_mode)
 		&& !is_builtin_command(str))
 	{
 		data->cmd.status = 127;
-		printf("bash: %s: No such file or directory\n", path);
+		token->error = 1;
+		printf("bash: %s: No such file or directory\n", token->content);
 	}
 	free(str);
 }
@@ -212,8 +215,7 @@ int	checksyntaxerror(t_data *data)
 		}
 		if (tmp->id == TOKEN_COMMAND)
 		{
-			check_path(tmp->content, data);
-			tmp->error = 1;
+			check_path(tmp, data);
 			tmp = tmp->next;
 			continue ;
 		}

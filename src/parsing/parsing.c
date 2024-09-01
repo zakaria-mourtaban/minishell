@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 16:05:11 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 18:19:28 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 19:45:59 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ t_command	*create_command_node(void)
 	new_cmd->infile = STDIN_FILENO;
 	new_cmd->outfile = STDOUT_FILENO;
 	new_cmd->next = NULL;
+	new_cmd->error = 0;
 	return (new_cmd);
 }
 void	append_command_node(t_command **cmd_list, t_command *new_cmd)
@@ -129,15 +130,12 @@ t_command	*parse_tokens(t_tokens *tokens)
 				return (NULL);
 			}
 		}
-		current_cmd->error = 0;
 		add_argument(current_cmd, tmp->content);
 	}
+	current_cmd->error = 0;
 	tmp = tmp->next;
 	while (tmp)
 	{
-		current_cmd->error = 0;
-		if (tmp->error == 1)
-			current_cmd->error = 1;
 		if (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
 		{
 			if (!current_cmd)
@@ -211,7 +209,11 @@ t_command	*parse_tokens(t_tokens *tokens)
 			}
 			tmp = nexttoken(tmp);
 		}
-		if (tmp != NULL)
+		if (tmp->error == 1)
+		{
+			current_cmd->error = 1;
+			printf("cmderror = 1\n");
+		}if (tmp != NULL)
 			tmp = tmp->next;
 	}
 	if (current_cmd)

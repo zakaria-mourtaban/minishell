@@ -3,26 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 12:09:41 by odib              #+#    #+#             */
-/*   Updated: 2024/08/30 12:19:53 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/01 18:00:02 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-//to be edit
-void pwd_command()
+void	pwd_command(void)
 {
-    static char cwd[1024];
-    if (getcwd(cwd, sizeof(cwd)) != NULL)
-    {
-        printf("%s\n", cwd);
-    }
-    else
-    {
-        perror("getcwd() error");
-        return ;
-    }
+	static char cwd[1024];
+	if (getcwd(cwd, sizeof(cwd)) != NULL)
+	{
+		printf("%s\n", cwd);
+	}
+	else
+	{
+		perror("getcwd() error");
+		return ;
+	}
 }

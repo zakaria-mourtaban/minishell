@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 17:04:37 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 18:00:19 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	init(t_data *data, char **env)
 {
 	t_env	*tmp;
 
-	art(); // can be removed for norm
+	art();
 	signalint = 0;
 	data->env_list = NULL;
 	data->cmdchain = NULL;

@@ -6,12 +6,12 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 13:36:39 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/07/15 03:47:31 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 17:59:48 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <limits.h>
 #include "libft.h"
+#include <limits.h>
 
 static size_t	find_next_line_break(char *str, size_t i)
 {
@@ -25,7 +25,7 @@ static size_t	find_next_line_break(char *str, size_t i)
 	return (ptr - str);
 }
 
-char	*get_substr(char	*buffer)
+char	*get_substr(char *buffer)
 {
 	char	*str;
 	size_t	i;
@@ -44,9 +44,9 @@ char	*get_substr(char	*buffer)
 	str[j] = '\0';
 	if (!*str)
 		return (free(str), free(buffer), NULL);
-	free (buffer);
+	free(buffer);
 	return (str);
-}	
+}
 
 char	*get_lines(char *buffer)
 {
@@ -111,28 +111,3 @@ char	*ft_get_next_line(int fd)
 	read_buffer = get_substr(read_buffer);
 	return (read_content);
 }
-
-// int main()
-// {
-// 	int i = open("file.txt",O_RDONLY);
-// 	char *buf;
-// 	buf = get_next_line(i);
-// 	printf("%s", buf);
-// 	buf = get_next_line(i);
-// 	printf("%s", buf);
-// 	buf = get_next_line(i);
-// 	printf("%s", buf);
-// 	buf = get_next_line(i);
-// 	printf("%s", buf);
-// 	free(buf);
-// 	buf = get_next_line(i);
-// 	printf("%s", buf);
-// 	free(buf);
-// 	buf = get_next_line(i);
-// 	printf("%s", buf);
-// 	free(buf);
-// 	buf = get_next_line(i);
-// 	printf("%s", buf);
-// 	free(buf);
-// 	return (0);
-// }

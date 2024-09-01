@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 23:38:08 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/29 15:02:16 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 18:00:29 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,6 @@ void	free_env_list(t_env *env_list)
 	while (current != NULL)
 	{
 		next = current->next;
-		// Free any dynamically allocated members of t_env
-		// For example, if t_env has a 'name' and 'value' char pointer:
-		// free(current->name);
-		// free(current->value);
 		if (current->key)
 			free(current->key);
 		if (current->value)
@@ -59,10 +55,5 @@ void	free_data(t_data *data)
 		if (data->cmdchain != NULL)
 			free_cmdchain(data->cmdchain);
 		free_env_list(data->env_list);
-		// Free any other dynamically allocated members of t_data
-		// For example:
-		// free(data->cmd.command);
-		// free(data->cmd.args);
-		// etc.
 	}
 }

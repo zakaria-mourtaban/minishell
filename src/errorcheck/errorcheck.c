@@ -67,8 +67,8 @@ int	checkfileout(t_tokens *token)
 	next_token = getnext(token->next);
 	if (!next_token || (next_token->id != TOKEN_WORD
 			&& next_token->id != TOKEN_COMMAND))
-		return (1); // Error: No valid file or command after >
-	return (0);     // No error
+		return (1);
+	return (0);
 }
 
 int	checkfilein(t_tokens *token)
@@ -78,8 +78,8 @@ int	checkfilein(t_tokens *token)
 	next_token = getnext(token->next);
 	if (!next_token || (next_token->id != TOKEN_WORD
 			&& next_token->id != TOKEN_COMMAND))
-		return (1); // Error: No valid file or command after <
-	return (0);     // No error
+		return (1);
+	return (0);
 }
 
 void	printerror(t_tokens *token)
@@ -96,7 +96,6 @@ void	printerror(t_tokens *token)
 }
 int	is_command(t_tokens *token)
 {
-	// Check if the file exists and is executable
 	return (access(token->content, F_OK) == 0 && access(token->content,
 			X_OK) == 0);
 }
@@ -120,14 +119,14 @@ int	isdirectory(t_tokens *token)
 int	contains_dot_or_slash(const char *str)
 {
 	while (*str)
-	{ // Iterate through the string
+	{
 		if (*str == '.' || *str == '/')
 		{
-			return (1); // Return 1 if '.' or '/' is found
+			return (1);
 		}
 		str++;
 	}
-	return (0); // Return 0 if neither '.' nor '/' is found
+	return (0);
 }
 
 void	check_path(const char *path, t_data *data)
@@ -157,166 +156,56 @@ void	check_path(const char *path, t_data *data)
 	free(str);
 }
 
-void handle_error(t_tokens *token, t_data *data, int (*check_func)(t_tokens *), void (*error_func)(t_tokens *), int status)
+void	handle_error(t_tokens *token, t_data *data,
+		int (*check_func)(t_tokens *), void (*error_func)(t_tokens *),
+		int status)
 {
-    if (check_func(token))
-    {
-        data->cmd.status = status;
-        error_func(token->next);
-        token->error = 1;
-        return;
-    }
+	if (check_func(token))
+	{
+		data->cmd.status = status;
+		error_func(token->next);
+		token->error = 1;
+		return ;
+	}
 }
 
-int checksyntaxerror(t_data *data)
+int	checksyntaxerror(t_data *data)
 {
-    t_tokens *tmp = data->cmdchain;
+	t_tokens	*tmp;
 
-    while (tmp)
-    {
-        if (tmp->id == TOKEN_PIPE)
-        {
-            handle_error(tmp, data, checkpipe, printerror, 2);
-            if (tmp->error)
-                return 1;
-        }
-        else if (tmp->id == TOKEN_HEREDOC_EOF)
-        {
-            handle_error(tmp, data, checkheredoc, printerror, 2);
-            if (tmp->error)
-                return 1;
-        }
-        else if (tmp->id == TOKEN_IN_FILE)
-        {
-            handle_error(tmp, data, checkfilein, printerror, 2);
-            if (tmp->error)
-                return 1;
-        }
-        else if (tmp->id == TOKEN_OUT_FILE || tmp->id == TOKEN_OUT_A_FILE)
-        {
-            handle_error(tmp, data, checkfileout, printerror, 2);
-            if (tmp->error)
-                return 1;
-        }
-        else if (tmp->id == TOKEN_COMMAND)
-        {
-            check_path(tmp->content, data);
-            tmp->error = 1;
-        }
-        
-        tmp = tmp->next;
-    }
-
-    return 0;
+	tmp = data->cmdchain;
+	while (tmp)
+	{
+		if (tmp->id == TOKEN_PIPE)
+		{
+			handle_error(tmp, data, checkpipe, printerror, 2);
+			if (tmp->error)
+				return (1);
+		}
+		else if (tmp->id == TOKEN_HEREDOC_EOF)
+		{
+			handle_error(tmp, data, checkheredoc, printerror, 2);
+			if (tmp->error)
+				return (1);
+		}
+		else if (tmp->id == TOKEN_IN_FILE)
+		{
+			handle_error(tmp, data, checkfilein, printerror, 2);
+			if (tmp->error)
+				return (1);
+		}
+		else if (tmp->id == TOKEN_OUT_FILE || tmp->id == TOKEN_OUT_A_FILE)
+		{
+			handle_error(tmp, data, checkfileout, printerror, 2);
+			if (tmp->error)
+				return (1);
+		}
+		else if (tmp->id == TOKEN_COMMAND)
+		{
+			check_path(tmp->content, data);
+			tmp->error = 1;
+		}
+		tmp = tmp->next;
+	}
+	return (0);
 }
-
-// int	checksyntaxerror(t_data *data)
-// {
-// 	t_tokens	*tmp;
-
-// 	tmp = data->cmdchain;
-// 	while (tmp)
-// 	{
-// 		if (tmp->id == TOKEN_PIPE && checkpipe(tmp))
-// 		{
-// 			data->cmd.status = 2;
-// 			printerror(tmp);
-// 			tmp->error = 1;
-// 			tmp = tmp->next;
-// 			return (1);
-// 			// return (1);
-// 		}
-// 		if (tmp->id == TOKEN_HEREDOC_EOF && checkheredoc(tmp))
-// 		{
-// 			data->cmd.status = 2;
-// 			printerror(tmp->next);
-// 			tmp->error = 1;
-// 			tmp = tmp->next;
-// 			return (1);
-// 			// return (1);
-// 		}
-// 		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
-// 		{
-// 			data->cmd.status = 2;
-// 			printerror(tmp->next);
-// 			tmp->error = 1;
-// 			tmp = tmp->next;
-// 			return (1);
-// 			// return (1);
-// 		}
-// 		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
-// 		{
-// 			data->cmd.status = 2;
-// 			printerror(tmp->next);
-// 			tmp->error = 1;
-// 			tmp = tmp->next;
-// 			return (1);
-// 			// return (1);
-// 		}
-// 		if ((tmp->id == TOKEN_OUT_FILE || tmp->id == TOKEN_OUT_A_FILE)
-// 			&& checkfileout(tmp))
-// 		{
-// 			data->cmd.status = 2;
-// 			printerror(tmp->next);
-// 			tmp->error = 1;
-// 			tmp = tmp->next;
-// 			return (1);
-// 			// return (1);
-// 		}
-// 		if (tmp->id == TOKEN_COMMAND)
-// 		{
-// 			check_path(tmp->content, data);
-// 			tmp->error = 1;
-// 			tmp = tmp->next;
-// 			continue ;
-// 		}
-// 		// printf("%s\n", tmp->content);
-// 		tmp = tmp->next;
-// 	}
-// 	return (0);
-// }
-// tmp = data->cmdchain;
-// while (tmp)
-// {
-// 	switch (tmp->id)
-// 	{
-// 	case TOKEN_COMMAND:
-// 		if (isdirectory(tmp))
-// 		{
-// 			printerror(tmp);
-// 			return (1);
-// 		}
-// 		break ;
-// 	case (TOKEN_OUT_FILE):
-// 		if (checkfileout(tmp))
-// 		{
-// 			printerror(tmp);
-// 			return (1);
-// 		}
-// 		break ;
-// 	case (TOKEN_OUT_A_FILE):
-// 		if (checkfileout(tmp))
-// 		{
-// 			printerror(tmp);
-// 			return (1);
-// 		}
-// 		break ;
-// 	case TOKEN_IN_FILE:
-// 		if (checkfilein(tmp))
-// 		{
-// 			printerror(tmp);
-// 			return (1);
-// 		}
-// 		break ;
-// 	case TOKEN_HEREDOC_EOF:
-// 		if (checkheredoc(tmp))
-// 		{
-// 			printerror(tmp);
-// 			return (1);
-// 		}
-// 		break ;
-// 	default:
-// 		break ;
-// 	}
-// 	tmp = tmp->next;
-// }

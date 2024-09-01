@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 06:58:20 by odib              #+#    #+#             */
-/*   Updated: 2024/08/27 17:08:30 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 18:00:30 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@ void	remove_quotes(t_tokens *tokens)
 			else if (quote && *src == quote)
 				quote = 0;
 			else
-            {
+			{
 				*dst = *src;
-                dst++;
-            }
+				dst++;
+			}
 			src++;
 		}
 		*dst = '\0';
@@ -41,22 +41,20 @@ void	remove_quotes(t_tokens *tokens)
 	}
 }
 
-void specify_token_cmd(t_tokens *token)
+void	specify_token_cmd(t_tokens *token)
 {
-    while (token)
-    {
-        while (token && token->id != TOKEN_COMMAND && token->id != TOKEN_WORD)
-        {
-            token = token->next;
-        }
-        if (!token)
-            return ;
-	
-        token->id = TOKEN_COMMAND;
-        while (token && token->id != TOKEN_PIPE)
-        {
-            token = token->next;
-        }
-    }
+	while (token)
+	{
+		while (token && token->id != TOKEN_COMMAND && token->id != TOKEN_WORD)
+		{
+			token = token->next;
+		}
+		if (!token)
+			return ;
+		token->id = TOKEN_COMMAND;
+		while (token && token->id != TOKEN_PIPE)
+		{
+			token = token->next;
+		}
+	}
 }
-

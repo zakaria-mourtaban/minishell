@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:24:52 by odib              #+#    #+#             */
-/*   Updated: 2024/08/31 22:50:15 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 18:00:00 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ int	is_key_invalid(char *key)
 {
 	if (check_key(key) == 0)
 	{
-		printf("Invalid key: %s\n", key); // Debugging
+		printf("Invalid key: %s\n", key);
 		return (1);
 	}
 	return (0);
@@ -213,24 +213,3 @@ void	export_command(t_env **env_list, t_arg *arg)
 	if (i == 0)
 		print_sorted_env_list(*env_list);
 }
-
-// int	update_env_value(t_env *head, const char *key, const char *new_value)
-//{
-//	t_env	*current;
-
-//	current = head;
-//	// Traverse the list to find the node with the matching key
-//	while (current)
-//	{
-//		if (strcmp(current->key, key) == 0) // If the key matches
-//		{
-//			free(current->value);               // Free the old value
-//			current->value = strdup(new_value); // Update with the new value
-//			if (!current->value)
-//				return (-1); // Memory allocation failure
-//			return (0);      // Success
-//		}
-//		current = current->next;
-//	}
-//	return (-1); // Key not found
-//}

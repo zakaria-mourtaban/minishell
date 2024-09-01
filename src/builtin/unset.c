@@ -3,65 +3,60 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 11:37:39 by odib              #+#    #+#             */
-/*   Updated: 2024/09/01 11:40:45 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/01 18:00:04 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void unset(t_env **env_list, const char *key)
+void	unset(t_env **env_list, const char *key)
 {
-    t_env *current = *env_list;
-    t_env *previous = NULL;
+	t_env	*current;
+	t_env	*previous;
 
-    while (current != NULL)
-    {
-        // Check if the current node's key matches the key to be unset
-        if (strcmp(current->key, key) == 0)
-        {
-            if (previous == NULL) // The first node is the target
-            {
-                *env_list = current->next;
-            }
-            else
-            {
-                previous->next = current->next;
-            }
-
-            // Free the memory allocated for the key, value, and the node itself
-            free(current->key);
-            free(current->value);
-            free(current);
-
-            return; // Key found and removed, exit the function
-        }
-
-        previous = current;
-        current = current->next;
-    }
-
-    // If we reach here, the key was not found
-    fprintf(stderr, "unset: %s: no such variable\n", key);
+	current = *env_list;
+	previous = NULL;
+	while (current != NULL)
+	{
+		if (strcmp(current->key, key) == 0)
+		{
+			if (previous == NULL)
+			{
+				*env_list = current->next;
+			}
+			else
+			{
+				previous->next = current->next;
+			}
+			free(current->key);
+			free(current->value);
+			free(current);
+			return ;
+		}
+		previous = current;
+		current = current->next;
+	}
+	fprintf(stderr, "unset: %s: no such variable\n", key);
 }
 
-int unset_command(t_arg *args, t_env **env_list)
+int	unset_command(t_arg *args, t_env **env_list)
 {
-    t_arg *current = args->next; // Skipping the command itself
+	t_arg *current = args->next;
 
-    if (current == NULL)
-    {
-        fprintf(stderr, "unset: not enough arguments\n");
-        return 1;
-    }
+	if (current == NULL)
+	{
+		fprintf(stderr, "unset: not enough arguments\n");
+		return (1);
+	}
 
-    while (current != NULL)
-    {
-        unset(env_list, current->arg);
-        current = current->next;
-    }
+	while (current != NULL)
+	{
+		unset(env_list, current->arg);
+		current = current->next;
+	}
 
-    return 0;
+	return (0);
 }

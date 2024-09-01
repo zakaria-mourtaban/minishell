@@ -6,13 +6,11 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 17:31:43 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 18:00:14 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-extern char	**environ;
 
 void	close_pipes(int *pipes, int num_pipes)
 {

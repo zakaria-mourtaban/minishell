@@ -105,6 +105,7 @@ void	initcmd(char *input, char **env, t_data *data)
 	}
 	free(input);
 	free_cmdchain(data->cmdchain);
+	data->cmd.status = data->cmd.status % 255;
 	(void)env;
 	(void)command;
 	(void)data;

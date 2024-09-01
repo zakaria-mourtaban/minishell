@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 16:05:11 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/31 23:04:19 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 13:13:15 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int	hasaccess(t_tokens *token, t_data *data)
 		return (1);
 	if (access(get_path(token->content, data->env_list), X_OK))
 		return (1);
-	printf("bash: %s: command not found\n", token->content);
+	printf("bash: %s: commandsda not found\n", token->content);
 	data->cmd.status = 127;
 	return (0);
 }

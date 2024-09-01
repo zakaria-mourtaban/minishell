@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 06:10:13 by odib              #+#    #+#             */
-/*   Updated: 2024/08/31 22:55:31 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 18:00:08 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,6 @@ t_env	*create_envp_node(char *key, char *value, int hidden)
 	new_node->value = ft_strdup(value);
 	new_node->hidden = hidden;
 	new_node->next = NULL;
-	// free(key);
-	// free(value);
 	return (new_node);
 }
 t_env	*create_envp_list_node(char *envp_str, int hidden)
@@ -47,29 +45,6 @@ void	add_node_to_envp_list(t_env **head, t_env **current, t_env *new_node)
 		(*current)->next = new_node;
 	*current = new_node;
 }
-
-// void	append_node(t_env **head, char *key, char *value,int hidden)
-// {
-// 	t_env *current;
-// 	t_env *new_node;
-
-// 	current = *head;
-// 	while (current)
-// 	{
-// 		if (ft_strcmp(current->key, key) == 0) {
-// 			free(current->value);
-// 			current->value = ft_strdup(value);
-// 			return ;
-// 		}
-// 		current = current->next;
-// 	}
-// 	new_node = create_envp_node((char *)key, (char *)value,hidden);
-// 	if (!new_node)
-// 		return ;
-// 	new_node->next = *head;
-// 	*head = new_node;
-// 	return ;
-// }
 
 t_env	*init_copy_envp(char **envp)
 {
@@ -96,9 +71,7 @@ t_env	*init_copy_envp(char **envp)
 		free_env_list(head);
 		return (NULL);
 	}
-	// add_uid_to_envp_list(head);
 	free(UID);
-	// free_env_list(current);
 	return (head);
 }
 
@@ -127,12 +100,6 @@ int	set_env(t_env **head, const char *key, const char *value, int hidden)
 	if (!new_node)
 		return (-1);
 	prev->next = new_node;
-	// new_node->next = *head;
-	// head = new_node;
-	// free_env_list(current);
-	// free(current);
-	// free((char *)key);
-	// free((char *)value);
 	return (0);
 }
 
@@ -148,7 +115,7 @@ void	free_tab(char **tab)
 	}
 	free(tab);
 }
-// to delete a node from envp
+
 int	unset_env(t_env **head, const char *key)
 {
 	t_env	*current;
@@ -188,8 +155,6 @@ void	free_list(t_env *head)
 	}
 }
 
-// for testing
-
 void	print_list(t_env *env_head)
 {
 	t_env	*current_env;
@@ -198,36 +163,11 @@ void	print_list(t_env *env_head)
 	current_env = env_head;
 	while (current_env)
 	{
-		// Print the key
 		printf("Key: %s\n", current_env->key);
-		// Print the values
 		current_value = current_env->value;
 		printf("Values: ");
 		printf("%s", current_value);
-		printf("\n\n"); // Print a newline between entries
-		// Move to the next env node
+		printf("\n\n");
 		current_env = current_env->next;
 	}
 }
-
-// int count_envp_elements(char **envp)
-// {
-// 	int count = 0;
-// 	while (envp[count] != NULL)
-// 	{
-// 		count++;
-// 	}
-// 	return (count);
-// }
-
-// int list_length(t_env *head)
-// {
-// 	int length = 0;
-// 	t_env *current = head;
-// 	while (current)
-// 	{
-// 		length++;
-// 		current = current->next;
-// 	}
-// 	return (length);
-// }

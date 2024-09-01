@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 14:42:27 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/31 23:09:26 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 18:00:06 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,6 @@ char	*envvaluestr(char *key, t_data *data)
 	if (value != NULL)
 	{
 		valuestr = ft_strjoingnl(valuestr, value);
-		// if (value->next != NULL)
-		// 	valuestr = ft_strjoingnl(valuestr, ":");
-		// value = value->next;
 	}
 	free(key);
 	return (valuestr);
@@ -110,9 +107,6 @@ char	*concatenvloop(char *input, t_data *data)
 	free(after);
 	return (input);
 }
-// printf("before:%s\n", before);
-// printf("key:%s\n", key);
-// printf("after:%s\n", after);
 
 int	dollarcount(char *input)
 {
@@ -149,20 +143,20 @@ int	dollarcount(char *input)
 	return (count);
 }
 
-char *concatenv(char *input, t_data *data) {
-    char *out;
+char	*concatenv(char *input, t_data *data)
+{
+	char	*out;
+	char	*temp_out;
 
-    out = ft_strdup(input);
-    while (dollarcount(out) != 0) {
-        char *temp_out = out;
-        out = concatenvloop(out, data);
-        
-        // Free the previous 'out' to prevent memory leaks
-        free(temp_out);
-        
-        printf("out:%s\n", out);
-    }
-    return (out);
+	out = ft_strdup(input);
+	while (dollarcount(out) != 0)
+	{
+		temp_out = out;
+		out = concatenvloop(out, data);
+		free(temp_out);
+		printf("out:%s\n", out);
+	}
+	return (out);
 }
 
 void	concatenvtoken(t_data *data)
@@ -172,12 +166,7 @@ void	concatenvtoken(t_data *data)
 	tmp = data->cmdchain;
 	while (tmp)
 	{
-		
 		tmp->content = handle_dollar_sign(tmp->content, data);
 		tmp = tmp->next;
 	}
-	// free_cmdchain(tmp);
-	// Free the cmdchain after processing all tokens
-    //free_cmdchain(data->cmdchain);
-    //data->cmdchain = NULL;  // Avoid dangling pointer
 }

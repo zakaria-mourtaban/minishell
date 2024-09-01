@@ -2,15 +2,19 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   runcmd.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
+/*                                                    +:+ +:+
+	+:+     */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+
+	+#+        */
+/*                                                +#+#+#+#+#+
+	+#+           */
 /*   Created: 2024/09/01 17:06:09 by zmourtab          #+#    #+#             */
 /*   Updated: 2024/09/01 17:06:09 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
 
 void	free_tokens(t_tokens *head)
 {
@@ -20,10 +24,10 @@ void	free_tokens(t_tokens *head)
 	current = head;
 	while (current != NULL)
 	{
-		next = current->next;   // Save the next node
-		free(current->content); // Free the content of the current node
-		free(current);          // Free the current node
-		current = next;         // Move to the next node
+		next = current->next;
+		free(current->content);
+		free(current);
+		current = next;
 	}
 }
 
@@ -48,7 +52,6 @@ int	check_quotes(const char *str)
 
 void	initcmd(char *input, char **env, t_data *data)
 {
-	// check quote closed
 	t_command *command;
 
 	if (ft_strlen(input) == 0)
@@ -62,7 +65,7 @@ void	initcmd(char *input, char **env, t_data *data)
 	if (!checksyntaxerror(data))
 	{
 		command = parse_tokens(data->cmdchain);
-		// print_command_list(command);
+
 		execute_pipeline(command, data);
 		free_command_list(command);
 	}

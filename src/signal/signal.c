@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 00:00:34 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/31 22:59:22 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 18:00:24 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ void	interactivehandle_sigint(int sig)
 	(void)sig;
 }
 
-// Function to handle SIGQUIT (Ctrl-\), which we will ignore
 void	interactivehandle_sigquit(int sig)
 {
 	(void)sig;
@@ -42,7 +41,6 @@ void	noninteractivehandle_sigint(int sig)
 	(void)sig;
 }
 
-// Function to handle SIGQUIT (Ctrl-\), which we will ignore
 void	noninteractivehandle_sigquit(int sig)
 {
 	(void)sig;
@@ -74,14 +72,12 @@ char	*getinfo(t_data *data)
 void	interactivemode(t_data *data, char **input)
 {
 	char	*info;
+
 	signal(SIGINT, interactivehandle_sigint);
 	signal(SIGQUIT, interactivehandle_sigquit);
-	
 	while (1)
 	{
 		info = getinfo(data);
-		
-		
 		*input = readline(info);
 		free(info);
 		if (input != NULL)

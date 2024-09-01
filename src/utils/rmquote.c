@@ -114,8 +114,6 @@ char	*processstr(char *input, t_data *data)
 
 	l = 0;
 	buffer = ft_strdup(input);
-	// if (numchar(buffer, '\'') % 2 != 0 && numchar(buffer, '\'') != 0)
-	// 	l++;
 	if ((numchar(buffer, '\"') % 2 != 0 && numchar(buffer, '\"') != 0))
 		l++;
 	if (l != 0)
@@ -131,36 +129,7 @@ char	*processstr(char *input, t_data *data)
 	return (buffer);
 }
 
-// char	*envconcatlen(char *input, t_data *data)
-// {
-// 	int	i;
-// 	int	len;
-
-// 	i = 0;
-// 	len = 0;
-// 	while (input[i] != '\0')
-// 	{
-// 		/* code */
-// 	}
-// }
-
-// char	*envconcat(char *input, t_data *data)
-// {
-// 	int	i;
-// 	i = 0;
-// 	while (input[i] != '\0')
-// 	{
-// 		if (input[i] == '$' && input[i + 1] != '\0')
-// 		{
-
-// 		}
-// 	}
-// }
-
 char	*rmquote(char *input, t_data *data)
 {
-	// char *str;
-
-	// str = envconcat(input, data);
 	return (processstr(input, data));
 }

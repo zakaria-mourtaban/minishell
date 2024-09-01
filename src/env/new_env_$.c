@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 23:30:14 by odib              #+#    #+#             */
-/*   Updated: 2024/08/31 23:06:39 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 17:17:58 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ void	handle_normal_variable(char *input, int *i, char **result, t_env *env)
 
 	(*i)++;
 	start = *i;
-	//free(*result);
+	// free(*result);
 	while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
 		(*i)++;
 	end = *i;
@@ -127,7 +127,7 @@ void	handle_normal_variable(char *input, int *i, char **result, t_env *env)
 		env_value = get_env(env, sub_env);
 		if (env_value && *result != NULL)
 			*result = ft_strjoingnl(*result, env_value);
-		else 
+		else
 			*result = ft_strdup(env_value);
 		free(env_value);
 		free(sub_env);
@@ -145,11 +145,30 @@ void	handle_two_dollar(char **result, int *i)
 	*i += 2;
 	free(num_str);
 }
+
+void	handle_question_mark(char **result, int *i, t_data *data)
+{
+	*result = ft_strjoingnl(*result, ft_itoa(data->cmd.status));
+	(*i) += 2;
+}
+
+void copy_and_append_char(char **result, const char *input, int *i)
+{
+    char tmp[2];
+
+    // Copy one character from input to tmp
+    tmp[0] = input[*i];
+    tmp[1] = '\0'; // Null-terminate the string
+    // Append tmp to result
+    *result = ft_strjoingnl(*result, tmp);
+    // Increment the index
+    (*i)++;
+}
+
 char	*handle_dollar_sign(char *input, t_data *data)
 {
 	int		i;
 	char	*result;
-	char	tmp[2];
 
 	i = 0;
 	result = ft_strdup("");
@@ -159,21 +178,14 @@ char	*handle_dollar_sign(char *input, t_data *data)
 			if (input[i + 1] == '$')
 				handle_two_dollar(&result, &i);
 			else if (input[i + 1] == '?')
-			{
-				result = ft_strjoingnl(result, ft_itoa(data->cmd.status));
-				i += 2;
-			}
+				handle_question_mark(&result, &i, data);
 			else if (ft_isdigit(input[i + 1]))
 				i += 2;
 			else
 				handle_normal_variable(input, &i, &result, data->env_list);
 		}
 		else
-		{
-			ft_strlcpy(tmp, input + i, 2);
-			result = ft_strjoingnl(result, tmp);
-			i++;
-		}
+			copy_and_append_char(&result, input, &i);
 	free(input);
 	return (result);
 }

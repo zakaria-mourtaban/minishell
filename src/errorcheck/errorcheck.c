@@ -157,71 +157,124 @@ void	check_path(const char *path, t_data *data)
 	free(str);
 }
 
-int	checksyntaxerror(t_data *data)
+void handle_error(t_tokens *token, t_data *data, int (*check_func)(t_tokens *), void (*error_func)(t_tokens *), int status)
 {
-	t_tokens	*tmp;
-
-	tmp = data->cmdchain;
-	while (tmp)
-	{
-		if (tmp->id == TOKEN_PIPE && checkpipe(tmp))
-		{
-			data->cmd.status = 2;
-			printerror(tmp);
-			tmp->error = 1;
-			tmp = tmp->next;
-			return (1);
-			// return (1);
-		}
-		if (tmp->id == TOKEN_HEREDOC_EOF && checkheredoc(tmp))
-		{
-			data->cmd.status = 2;
-			printerror(tmp->next);
-			tmp->error = 1;
-			tmp = tmp->next;
-			return (1);
-			// return (1);
-		}
-		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
-		{
-			data->cmd.status = 2;
-			printerror(tmp->next);
-			tmp->error = 1;
-			tmp = tmp->next;
-			return (1);
-			// return (1);
-		}
-		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
-		{
-			data->cmd.status = 2;
-			printerror(tmp->next);
-			tmp->error = 1;
-			tmp = tmp->next;
-			return (1);
-			// return (1);
-		}
-		if ((tmp->id == TOKEN_OUT_FILE || tmp->id == TOKEN_OUT_A_FILE)
-			&& checkfileout(tmp))
-		{
-			data->cmd.status = 2;
-			printerror(tmp->next);
-			tmp->error = 1;
-			tmp = tmp->next;
-			return (1);
-			// return (1);
-		}
-		if (tmp->id == TOKEN_COMMAND)
-		{
-			check_path(tmp->content, data);
-			tmp->error = 1;
-			tmp = tmp->next;
-			continue ;
-		}
-		// printf("%s\n", tmp->content);
-		tmp = tmp->next;
-	}
-	return (0);
+    if (check_func(token))
+    {
+        data->cmd.status = status;
+        error_func(token->next);
+        token->error = 1;
+        return;
+    }
 }
+
+int checksyntaxerror(t_data *data)
+{
+    t_tokens *tmp = data->cmdchain;
+
+    while (tmp)
+    {
+        if (tmp->id == TOKEN_PIPE)
+        {
+            handle_error(tmp, data, checkpipe, printerror, 2);
+            if (tmp->error)
+                return 1;
+        }
+        else if (tmp->id == TOKEN_HEREDOC_EOF)
+        {
+            handle_error(tmp, data, checkheredoc, printerror, 2);
+            if (tmp->error)
+                return 1;
+        }
+        else if (tmp->id == TOKEN_IN_FILE)
+        {
+            handle_error(tmp, data, checkfilein, printerror, 2);
+            if (tmp->error)
+                return 1;
+        }
+        else if (tmp->id == TOKEN_OUT_FILE || tmp->id == TOKEN_OUT_A_FILE)
+        {
+            handle_error(tmp, data, checkfileout, printerror, 2);
+            if (tmp->error)
+                return 1;
+        }
+        else if (tmp->id == TOKEN_COMMAND)
+        {
+            check_path(tmp->content, data);
+            tmp->error = 1;
+        }
+        
+        tmp = tmp->next;
+    }
+
+    return 0;
+}
+
+// int	checksyntaxerror(t_data *data)
+// {
+// 	t_tokens	*tmp;
+
+// 	tmp = data->cmdchain;
+// 	while (tmp)
+// 	{
+// 		if (tmp->id == TOKEN_PIPE && checkpipe(tmp))
+// 		{
+// 			data->cmd.status = 2;
+// 			printerror(tmp);
+// 			tmp->error = 1;
+// 			tmp = tmp->next;
+// 			return (1);
+// 			// return (1);
+// 		}
+// 		if (tmp->id == TOKEN_HEREDOC_EOF && checkheredoc(tmp))
+// 		{
+// 			data->cmd.status = 2;
+// 			printerror(tmp->next);
+// 			tmp->error = 1;
+// 			tmp = tmp->next;
+// 			return (1);
+// 			// return (1);
+// 		}
+// 		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
+// 		{
+// 			data->cmd.status = 2;
+// 			printerror(tmp->next);
+// 			tmp->error = 1;
+// 			tmp = tmp->next;
+// 			return (1);
+// 			// return (1);
+// 		}
+// 		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
+// 		{
+// 			data->cmd.status = 2;
+// 			printerror(tmp->next);
+// 			tmp->error = 1;
+// 			tmp = tmp->next;
+// 			return (1);
+// 			// return (1);
+// 		}
+// 		if ((tmp->id == TOKEN_OUT_FILE || tmp->id == TOKEN_OUT_A_FILE)
+// 			&& checkfileout(tmp))
+// 		{
+// 			data->cmd.status = 2;
+// 			printerror(tmp->next);
+// 			tmp->error = 1;
+// 			tmp = tmp->next;
+// 			return (1);
+// 			// return (1);
+// 		}
+// 		if (tmp->id == TOKEN_COMMAND)
+// 		{
+// 			check_path(tmp->content, data);
+// 			tmp->error = 1;
+// 			tmp = tmp->next;
+// 			continue ;
+// 		}
+// 		// printf("%s\n", tmp->content);
+// 		tmp = tmp->next;
+// 	}
+// 	return (0);
+// }
 // tmp = data->cmdchain;
 // while (tmp)
 // {

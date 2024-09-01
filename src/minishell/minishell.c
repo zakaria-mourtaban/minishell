@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 18:00:19 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 18:27:55 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	init(t_data *data, char **env)
 	signalint = 0;
 	data->env_list = NULL;
 	data->cmdchain = NULL;
-	data->env = env;
+	data->env = NULL;
 	data->cmd.status = 0;
 	data->cmd.running = 0;
 	data->env_list = init_copy_envp(env);
@@ -93,6 +93,8 @@ int	main(int ac, char **av, char **env)
 	init(&data, env);
 	while (1)
 	{
+		if (data.env != NULL)
+			free_tab(data.env);
 		data.env = createenv(data.env_list);
 		interactivemode(&data, &input);
 		if (input == NULL)

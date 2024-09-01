@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 17:59:45 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 18:32:32 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,7 @@ typedef struct s_data
 }						t_data;
 
 extern int				signalint;
+void					free_tab(char **tab);
 void					check_path(const char *path, t_data *data);
 int						hasaccess(t_tokens *token, t_data *data);
 void					execute_pipeline(t_command *cmds, t_data *data);
@@ -168,11 +169,11 @@ void					print_list(t_env *env_head);
 pid_t					ft_getuid(void);
 
 bool					is_builtin_command(const char *command);
-void					pwd_command(void);
-void					exit_command(t_arg *args);
-void					echo_command(t_arg *args);
-void					env_command(t_env *env_list);
-void					export_command(t_env **env_list, t_arg *arg);
+int						pwd_command(void);
+int						exit_command(t_arg *args);
+int						echo_command(t_arg *args);
+int						env_command(t_env *env_list);
+int						export_command(t_env **env_list, t_arg *arg);
 void					split_envp(char *envp_str, char **key, char **value);
 int						ft_strlen1(const char *s);
 char					*ft_strndup(const char *s, size_t n);

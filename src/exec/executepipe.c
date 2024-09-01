@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executepipe.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/31 23:30:37 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 11:41:13 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,12 +72,22 @@ void	execute_builtin_command(t_command *command, t_env *env_list)
 		return ;
 	if (strcmp(command->args->arg, "echo") == 0)
 	{
-		// echo_command(argv);
+		echo_command(command->args);
+		return ;
+	}
+	if (strcmp(command->args->arg, "cd") == 0)
+	{
+		change_dir(command->args,env_list);
 		return ;
 	}
 	if (strcmp(command->args->arg, "exit") == 0)
 	{
-		// exit_command(argv);
+		exit_command(command->args);
+		return ;
+	}
+	if (strcmp(command->args->arg, "unset") == 0)
+	{
+		unset_command(command->args,&env_list);
 		return ;
 	}
 	if (strcmp(command->args->arg, "pwd") == 0)

@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:24:52 by odib              #+#    #+#             */
-/*   Updated: 2024/09/01 18:00:00 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 18:31:22 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,33 +177,42 @@ int	getac(t_arg *arg)
 	return (i);
 }
 
-void	export_command(t_env **env_list, t_arg *arg)
+int	export_command(t_env **env_list, t_arg *arg)
 {
 	char	*key;
 	char	*value;
 	t_arg	*tmparg;
 	int		i;
+	int		status;
 
-	tmparg = arg;
+	key = NULL;
+	value = NULL;
 	i = 0;
-	tmparg = tmparg->next;
+	status = 0;
+	tmparg = arg->next;
 	while (tmparg)
 	{
 		split_envp(tmparg->arg, &key, &value);
 		if (is_key_invalid(key))
 		{
 			free_resources(key, value);
+			status = 1;
 			tmparg = tmparg->next;
 			continue ;
 		}
 		if (ft_strlen(value) == 0)
 		{
-			printf("setting env\n");
-			set_env(env_list, key, value, 1);
+			if (set_env(env_list, key, value, 1) != 0)
+			{
+				status = 1;
+			}
 		}
 		else
 		{
-			set_env(env_list, key, value, 0);
+			if (set_env(env_list, key, value, 0) != 0)
+			{
+				status = 1;
+			}
 		}
 		free_resources(key, value);
 		tmparg = tmparg->next;
@@ -211,5 +220,8 @@ void	export_command(t_env **env_list, t_arg *arg)
 	}
 	sort_env_list(*env_list);
 	if (i == 0)
+	{
 		print_sorted_env_list(*env_list);
+	}
+	return (status);
 }

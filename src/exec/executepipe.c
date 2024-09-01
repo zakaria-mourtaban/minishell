@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 18:00:14 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 18:35:16 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,47 +64,54 @@ bool	is_builtin_command(const char *command)
 	return (false);
 }
 
-void	execute_builtin_command(t_command *command, t_env *env_list)
+void	execute_builtin_command(t_command *command, t_data *data)
 {
 	if (command == NULL)
 		return ;
-	if (strcmp(command->args->arg, "echo") == 0)
+	if (ft_strcmp(command->args->arg, "echo") == 0
+		&& ft_strlen(command->args->arg) == 4)
 	{
-		echo_command(command->args);
+		data->cmd.status = echo_command(command->args);
 		return ;
 	}
-	if (strcmp(command->args->arg, "cd") == 0)
+	if (ft_strcmp(command->args->arg, "cd") == 0
+		&& ft_strlen(command->args->arg) == 2)
 	{
-		change_dir(command->args, env_list);
+		data->cmd.status = change_dir(command->args, data->env_list);
 		return ;
 	}
-	if (strcmp(command->args->arg, "exit") == 0)
+	if (ft_strcmp(command->args->arg, "exit") == 0
+		&& ft_strlen(command->args->arg) == 4)
 	{
 		exit_command(command->args);
 		return ;
 	}
-	if (strcmp(command->args->arg, "unset") == 0)
+	if (ft_strcmp(command->args->arg, "unset") == 0
+		&& ft_strlen(command->args->arg) == 5)
 	{
-		unset_command(command->args, &env_list);
+		data->cmd.status = unset_command(command->args, &data->env_list);
 		return ;
 	}
-	if (strcmp(command->args->arg, "pwd") == 0)
+	if (ft_strcmp(command->args->arg, "pwd") == 0
+		&& ft_strlen(command->args->arg) == 3)
 	{
-		pwd_command();
+		data->cmd.status = pwd_command();
 		return ;
 	}
-	if (strcmp(command->args->arg, "env") == 0)
+	if (ft_strcmp(command->args->arg, "env") == 0
+		&& ft_strlen(command->args->arg) == 3)
 	{
 		printf("running env\n");
-		env_command(env_list);
+		data->cmd.status = env_command(data->env_list);
 		return ;
 	}
-	if (strcmp(command->args->arg, "export") == 0)
+	if (ft_strcmp(command->args->arg, "export") == 0
+		&& ft_strlen(command->args->arg) == 6)
 	{
 		printf("%s\n", command->args->arg);
 		// argv = tokens_to_args(command->args->arg);
 		// printf("%s",*argv);
-		export_command(&env_list, command->args);
+		data->cmd.status = export_command(&data->env_list, command->args);
 		return ;
 	}
 	// Uncomment and implement if needed
@@ -188,7 +195,7 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
 			path = get_path(args[0], data->env_list);
 		if (is_builtin_command(args[0]))
 		{
-			execute_builtin_command(cmd, data->env_list);
+			execute_builtin_command(cmd, data);
 		}
 		else if (!access(path, X_OK))
 			execve(path, args, data->env);
@@ -247,7 +254,7 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 		path = get_path(current->args->arg, data->env_list);
 		if (is_builtin_command(current->args->arg) && current->next == NULL)
 		{
-			execute_builtin_command(current, data->env_list);
+			execute_builtin_command(current, data);
 		}
 		else if (current->error == 0)
 			execute_command(current, pipes, i, num_cmds, data);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executepipe.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 11:41:13 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/01 13:30:13 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void	execute_builtin_command(t_command *command, t_env *env_list)
 	}
 	if (strcmp(command->args->arg, "cd") == 0)
 	{
-		change_dir(command->args,env_list);
+		change_dir(command->args, env_list);
 		return ;
 	}
 	if (strcmp(command->args->arg, "exit") == 0)
@@ -87,7 +87,7 @@ void	execute_builtin_command(t_command *command, t_env *env_list)
 	}
 	if (strcmp(command->args->arg, "unset") == 0)
 	{
-		unset_command(command->args,&env_list);
+		unset_command(command->args, &env_list);
 		return ;
 	}
 	if (strcmp(command->args->arg, "pwd") == 0)
@@ -117,7 +117,7 @@ void	execute_builtin_command(t_command *command, t_env *env_list)
 }
 
 void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
-		t_env *env_list)
+		t_data *data)
 {
 	char	**args;
 	int		arg_count;
@@ -186,12 +186,20 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
 		args[j] = NULL;
 		// Execute the command
 		if (args[0])
-			path = get_path(args[0], env_list);
-		execve(path, args, environ);
+			path = get_path(args[0], data->env_list);
+		if (!access(path, X_OK))
+			execve(path, args, data->env);
+		else
+		{
+			if (path != args[0])
+				free(path);
+			free(args);
+			exit(127);
+		}
 		if (path != args[0])
 			free(path);
 		free(args);
-		exit(1);
+		exit(0);
 	}
 }
 
@@ -203,7 +211,6 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	t_command	*current;
 	char		*path;
 
-	signalint = 0;
 	num_cmds = 0;
 	current = cmds;
 	while (current)
@@ -240,7 +247,7 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 			execute_builtin_command(current, data->env_list);
 		}
 		else
-			execute_command(current, pipes, i, num_cmds, data->env_list);
+			execute_command(current, pipes, i, num_cmds, data);
 		current = current->next;
 		i++;
 		free(path);

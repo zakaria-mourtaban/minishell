@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/02 03:18:28 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/02 12:32:33 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,22 +122,11 @@ int	execute_builtin_command(t_command *command, t_data *data)
 	return (-1);
 }
 
-int	execute_builtin_command_nofork(t_command *command, t_data *data, int *pipes,
-		int i)
+int	execute_builtin_command_nofork(t_command *command, t_data *data)
 {
 	if (command == NULL)
 		return (-1);
-	if (i > 0)
-	{
-		dup2(pipes[(i - 1) * 2], STDIN_FILENO);
-	}
-	// Handle pipe output
-	if (i < 1 - 1)
-	{
-		dup2(pipes[i * 2 + 1], STDOUT_FILENO);
-	}
-	// Handle output redirection if outfile is provided
-	else if (command->outfile != -1)
+	if (command->outfile != -1)
 	{
 		dup2(command->outfile, STDOUT_FILENO);
 	}
@@ -150,49 +139,42 @@ int	execute_builtin_command_nofork(t_command *command, t_data *data, int *pipes,
 		&& ft_strlen(command->args->arg) == 4)
 	{
 		data->cmd.status = echo_command(command->args);
-		close_pipes(pipes,1);
 		return (data->cmd.status);
 	}
 	if (ft_strcmp(command->args->arg, "cd") == 0
 		&& ft_strlen(command->args->arg) == 2)
 	{
 		data->cmd.status = change_dir(command->args, data->env_list);
-		close_pipes(pipes,1);
 		return (data->cmd.status);
 	}
 	if (ft_strcmp(command->args->arg, "exit") == 0
 		&& ft_strlen(command->args->arg) == 4)
 	{
 		exit_command(command->args);
-		close_pipes(pipes,1);
 		return (data->cmd.status);
 	}
 	if (ft_strcmp(command->args->arg, "unset") == 0
 		&& ft_strlen(command->args->arg) == 5)
 	{
 		data->cmd.status = unset_command(command->args, &data->env_list);
-		close_pipes(pipes,1);
 		return (data->cmd.status);
 	}
 	if (ft_strcmp(command->args->arg, "pwd") == 0
 		&& ft_strlen(command->args->arg) == 3)
 	{
 		data->cmd.status = pwd_command();
-		close_pipes(pipes,1);
 		return (data->cmd.status);
 	}
 	if (ft_strcmp(command->args->arg, "env") == 0
 		&& ft_strlen(command->args->arg) == 3)
 	{
 		data->cmd.status = env_command(data->env_list);
-		close_pipes(pipes,1);
 		return (data->cmd.status);
 	}
 	if (ft_strcmp(command->args->arg, "export") == 0
 		&& ft_strlen(command->args->arg) == 6)
 	{
 		data->cmd.status = export_command(&data->env_list, command->args);
-		close_pipes(pipes,1);
 		return (data->cmd.status);
 	}
 	// Uncomment and implement if needed
@@ -299,6 +281,8 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	int			num_cmds;
 	int			i;
 	t_command	*current;
+	int			in;
+	int			out;
 	char		*path;
 
 	num_cmds = 0;
@@ -326,6 +310,7 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	current = cmds;
 	while (current)
 	{
+		printf("executing\n");
 		if (ft_strlen(current->args->arg) == 0)
 		{
 			current = current->next;
@@ -334,7 +319,13 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 		path = get_path(current->args->arg, data->env_list);
 		if (is_builtin_command(current->args->arg) && current->next == NULL)
 		{
-			execute_builtin_command_nofork(current, data, pipes, i);
+			in = dup(STDIN_FILENO);
+			out = dup(STDOUT_FILENO);
+			execute_builtin_command_nofork(current, data);
+			dup2(in,STDIN_FILENO);
+			dup2(out,STDOUT_FILENO);
+			close(in);
+			close(out);
 		}
 		else if (current->error == 0)
 			execute_command(current, pipes, i, num_cmds, data);

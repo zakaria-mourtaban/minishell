@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 17:07:10 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/03 03:13:19 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/02 17:35:19 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,8 @@ void	printcmds(t_data *data)
 {
 	t_tokens	*tmp;
 	const char	*type_names[] = {"DEFID", "WORD", "INFILE", "OUTFILE",
-			"HEREDOC", "OUTAPPEND", "COMMAND", "OPERATOR", "PIPE", "SPACE", "FILE"};
+			"HEREDOC", "OUTAPPEND", "COMMAND", "OPERATOR", "PIPE", "SPACE",
+			"FILE"};
 
 	tmp = data->cmdchain;
 	while (tmp != NULL)
@@ -135,7 +136,8 @@ void	tokenizer(char *input, t_data *data)
 			if (buf_i > 0)
 			{
 				buffer[buf_i] = '\0';
-				if (!foundcmd && data->cmdchain->previous->id != TOKEN_START
+				if (!foundcmd && data->cmdchain
+					&& data->cmdchain->previous->id != TOKEN_START
 					&& data->cmdchain->previous->id != TOKEN_COMMAND)
 				{
 					append(&data->cmdchain, buffer, TOKEN_COMMAND);

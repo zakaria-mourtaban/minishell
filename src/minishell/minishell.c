@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/02 12:06:29 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/02 20:26:33 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ void	init(t_data *data, char **env)
 	data->env = NULL;
 	data->cmd.status = 0;
 	data->cmd.running = 0;
+	data->tmpfd = -1;
 	data->env_list = init_copy_envp(env);
 	tmp = get_tenv(data->env_list, "SHLVL");
 	if (tmp == NULL)

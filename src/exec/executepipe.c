@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/02 14:35:28 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/02 20:27:12 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -277,6 +277,7 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 {
 	int			*pipes;
 	int			num_cmds;
+	int			ispiped;
 	int			i;
 	t_command	*current;
 	int			in;
@@ -284,29 +285,36 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	char		*path;
 
 	num_cmds = 0;
+	ispiped = 0;
 	current = cmds;
 	while (current)
 	{
-		if (access(current->args->arg,X_OK))
+		if (access(current->args->arg, X_OK))
 			num_cmds++;
 		current = current->next;
 	}
-	pipes = malloc(sizeof(int) * (num_cmds - 1) * 2);
-	if (!pipes)
-		return ;
-	i = 0;
-	while (i < num_cmds - 1)
+	if (num_cmds > 1)
 	{
-		if (pipe(pipes + i * 2) == -1)
-		{
-			perror("pipe");
-			free(pipes);
+		ispiped = 1;
+		pipes = malloc(sizeof(int) * (num_cmds - 1) * 2);
+		if (!pipes)
 			return ;
+		i = 0;
+		while (i < num_cmds - 1)
+		{
+			if (pipe(pipes + i * 2) == -1)
+			{
+				perror("pipe");
+				free(pipes);
+				return ;
+			}
+			i++;
 		}
-		i++;
 	}
 	i = 0;
 	current = cmds;
+	if (data->tmpfd != -1)
+		dup2(STDIN_FILENO, data->tmpfd);
 	while (current)
 	{
 		printf("executing\n");
@@ -342,5 +350,6 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	}
 	if (signalint == 130)
 		data->cmd.status = 130;
-	free(pipes);
+	if (ispiped)
+		free(pipes);
 }

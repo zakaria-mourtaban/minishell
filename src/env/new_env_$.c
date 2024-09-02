@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   new_env_$.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 23:30:14 by odib              #+#    #+#             */
-/*   Updated: 2024/09/03 02:53:17 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/02 17:45:21 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,11 +147,15 @@ void	handle_two_dollar(char **result, int *i)
 
 void	handle_question_mark(char **result, int *i, t_data *data)
 {
-	*result = ft_strjoingnl(*result, ft_itoa(data->cmd.status));
+	char	*out;
+
+	out = ft_itoa(data->cmd.status);
+	*result = ft_strjoingnl(*result, out);
+	free(out);
 	(*i) += 2;
 }
 
-void	copy_and_append_char(char **result,char *input, int *i)
+void	copy_and_append_char(char **result, char *input, int *i)
 {
 	char	tmp[2];
 

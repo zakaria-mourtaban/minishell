@@ -67,7 +67,8 @@ void	fixuptoken(t_data *data)
 			&& (tmp->next->next->id == TOKEN_COMMAND
 				|| tmp->next->next->id == TOKEN_WORD))
 			tmp->next->next->id = TOKEN_FILE;
-		if ((tmp->id == TOKEN_OUT_FILE || tmp->id == TOKEN_OUT_A_FILE))
+		if ((tmp->id == TOKEN_OUT_FILE || tmp->id == TOKEN_OUT_A_FILE
+				|| tmp->id == TOKEN_HEREDOC_EOF))
 		{
 			tmp = tmp->next;
 			if (tmp && tmp->id == TOKEN_SPACE)
@@ -227,6 +228,83 @@ void	handleredirects(t_data *data, t_command *command)
 	}
 }
 
+void	handleheredoc(t_data *data)
+{
+	t_tokens *tmp;
+	char *input;
+	char **heredocs;
+	int foundheredoc;
+	int i;
+
+	i = 0;
+	foundheredoc = 0;
+	tmp = data->cmdchain;
+	while (tmp)
+	{
+		if (tmp->id == TOKEN_HEREDOC_EOF)
+			i++;
+		tmp = tmp->next;
+	}
+	tmp = data->cmdchain;
+	heredocs = malloc(sizeof(char *) * i);
+	i = 0;
+	while (tmp)
+	{
+		if (tmp->id == TOKEN_HEREDOC_EOF)
+		{
+			foundheredoc = 1;
+			heredocs[i] = ft_strdup("");
+			i++;
+		}
+		tmp = tmp->next;
+	}
+	tmp = data->cmdchain;
+	i = 0;
+	while (tmp)
+	{
+		printf("in loop\n");
+		if (tmp->id == TOKEN_HEREDOC_EOF && tmp->error == 0)
+		{
+			tmp = tmp->next;
+			if (tmp && tmp->id == TOKEN_SPACE)
+				tmp = tmp->next;
+			if (tmp && (tmp->id == TOKEN_FILE))
+			{
+				while (1)
+				{
+					input = readline("> ");
+					if (ft_strcmp(input, tmp->content) == 0
+						&& ft_strlen(input) == ft_strlen(tmp->content))
+						break ;
+					heredocs[i] = ft_strjoingnl(heredocs[i], input);
+					heredocs[i] = ft_strjoingnl(heredocs[i], "\n");
+					free(input);
+				}
+				if (heredocs[i] != NULL)
+					printf("%s\n", heredocs[i]);
+			}
+			else
+			{
+				tmp->error = 1;
+				printf("Invalid EOF\n");
+			}
+			tmp = tmp->next;
+		}
+		i++;
+		if (tmp && tmp->id == TOKEN_PIPE)
+			break ;
+		if (tmp)
+			tmp = tmp->next;
+	}
+	if (foundheredoc)
+	{
+		if (heredocs[i - 1] == NULL)
+			heredocs[i - 1] = ft_strdup("\n");
+		data->tmpfd = open("heredocfile", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		ft_putstr_fd(heredocs[i - 1], data->tmpfd);
+	}
+}
+
 void	initcmd(char *input, char **env, t_data *data)
 {
 	t_command *command;
@@ -237,6 +315,7 @@ void	initcmd(char *input, char **env, t_data *data)
 	tokenizer(handle_dollar_sign(input, data), data);
 	fixuptoken(data);
 	remove_quotes(data->cmdchain);
+	handleheredoc(data);
 	checksyntaxerror(data);
 	printcmds(data);
 	command = getcommands(data);

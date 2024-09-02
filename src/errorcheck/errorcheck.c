@@ -143,6 +143,8 @@ int	check_path(t_tokens *token, t_data *data)
 	struct stat	statbuf;
 	char		*str;
 
+	if (is_builtin_command(token->content))
+		return (0);
 	str = get_path((char *)token->content, data->env_list);
 	if (access(str, X_OK) != 0 && !contains_dot_or_slash(token->content)
 		&& !is_builtin_command(str))
@@ -162,8 +164,7 @@ int	check_path(t_tokens *token, t_data *data)
 		free(str);
 		return (1);
 	}
-	else if (access(str, X_OK) != 0 && !S_ISDIR(statbuf.st_mode)
-		&& !is_builtin_command(str))
+	else if (access(str, X_OK) != 0 && !S_ISDIR(statbuf.st_mode))
 	{
 		data->cmd.status = 127;
 		token->error = 1;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   new_env_$.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 23:30:14 by odib              #+#    #+#             */
-/*   Updated: 2024/09/01 18:00:09 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 02:53:17 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ void	handle_question_mark(char **result, int *i, t_data *data)
 	(*i) += 2;
 }
 
-void	copy_and_append_char(char **result, const char *input, int *i)
+void	copy_and_append_char(char **result,char *input, int *i)
 {
 	char	tmp[2];
 

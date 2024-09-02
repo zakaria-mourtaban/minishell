@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 17:07:10 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 19:24:22 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/02 01:40:54 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void	append(t_tokens **cmds, char *data, int type)
 	{
 		new_node = newnode(data, type);
 		new_node->previous = newnode("START", TOKEN_START);
+		new_node->error = 0;
 		*cmds = new_node;
 		return ;
 	}
@@ -56,6 +57,7 @@ void	append(t_tokens **cmds, char *data, int type)
 	else
 	{
 		new_node = newnode(data, type);
+		new_node->error = 0;
 		tmp->next = new_node;
 		new_node->previous = tmp;
 	}
@@ -65,7 +67,7 @@ void	printcmds(t_data *data)
 {
 	t_tokens	*tmp;
 	const char	*type_names[] = {"DEFID", "WORD", "INFILE", "OUTFILE",
-			"HEREDOC", "OUTAPPEND", "COMMAND", "OPERATOR", "PIPE", "SPACE"};
+			"HEREDOC", "OUTAPPEND", "COMMAND", "OPERATOR", "PIPE", "SPACE", "FILE"};
 
 	tmp = data->cmdchain;
 	while (tmp != NULL)

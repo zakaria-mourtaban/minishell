@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 16:05:11 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 19:45:59 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/02 02:01:53 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ t_arg	*create_arg_node(char *arg)
 	new_arg = (t_arg *)malloc(sizeof(t_arg));
 	if (!new_arg)
 		return (NULL);
-	new_arg->arg = strdup(arg);
+	new_arg->arg = ft_strdup(arg);
 	new_arg->next = NULL;
 	return (new_arg);
 }
@@ -125,27 +125,22 @@ t_command	*parse_tokens(t_tokens *tokens)
 		{
 			current_cmd = create_command_node();
 			if (!current_cmd)
-			{
-				fprintf(stderr, "Failed to create a new command node.\n");
 				return (NULL);
-			}
 		}
 		add_argument(current_cmd, tmp->content);
 	}
-	current_cmd->error = 0;
 	tmp = tmp->next;
 	while (tmp)
 	{
+		if (tmp != NULL && tmp->error == 1 && current_cmd)
+			current_cmd->error = 1;
 		if (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
 		{
 			if (!current_cmd)
 			{
 				current_cmd = create_command_node();
 				if (!current_cmd)
-				{
-					fprintf(stderr, "Failed to create a new command node.\n");
 					return (NULL);
-				}
 			}
 			add_argument(current_cmd, tmp->content);
 		}
@@ -163,13 +158,9 @@ t_command	*parse_tokens(t_tokens *tokens)
 			if (tmp && tmp->id == TOKEN_SPACE)
 				tmp = tmp->next; // Move to the next token,
 			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
-				&& current_cmd)
+				&& current_cmd && !current_cmd->error)
 			{
 				current_cmd->infile = open(tmp->content, O_RDONLY);
-				if (current_cmd->infile < 0)
-					perror("Failed to open input file");
-				else
-					printf("Set input file to: %s\n", tmp->content);
 			}
 			tmp = nexttoken(tmp);
 		}
@@ -179,15 +170,11 @@ t_command	*parse_tokens(t_tokens *tokens)
 			if (tmp->id == TOKEN_SPACE)
 				tmp = tmp->next; // Move to the next token,
 			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
-				&& current_cmd)
+				&& current_cmd && !current_cmd->error)
 			{
 				current_cmd->outfile = open(tmp->content,
 						O_WRONLY | O_CREAT | O_TRUNC, 0644);
 				current_cmd->append = 0;
-				if (current_cmd->outfile < 0)
-					perror("Failed to open output file");
-				else
-					printf("Set output file to: %s\n", tmp->content);
 			}
 			tmp = nexttoken(tmp);
 		}
@@ -197,23 +184,15 @@ t_command	*parse_tokens(t_tokens *tokens)
 			if (tmp->id == TOKEN_SPACE)
 				tmp = tmp->next; // Move to the next token,
 			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
-				&& current_cmd)
+				&& current_cmd && !current_cmd->error)
 			{
 				current_cmd->outfile = open(tmp->content,
 						O_WRONLY | O_CREAT | O_APPEND, 0644);
 				current_cmd->append = 1;
-				if (current_cmd->outfile < 0)
-					perror("Failed to open append output file");
-				else
-					printf("Set append output file to: %s\n", tmp->content);
 			}
 			tmp = nexttoken(tmp);
 		}
-		if (tmp->error == 1)
-		{
-			current_cmd->error = 1;
-			printf("cmderror = 1\n");
-		}if (tmp != NULL)
+		if (tmp != NULL)
 			tmp = tmp->next;
 	}
 	if (current_cmd)

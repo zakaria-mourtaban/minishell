@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 18:27:55 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/01 22:35:06 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ char	*envtostr(t_env *envs)
 	char	*out;
 
 	out = ft_strdup(envs->key);
-	out = ft_strjoin(out, "=");
-	out = ft_strjoin(out, envs->value);
+	out = ft_strjoingnl(out, "=");
+	out = ft_strjoingnl(out, envs->value);
 	return (out);
 }
 
@@ -68,6 +68,7 @@ t_env	*get_tenv(t_env *head, const char *key)
 void	init(t_data *data, char **env)
 {
 	t_env	*tmp;
+	char 	*tmpval;
 
 	art();
 	signalint = 0;
@@ -81,7 +82,12 @@ void	init(t_data *data, char **env)
 	if (tmp == NULL)
 		set_env(&data->env_list, "SHLVL", "1", 0);
 	else
-		tmp->value = ft_itoa(ft_atoi(tmp->value) + 1);
+	{
+		tmpval = ft_strdup(tmp->value);
+		free(tmp->value);
+		tmp->value = ft_itoa(ft_atoi(tmpval) + 1);
+		free(tmpval);
+	}
 }
 
 int	main(int ac, char **av, char **env)
@@ -108,6 +114,7 @@ int	main(int ac, char **av, char **env)
 		initcmd(input, env, &data);
 	}
 	free_env_list(data.env_list);
+	free_args(data.env);
 	return (0);
 	(void)ac;
 	(void)av;

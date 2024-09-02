@@ -163,7 +163,10 @@ void	check_path(t_tokens *token, t_data *data)
 int	checksyntaxerror(t_data *data)
 {
 	t_tokens	*tmp;
+	int			types[12];
+	int			wasredirect;
 
+	wasredirect = 0;
 	tmp = data->cmdchain;
 	while (tmp)
 	{
@@ -172,36 +175,24 @@ int	checksyntaxerror(t_data *data)
 			data->cmd.status = 2;
 			printerror(tmp);
 			tmp->error = 1;
+			wasredirect = 0;
 			tmp = tmp->next;
-			return (1);
-			// return (1);
 		}
 		if (tmp->id == TOKEN_HEREDOC_EOF && checkheredoc(tmp))
 		{
 			data->cmd.status = 2;
 			printerror(tmp->next);
 			tmp->error = 1;
+			wasredirect = 0;
 			tmp = tmp->next;
-			return (1);
-			// return (1);
 		}
 		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
 		{
 			data->cmd.status = 2;
 			printerror(tmp->next);
 			tmp->error = 1;
+			wasredirect = 0;
 			tmp = tmp->next;
-			return (1);
-			// return (1);
-		}
-		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
-		{
-			data->cmd.status = 2;
-			printerror(tmp->next);
-			tmp->error = 1;
-			tmp = tmp->next;
-			return (1);
-			// return (1);
 		}
 		if ((tmp->id == TOKEN_OUT_FILE || tmp->id == TOKEN_OUT_A_FILE)
 			&& checkfileout(tmp))
@@ -210,16 +201,23 @@ int	checksyntaxerror(t_data *data)
 			printerror(tmp->next);
 			tmp->error = 1;
 			tmp = tmp->next;
-			return (1);
-			// return (1);
+			wasredirect = 1;
 		}
-		if (tmp->id == TOKEN_COMMAND)
+		if (tmp->id == TOKEN_COMMAND && wasredirect == 1)
 		{
-			check_path(tmp, data);
+				check_path(tmp, data);
+			wasredirect = 0;
 			tmp = tmp->next;
 			continue ;
 		}
 		// printf("%s\n", tmp->content);
+		types[tmp->id] += 1;
+		if (types[TOKEN_IN_FILE] > 1)
+		{
+			printf("bash: syntax error near unexpected token `%s' %d\n",
+				getnext(tmp)->content, types[TOKEN_IN_FILE]);
+			tmp->error = 1;
+		}
 		tmp = tmp->next;
 	}
 	return (0);

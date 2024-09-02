@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/02 01:57:54 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/02 13:43:22 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void					append_command_node(t_command **cmd_list,
 							t_command *new_cmd);
 void					free_tab(char **tab);
 char					*handle_dollar_sign(char *input, t_data *data);
-void					check_path(t_tokens *tokens, t_data *data);
+int					check_path(t_tokens *tokens, t_data *data);
 int						hasaccess(t_tokens *token, t_data *data);
 void					execute_pipeline(t_command *cmds, t_data *data);
 void					art(void);

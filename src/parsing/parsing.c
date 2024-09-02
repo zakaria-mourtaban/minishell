@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 16:05:11 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/02 02:01:53 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/02 14:34:45 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -253,6 +253,7 @@ void	print_command_list(t_command *cmd_list)
 			printf("  Output File: (fd: %d)\n", cmd->outfile);
 		else
 			printf("  Output File: STDOUT\n");
+		printf("Error %d:\n", cmd->error);
 		cmd = cmd->next;
 		cmd_num++;
 	}

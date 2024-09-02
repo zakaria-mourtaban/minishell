@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/02 12:43:51 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/02 14:35:28 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,8 +108,6 @@ int	execute_builtin_command(t_command *command, t_data *data)
 		&& ft_strlen(command->args->arg) == 6)
 	{
 		printf("%s\n", command->args->arg);
-		// argv = tokens_to_args(command->args->arg);
-		// printf("%s",*argv);
 		data->cmd.status = export_command(&data->env_list, command->args);
 		return (data->cmd.status);
 	}
@@ -289,7 +287,8 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	current = cmds;
 	while (current)
 	{
-		num_cmds++;
+		if (access(current->args->arg,X_OK))
+			num_cmds++;
 		current = current->next;
 	}
 	pipes = malloc(sizeof(int) * (num_cmds - 1) * 2);
@@ -317,13 +316,14 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 			continue ;
 		}
 		path = get_path(current->args->arg, data->env_list);
-		if (is_builtin_command(current->args->arg) && current->next == NULL && i == 0)
+		if (is_builtin_command(current->args->arg) && current->next == NULL
+			&& i == 0 && current->error == 0)
 		{
 			in = dup(STDIN_FILENO);
 			out = dup(STDOUT_FILENO);
 			execute_builtin_command_nofork(current, data);
-			dup2(in,STDIN_FILENO);
-			dup2(out,STDOUT_FILENO);
+			dup2(in, STDIN_FILENO);
+			dup2(out, STDOUT_FILENO);
 			close(in);
 			close(out);
 		}

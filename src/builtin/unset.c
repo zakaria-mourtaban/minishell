@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 11:37:39 by odib              #+#    #+#             */
-/*   Updated: 2024/09/01 18:00:04 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 00:23:04 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,9 @@ void	unset(t_env **env_list, const char *key)
 		if (strcmp(current->key, key) == 0)
 		{
 			if (previous == NULL)
-			{
 				*env_list = current->next;
-			}
 			else
-			{
 				previous->next = current->next;
-			}
 			free(current->key);
 			free(current->value);
 			free(current);
@@ -39,24 +35,24 @@ void	unset(t_env **env_list, const char *key)
 		previous = current;
 		current = current->next;
 	}
-	fprintf(stderr, "unset: %s: no such variable\n", key);
+	printf("unset: %s: no such variable", key);
+	perror("\n");
 }
 
 int	unset_command(t_arg *args, t_env **env_list)
 {
-	t_arg *current = args->next;
+	t_arg	*current;
 
+	current = args->next;
 	if (current == NULL)
 	{
-		fprintf(stderr, "unset: not enough arguments\n");
+		perror("unset: not enough arguments\n");
 		return (1);
 	}
-
 	while (current != NULL)
 	{
 		unset(env_list, current->arg);
 		current = current->next;
 	}
-
 	return (0);
 }

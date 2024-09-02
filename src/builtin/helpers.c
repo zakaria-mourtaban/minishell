@@ -1,32 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   helpers.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/30 12:12:30 by odib              #+#    #+#             */
-/*   Updated: 2024/09/02 23:53:52 by odib             ###   ########.fr       */
+/*   Created: 2024/08/30 14:17:06 by odib              #+#    #+#             */
+/*   Updated: 2024/09/03 00:19:41 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int	env_command(t_env *env_list)
+void	free_args(char **args)
 {
-	t_env	*temp;
+	int	i;
 
-	if (env_list == NULL)
+	i = 0;
+	while (args[i])
 	{
-		perror("Error: Environment list is NULL\n");
-		return (1);
+		free(args[i]);
+		i++;
 	}
-	temp = env_list;
-	while (temp != NULL)
-	{
-		if (temp->hidden == 0)
-			printf("%s=\"%s\"\n", temp->key, temp->value);
-		temp = temp->next;
-	}
-	return (0);
+	free(args);
 }

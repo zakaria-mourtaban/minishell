@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 17:07:10 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/02 01:40:54 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 03:13:19 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,4 +226,5 @@ void	tokenizer(char *input, t_data *data)
 			append(&data->cmdchain, buffer, TOKEN_WORD);
 	}
 	free(buffer);
+	free(input);
 }

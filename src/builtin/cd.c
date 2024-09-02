@@ -6,7 +6,7 @@
 /*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 11:18:31 by odib              #+#    #+#             */
-/*   Updated: 2024/09/02 23:52:11 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/03 03:48:49 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ int	cd_to_path(char *path, t_env *env_list)
 	set_env(&env_list, "OLDPWD", pwd, 0);
 	set_env(&env_list, "PWD", new_pwd, 0);
 	free(new_pwd);
+	free(pwd);
 	return (0);
 }
 
@@ -97,5 +98,20 @@ int	change_dir(t_arg *args, t_env *env_list)
 		return (cd_to_path(current->arg, env_list));
 	}
 	perror("cd: too many arguments\n");
+	free_list_arg(current);
 	return (1);
 }
+
+void	free_list_arg(t_arg *head)
+{
+	t_arg	*temp;
+
+	while (head != NULL)
+	{
+		temp = head;
+		head = head->next;
+		free(temp->arg);  // Free the string stored in arg
+		free(temp);       // Free the current node
+	}
+}
+

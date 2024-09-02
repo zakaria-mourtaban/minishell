@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/02 13:43:22 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 03:37:53 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,4 +190,5 @@ int						change_dir(t_arg *args, t_env *env_list);
 char					**tokens_to_args(char *tokens);
 void					free_args(char **args);
 int						unset_command(t_arg *args, t_env **env_list);
+void	free_list_arg(t_arg *head);
 #endif

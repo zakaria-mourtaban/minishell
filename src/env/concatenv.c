@@ -3,14 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   concatenv.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 14:42:27 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 18:00:06 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 12:26:21 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+int	find_char_index(char *string, char c)
+{
+	int	i;
+
+	i = 0;
+	while (string[i] != c && string[i] != '\0')
+		i++;
+	return (i);
+}
 
 char	*envvaluestr(char *key, t_data *data)
 {
@@ -39,110 +49,6 @@ char	*envvaluestr(char *key, t_data *data)
 	return (valuestr);
 }
 
-int	find_char_index(char *string, char c)
-{
-	int	i;
-
-	i = 0;
-	while (string[i] != c && string[i] != '\0')
-		i++;
-	return (i);
-}
-
-char	*concatenvloop(char *input, t_data *data)
-{
-	int		i;
-	int		j;
-	int		inq;
-	char	*before;
-	char	*after;
-	char	*key;
-
-	i = 0;
-	inq = 0;
-	while (input[i] != '$' && input[i] != '\0')
-	{
-		if (input[i] == '"')
-			inq = !inq;
-		if (input[i] == '\'' && !inq)
-		{
-			i++;
-			while (input[i] != '\'' && input[i] != '\0')
-				i++;
-		}
-		i++;
-	}
-	before = ft_strnew(i + 1);
-	ft_strlcpy(before, input, i + 1);
-	j = i;
-	while (input[j] != ' ' && input[j] != '\0' && input[j] != '\"'
-		&& input[j] != '\'')
-	{
-		if (input[j] == '"')
-			inq = !inq;
-		if (input[j] == '\'' && !inq)
-		{
-			j++;
-			while (input[j] != '\'' && input[j] != '\0')
-				j++;
-		}
-		else
-			j++;
-	}
-	printf("inq:%d\n", inq);
-	key = ft_strnew(j - i + 1);
-	ft_strlcpy(key, (input + i), j - i + 1);
-	after = ft_strnew(ft_strlen(input) - ft_strlen(before) + ft_strlen(key)
-			+ 1);
-	ft_strlcpy(after, (input + j), ft_strlen(input) - ft_strlen(before)
-		+ ft_strlen(key) + 1);
-	free(input);
-	key = envvaluestr(key + 1, data);
-	input = ft_strdup("");
-	input = ft_strjoingnl(input, before);
-	input = ft_strjoingnl(input, key);
-	input = ft_strjoingnl(input, after);
-	free(before);
-	free(key);
-	free(after);
-	return (input);
-}
-
-int	dollarcount(char *input)
-{
-	int	i;
-	int	count;
-	int	inq;
-
-	inq = 0;
-	i = 0;
-	count = 0;
-	while (input[i] != '\0')
-	{
-		if (input[i] == '$' && !isalpha(input[i + 1]))
-		{
-			i++;
-			while (input[i] != ' ' && input[i] != '\0' && input[i] != '\"')
-				i++;
-			i++;
-		}
-		if (input[i] == '$')
-			count++;
-		if (input[i] == '"')
-			inq = !inq;
-		if (input[i] == '\'' && !inq)
-		{
-			i++;
-			while (input[i] != '\'' && input[i] != '\0')
-				i++;
-			i++;
-		}
-		else
-			i++;
-	}
-	return (count);
-}
-
 char	*concatenv(char *input, t_data *data)
 {
 	char	*out;
@@ -159,14 +65,14 @@ char	*concatenv(char *input, t_data *data)
 	return (out);
 }
 
-void	concatenvtoken(t_data *data)
-{
-	t_tokens	*tmp;
-
-	tmp = data->cmdchain;
-	while (tmp)
-	{
-		tmp->content = handle_dollar_sign(tmp->content, data);
-		tmp = tmp->next;
-	}
-}
+// void	concatenvtoken(t_data *data)
+// {
+// 	t_tokens	*tmp;
+//
+// 	tmp = data->cmdchain;
+// 	while (tmp)
+// 	{
+// 		tmp->content = handle_dollar_sign(tmp->content, data);
+// 		tmp = tmp->next;
+// 	}
+// }

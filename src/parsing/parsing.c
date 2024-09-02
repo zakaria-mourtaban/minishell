@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/16 16:05:11 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/02 14:34:45 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 12:10:55 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,96 +110,6 @@ t_tokens	*getnextspace(t_tokens *token)
 	return (tmp);
 }
 
-t_command	*parse_tokens(t_tokens *tokens)
-{
-	t_command	*cmd_list;
-	t_command	*current_cmd;
-	t_tokens	*tmp;
-
-	tmp = tokens;
-	cmd_list = NULL;
-	current_cmd = NULL;
-	if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND))
-	{
-		if (!current_cmd)
-		{
-			current_cmd = create_command_node();
-			if (!current_cmd)
-				return (NULL);
-		}
-		add_argument(current_cmd, tmp->content);
-	}
-	tmp = tmp->next;
-	while (tmp)
-	{
-		if (tmp != NULL && tmp->error == 1 && current_cmd)
-			current_cmd->error = 1;
-		if (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
-		{
-			if (!current_cmd)
-			{
-				current_cmd = create_command_node();
-				if (!current_cmd)
-					return (NULL);
-			}
-			add_argument(current_cmd, tmp->content);
-		}
-		else if (tmp->id == TOKEN_PIPE)
-		{
-			if (current_cmd)
-			{
-				append_command_node(&cmd_list, current_cmd);
-				current_cmd = NULL;
-			}
-		}
-		else if (tmp->id == TOKEN_IN_FILE)
-		{
-			tmp = tmp->next;
-			if (tmp && tmp->id == TOKEN_SPACE)
-				tmp = tmp->next; // Move to the next token,
-			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
-				&& current_cmd && !current_cmd->error)
-			{
-				current_cmd->infile = open(tmp->content, O_RDONLY);
-			}
-			tmp = nexttoken(tmp);
-		}
-		else if (tmp->id == TOKEN_OUT_FILE)
-		{
-			tmp = tmp->next;
-			if (tmp->id == TOKEN_SPACE)
-				tmp = tmp->next; // Move to the next token,
-			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
-				&& current_cmd && !current_cmd->error)
-			{
-				current_cmd->outfile = open(tmp->content,
-						O_WRONLY | O_CREAT | O_TRUNC, 0644);
-				current_cmd->append = 0;
-			}
-			tmp = nexttoken(tmp);
-		}
-		else if (tmp->id == TOKEN_OUT_A_FILE)
-		{
-			tmp = tmp->next;
-			if (tmp->id == TOKEN_SPACE)
-				tmp = tmp->next; // Move to the next token,
-			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
-				&& current_cmd && !current_cmd->error)
-			{
-				current_cmd->outfile = open(tmp->content,
-						O_WRONLY | O_CREAT | O_APPEND, 0644);
-				current_cmd->append = 1;
-			}
-			tmp = nexttoken(tmp);
-		}
-		if (tmp != NULL)
-			tmp = tmp->next;
-	}
-	if (current_cmd)
-		append_command_node(&cmd_list, current_cmd);
-	return (cmd_list);
-}
-
 void	free_arg_list(t_arg *head)
 {
 	t_arg	*tmp;
@@ -258,3 +168,185 @@ void	print_command_list(t_command *cmd_list)
 		cmd_num++;
 	}
 }
+
+void	handle_word_command_token(t_tokens *tmp, t_command **current_cmd)
+{
+	if (!(*current_cmd))
+	{
+		*current_cmd = create_command_node();
+		if (!(*current_cmd))
+			return;
+	}
+	add_argument(*current_cmd, tmp->content);
+}
+
+void	handle_pipe_token(t_command **cmd_list, t_command **current_cmd)
+{
+	if (*current_cmd)
+	{
+		append_command_node(cmd_list, *current_cmd);
+		*current_cmd = NULL;
+	}
+}
+
+t_tokens	*handle_in_file_token(t_tokens *tmp, t_command *current_cmd)
+{
+	tmp = tmp->next;
+	if (tmp && tmp->id == TOKEN_SPACE)
+		tmp = tmp->next; // Move to the next token
+	if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND) && current_cmd && !current_cmd->error)
+	{
+		current_cmd->infile = open(tmp->content, O_RDONLY);
+	}
+	return (nexttoken(tmp));
+}
+
+t_tokens	*handle_out_file_token(t_tokens *tmp, t_command *current_cmd, int append)
+{
+	tmp = tmp->next;
+	if (tmp->id == TOKEN_SPACE)
+		tmp = tmp->next; // Move to the next token
+	if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND) && current_cmd && !current_cmd->error)
+	{
+		if (append)
+		{
+			current_cmd->outfile = open(tmp->content, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		}
+		else
+		{	
+			current_cmd->outfile = open(tmp->content, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		}
+		current_cmd->append = append;
+	}
+	return (nexttoken(tmp));
+}
+
+t_command	*parse_tokens(t_tokens *tokens)
+{
+	t_command	*cmd_list = NULL;
+	t_command	*current_cmd = NULL;
+	t_tokens	*tmp = tokens;
+
+	if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND))
+		handle_word_command_token(tmp, &current_cmd);
+
+	tmp = tmp->next;
+	while (tmp)
+	{
+		if (tmp->error == 1 && current_cmd)
+			current_cmd->error = 1;
+
+		if (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
+			handle_word_command_token(tmp, &current_cmd);
+
+		else if (tmp->id == TOKEN_PIPE)
+			handle_pipe_token(&cmd_list, &current_cmd);
+
+		else if (tmp->id == TOKEN_IN_FILE)
+			tmp = handle_in_file_token(tmp, current_cmd);
+
+		else if (tmp->id == TOKEN_OUT_FILE)
+			tmp = handle_out_file_token(tmp, current_cmd, 0);
+
+		else if (tmp->id == TOKEN_OUT_A_FILE)
+			tmp = handle_out_file_token(tmp, current_cmd, 1);
+
+		if (tmp != NULL)
+			tmp = tmp->next;
+	}
+
+	if (current_cmd)
+		append_command_node(&cmd_list, current_cmd);
+
+	return (cmd_list);
+}
+
+// t_command	*parse_tokens(t_tokens *tokens)
+// {
+// 	t_command	*cmd_list;
+// 	t_command	*current_cmd;
+// 	t_tokens	*tmp;
+
+// 	tmp = tokens;
+// 	cmd_list = NULL;
+// 	current_cmd = NULL;
+// 	if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND))
+// 	{
+// 		if (!current_cmd)
+// 		{
+// 			current_cmd = create_command_node();
+// 			if (!current_cmd)
+// 				return (NULL);
+// 		}
+// 		add_argument(current_cmd, tmp->content);
+// 	}
+// 	tmp = tmp->next;
+// 	while (tmp)
+// 	{
+// 		if (tmp != NULL && tmp->error == 1 && current_cmd)
+// 			current_cmd->error = 1;
+// 		if (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
+// 		{
+// 			if (!current_cmd)
+// 			{
+// 				current_cmd = create_command_node();
+// 				if (!current_cmd)
+// 					return (NULL);
+// 			}
+// 			add_argument(current_cmd, tmp->content);
+// 		}
+// 		else if (tmp->id == TOKEN_PIPE)
+// 		{
+// 			if (current_cmd)
+// 			{
+// 				append_command_node(&cmd_list, current_cmd);
+// 				current_cmd = NULL;
+// 			}
+// 		}
+// 		else if (tmp->id == TOKEN_IN_FILE)
+// 		{
+// 			tmp = tmp->next;
+// 			if (tmp && tmp->id == TOKEN_SPACE)
+// 				tmp = tmp->next; // Move to the next token,
+// 			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
+// 				&& current_cmd && !current_cmd->error)
+// 			{
+// 				current_cmd->infile = open(tmp->content, O_RDONLY);
+// 			}
+// 			tmp = nexttoken(tmp);
+// 		}
+// 		else if (tmp->id == TOKEN_OUT_FILE)
+// 		{
+// 			tmp = tmp->next;
+// 			if (tmp->id == TOKEN_SPACE)
+// 				tmp = tmp->next; // Move to the next token,
+// 			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
+// 				&& current_cmd && !current_cmd->error)
+// 			{
+// 				current_cmd->outfile = open(tmp->content,
+// 						O_WRONLY | O_CREAT | O_TRUNC, 0644);
+// 				current_cmd->append = 0;
+// 			}
+// 			tmp = nexttoken(tmp);
+// 		}
+// 		else if (tmp->id == TOKEN_OUT_A_FILE)
+// 		{
+// 			tmp = tmp->next;
+// 			if (tmp->id == TOKEN_SPACE)
+// 				tmp = tmp->next; // Move to the next token,
+// 			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND)
+// 				&& current_cmd && !current_cmd->error)
+// 			{
+// 				current_cmd->outfile = open(tmp->content,
+// 						O_WRONLY | O_CREAT | O_APPEND, 0644);
+// 				current_cmd->append = 1;
+// 			}
+// 			tmp = nexttoken(tmp);
+// 		}
+// 		if (tmp != NULL)
+// 			tmp = tmp->next;
+// 	}
+// 	if (current_cmd)
+// 		append_command_node(&cmd_list, current_cmd);
+// 	return (cmd_list);
+// }

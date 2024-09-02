@@ -1,47 +1,47 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   helpers.c                                          :+:      :+:    :+:   */
+/*   signal_helpers.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/30 14:17:06 by odib              #+#    #+#             */
-/*   Updated: 2024/09/03 09:48:09 by odib             ###   ########.fr       */
+/*   Created: 2024/09/03 11:51:08 by odib              #+#    #+#             */
+/*   Updated: 2024/09/03 11:52:42 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int	is_input_null(char **input)
+void	handlesignal(t_data *data)
 {
-	return (input[1] == NULL);
+	if (data->cmd.running == 1)
+		kill(data->cmd.pid, SIGINT);
+	data->cmd.running = 0;
 }
 
-int	is_key_invalid(char *key)
+void	interactivehandle_sigint(int sig)
 {
-	if (check_key(key) == 0)
-	{
-		printf("Invalid key: %s\n", key);
-		return (1);
-	}
-	return (0);
+	printf("\n");
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
+	signalint = 130;
+	(void)sig;
 }
 
-void	free_resources(char *key, char *value)
+void	interactivehandle_sigquit(int sig)
 {
-	free(value);
-	free(key);
+	(void)sig;
 }
 
-void	free_args(char **args)
+void	noninteractivehandle_sigint(int sig)
 {
-	int	i;
+	printf("\n");
+	signalint = 130;
+	(void)sig;
+}
 
-	i = 0;
-	while (args[i])
-	{
-		free(args[i]);
-		i++;
-	}
-	free(args);
+void	noninteractivehandle_sigquit(int sig)
+{
+	(void)sig;
 }

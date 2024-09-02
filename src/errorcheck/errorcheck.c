@@ -61,7 +61,7 @@ int	checkfileoutappend(t_tokens *token)
 
 int	checkheredoc(t_tokens *token)
 {
-	if (!getnext(token->next) || getnext(token->next)->id != TOKEN_COMMAND)
+	if (!getnext(token->next) || getnext(token->next)->id != TOKEN_FILE)
 		return (1);
 	return (0);
 }

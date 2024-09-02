@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/03 03:37:53 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/02 20:06:43 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ typedef struct s_data
 	t_tokens			*cmdchain;
 	t_cmd				cmd;
 	char				**env;
+	int					tmpfd;
 }						t_data;
 
 extern int				signalint;
@@ -115,7 +116,7 @@ void					append_command_node(t_command **cmd_list,
 							t_command *new_cmd);
 void					free_tab(char **tab);
 char					*handle_dollar_sign(char *input, t_data *data);
-int					check_path(t_tokens *tokens, t_data *data);
+int						check_path(t_tokens *tokens, t_data *data);
 int						hasaccess(t_tokens *token, t_data *data);
 void					execute_pipeline(t_command *cmds, t_data *data);
 void					art(void);
@@ -190,5 +191,5 @@ int						change_dir(t_arg *args, t_env *env_list);
 char					**tokens_to_args(char *tokens);
 void					free_args(char **args);
 int						unset_command(t_arg *args, t_env **env_list);
-void	free_list_arg(t_arg *head);
+void					free_list_arg(t_arg *head);
 #endif

@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/02 12:32:33 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/02 12:43:51 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -317,7 +317,7 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 			continue ;
 		}
 		path = get_path(current->args->arg, data->env_list);
-		if (is_builtin_command(current->args->arg) && current->next == NULL)
+		if (is_builtin_command(current->args->arg) && current->next == NULL && i == 0)
 		{
 			in = dup(STDIN_FILENO);
 			out = dup(STDOUT_FILENO);

@@ -42,7 +42,13 @@ int	checkpipe(t_tokens *token)
 		|| !getprev(token->previous)
 		|| (getprev(token->previous)->id != TOKEN_WORD
 			&& getprev(token->previous)->id != TOKEN_COMMAND))
+	{
+		if (getprev(token->previous))
+			getprev(token->previous)->error = 1;
+		if (getnext(token->next))
+			getnext(token->next)->error = 1;
 		return (1);
+	}
 	return (0);
 }
 
@@ -65,8 +71,7 @@ int	checkfileout(t_tokens *token)
 	t_tokens	*next_token;
 
 	next_token = getnext(token->next);
-	if (!next_token || (next_token->id != TOKEN_WORD
-			&& next_token->id != TOKEN_COMMAND))
+	if (!next_token || (next_token->id != TOKEN_FILE))
 		return (1); // Error: No valid file or command after >
 	return (0);     // No error
 }
@@ -76,8 +81,7 @@ int	checkfilein(t_tokens *token)
 	t_tokens	*next_token;
 
 	next_token = getnext(token->next);
-	if (!next_token || (next_token->id != TOKEN_WORD
-			&& next_token->id != TOKEN_COMMAND))
+	if (!next_token || (next_token->id != TOKEN_FILE))
 		return (1); // Error: No valid file or command after <
 	return (0);     // No error
 }
@@ -90,8 +94,12 @@ void	printerror(t_tokens *token)
 		printf("bash: %s: Is a directory\n", getnext(token)->content);
 	else
 	{
-		printf("bash: syntax error near unexpected token `%s'\n",
-			getnext(token)->content);
+		if (getnext(token)->content)
+			printf("bash: syntax error near unexpected token `%s'\n",
+				getnext(token)->content);
+		else if (token->next)
+			printf("bash: syntax error near unexpected token `%s'\n",
+				token->next->content);
 	}
 }
 int	is_command(t_tokens *token)
@@ -130,7 +138,7 @@ int	contains_dot_or_slash(const char *str)
 	return (0); // Return 0 if neither '.' nor '/' is found
 }
 
-void	check_path(t_tokens *token, t_data *data)
+int	check_path(t_tokens *token, t_data *data)
 {
 	struct stat	statbuf;
 	char		*str;
@@ -142,6 +150,8 @@ void	check_path(t_tokens *token, t_data *data)
 		data->cmd.status = 127;
 		token->error = 1;
 		printf("bash: %s: command not found\n", token->content);
+		free(str);
+		return (1);
 	}
 	else if (stat(token->content, &statbuf) == 0 && S_ISDIR(statbuf.st_mode)
 		&& !is_builtin_command(str))
@@ -149,6 +159,8 @@ void	check_path(t_tokens *token, t_data *data)
 		data->cmd.status = 126;
 		token->error = 1;
 		printf("bash: %s: is a directory\n", token->content);
+		free(str);
+		return (1);
 	}
 	else if (access(str, X_OK) != 0 && !S_ISDIR(statbuf.st_mode)
 		&& !is_builtin_command(str))
@@ -156,17 +168,24 @@ void	check_path(t_tokens *token, t_data *data)
 		data->cmd.status = 127;
 		token->error = 1;
 		printf("bash: %s: No such file or directory\n", token->content);
+		free(str);
+		return (1);
 	}
 	free(str);
+	return (0);
+}
+
+t_tokens	*getnextcommand(t_tokens *tmp)
+{
+	while (tmp && tmp->id != TOKEN_PIPE)
+		tmp = tmp->next;
+	return (tmp);
 }
 
 int	checksyntaxerror(t_data *data)
 {
 	t_tokens	*tmp;
-	int			types[12];
-	int			wasredirect;
 
-	wasredirect = 0;
 	tmp = data->cmdchain;
 	while (tmp)
 	{
@@ -175,50 +194,41 @@ int	checksyntaxerror(t_data *data)
 			data->cmd.status = 2;
 			printerror(tmp);
 			tmp->error = 1;
-			wasredirect = 0;
-			tmp = tmp->next;
+			tmp = getnextcommand(tmp);
+			if (tmp && tmp->next)
+				tmp = tmp->next->next;
 		}
-		if (tmp->id == TOKEN_HEREDOC_EOF && checkheredoc(tmp))
+		else if (tmp->id == TOKEN_HEREDOC_EOF && checkheredoc(tmp))
 		{
 			data->cmd.status = 2;
 			printerror(tmp->next);
 			tmp->error = 1;
-			wasredirect = 0;
-			tmp = tmp->next;
+			tmp = getnextcommand(tmp);
 		}
-		if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
+		else if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
 		{
 			data->cmd.status = 2;
 			printerror(tmp->next);
 			tmp->error = 1;
-			wasredirect = 0;
-			tmp = tmp->next;
+			tmp = getnextcommand(tmp);
 		}
-		if ((tmp->id == TOKEN_OUT_FILE || tmp->id == TOKEN_OUT_A_FILE)
+		else if ((tmp->id == TOKEN_OUT_FILE || tmp->id == TOKEN_OUT_A_FILE)
 			&& checkfileout(tmp))
 		{
 			data->cmd.status = 2;
 			printerror(tmp->next);
 			tmp->error = 1;
-			tmp = tmp->next;
-			wasredirect = 1;
+			tmp = getnextcommand(tmp);
 		}
-		if (tmp->id == TOKEN_COMMAND && wasredirect == 1)
+		else if (tmp->id == TOKEN_COMMAND && check_path(tmp, data))
 		{
-				check_path(tmp, data);
-			wasredirect = 0;
-			tmp = tmp->next;
+			printf("%d\n", data->cmd.status);
+			tmp->error = 1;
+			tmp = getnextcommand(tmp);
 			continue ;
 		}
-		// printf("%s\n", tmp->content);
-		types[tmp->id] += 1;
-		if (types[TOKEN_IN_FILE] > 1)
-		{
-			printf("bash: syntax error near unexpected token `%s' %d\n",
-				getnext(tmp)->content, types[TOKEN_IN_FILE]);
-			tmp->error = 1;
-		}
-		tmp = tmp->next;
+		if (tmp)
+			tmp = tmp->next;
 	}
 	return (0);
 }

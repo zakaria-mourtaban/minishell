@@ -75,13 +75,16 @@ void	fixuptoken(t_data *data)
 			if (tmp != NULL)
 				tmp->id = TOKEN_FILE;
 		}
-		tmp = tmp->next;
+		if (tmp)
+			tmp = tmp->next;
 		if (tmp && tmp->id == TOKEN_SPACE)
 			tmp = tmp->next;
 	}
 	tmp = data->cmdchain;
 	while (tmp)
 	{
+		if (tmp->id == TOKEN_COMMAND)
+			foundcmd = 1;
 		if (tmp->id == TOKEN_PIPE)
 			foundcmd = 0;
 		if (tmp->id == TOKEN_WORD && foundcmd == 0)
@@ -111,6 +114,8 @@ t_command	*getcommands(t_data *data)
 				return (NULL);
 		}
 		add_argument(current_cmd, tmp->content);
+		if (tmp->error == 1)
+			current_cmd->error = 1;
 	}
 	tmp = tmp->next;
 	while (tmp)
@@ -133,7 +138,8 @@ t_command	*getcommands(t_data *data)
 				current_cmd = NULL;
 			}
 		}
-
+		if (tmp && tmp->error == 1 && current_cmd)
+			current_cmd->error = 1;
 		if (tmp != NULL)
 			tmp = tmp->next;
 	}
@@ -153,7 +159,7 @@ void	handleredirects(t_data *data, t_command *command)
 	{
 		while (tmp)
 		{
-			if (tmp->id == TOKEN_IN_FILE)
+			if (tmp->id == TOKEN_IN_FILE && tmp->error == 0)
 			{
 				tmp = tmp->next;
 				if (tmp && tmp->id == TOKEN_SPACE)
@@ -171,7 +177,7 @@ void	handleredirects(t_data *data, t_command *command)
 				}
 				tmp = tmp->next;
 			}
-			else if (tmp->id == TOKEN_OUT_FILE)
+			else if (tmp->id == TOKEN_OUT_FILE && tmp->error == 0)
 			{
 				tmp = tmp->next;
 				if (tmp->id == TOKEN_SPACE)
@@ -190,7 +196,7 @@ void	handleredirects(t_data *data, t_command *command)
 				}
 				tmp = tmp->next;
 			}
-			else if (tmp->id == TOKEN_OUT_A_FILE)
+			else if (tmp->id == TOKEN_OUT_A_FILE && tmp->error == 0)
 			{
 				tmp = tmp->next;
 				if (tmp->id == TOKEN_SPACE)
@@ -231,6 +237,7 @@ void	initcmd(char *input, char **env, t_data *data)
 	tokenizer(handle_dollar_sign(input, data), data);
 	fixuptoken(data);
 	remove_quotes(data->cmdchain);
+	checksyntaxerror(data);
 	printcmds(data);
 	command = getcommands(data);
 	handleredirects(data, command);
@@ -238,7 +245,8 @@ void	initcmd(char *input, char **env, t_data *data)
 	execute_pipeline(command, data);
 	free_command_list(command);
 	free_cmdchain(data->cmdchain);
-	data->cmd.status = data->cmd.status % 255;
+	if (data->cmd.status > 255)
+		data->cmd.status = data->cmd.status % 255;
 	(void)env;
 	(void)command;
 	(void)data;

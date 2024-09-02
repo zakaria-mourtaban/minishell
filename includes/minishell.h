@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 19:49:07 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/02 01:57:54 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,9 @@ typedef enum s_token
 	TOKEN_OPERATOR = 7,
 	TOKEN_PIPE = 8,
 	TOKEN_SPACE = 9,
-	TOKEN_DIRECTORY = 10,
-	TOKEN_START = 11,
+	TOKEN_FILE = 10,
+	TOKEN_DIRECTORY = 11,
+	TOKEN_START = 12,
 }						e_token;
 
 typedef struct s_tokens
@@ -107,7 +108,13 @@ typedef struct s_data
 }						t_data;
 
 extern int				signalint;
+t_arg					*create_arg_node(char *arg);
+void					add_argument(t_command *cmd, char *arg);
+t_command				*create_command_node(void);
+void					append_command_node(t_command **cmd_list,
+							t_command *new_cmd);
 void					free_tab(char **tab);
+char					*handle_dollar_sign(char *input, t_data *data);
 void					check_path(t_tokens *tokens, t_data *data);
 int						hasaccess(t_tokens *token, t_data *data);
 void					execute_pipeline(t_command *cmds, t_data *data);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executepipe.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/02 20:27:12 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 11:40:07 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,41 +27,24 @@ void	close_pipes(int *pipes, int num_pipes)
 #include <stdbool.h>
 #include <string.h>
 
-bool	is_builtin_command(const char *command)
+int	is_builtin_command(const char *command)
 {
 	if (command == NULL)
-		return (false);
-	// Compare both length and content of the command
-	switch (ft_strlen(command))
-	{
-	case 2:
-		if (ft_strcmp(command, "cd") == 0)
-			return (true);
-		break ;
-	case 4:
-		if (ft_strcmp(command, "echo") == 0)
-			return (true);
-		if (ft_strcmp(command, "exit") == 0)
-			return (true);
-		break ;
-	case 3:
-		if (ft_strcmp(command, "pwd") == 0)
-			return (true);
-		if (ft_strcmp(command, "env") == 0)
-			return (true);
-		break ;
-	case 6:
-		if (ft_strcmp(command, "export") == 0)
-			return (true);
-		break ;
-	case 5:
-		if (ft_strcmp(command, "unset") == 0)
-			return (true);
-		break ;
-	default:
-		break ;
-	}
-	return (false);
+		return (0);
+
+	// Check command length and content
+	if (ft_strlen(command) == 2 && ft_strcmp(command, "cd") == 0)
+		return (1);
+	else if (ft_strlen(command) == 4 && (ft_strcmp(command, "echo") == 0 || ft_strcmp(command, "exit") == 0))
+		return (1);
+	else if (ft_strlen(command) == 3 && (ft_strcmp(command, "pwd") == 0 || ft_strcmp(command, "env") == 0))
+		return (1);
+	else if (ft_strlen(command) == 6 && ft_strcmp(command, "export") == 0)
+		return (1);
+	else if (ft_strlen(command) == 5 && ft_strcmp(command, "unset") == 0)
+		return (1);
+	else
+		return (0);
 }
 
 int	execute_builtin_command(t_command *command, t_data *data)
@@ -345,7 +328,8 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	i = 0;
 	while (i < num_cmds)
 	{
-		waitpid(-1, &data->cmd.status, 0);
+		wait(&data->cmd.status);
+		//waitpid(-1, &data->cmd.status, 0);
 		i++;
 	}
 	if (signalint == 130)

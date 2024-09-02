@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strnstr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 16:42:57 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/22 23:46:04 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 12:30:01 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,4 +57,3 @@ char	*ft_strstr(const char *big, const char *little)
 	}
 	return (NULL);
 }
-

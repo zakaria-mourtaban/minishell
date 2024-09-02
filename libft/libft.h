@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/12 10:20:02 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/08/22 23:46:19 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 12:31:38 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 # include <stddef.h>
 # include <stdlib.h>
 # include <unistd.h>
+
+# define BUFFER_SIZE 42
 
 typedef struct s_list
 {
@@ -81,7 +83,7 @@ int					ft_memcmp(const void *s1, const void *s2, size_t n);
 char				*ft_get_next_line(int fd);
 char				*ft_strjoingnl(char *buffer, const char *content);
 
-#endif
-#ifndef BUFFER_SIZE
-# define BUFFER_SIZE 42
+// #endif
+// #ifndef BUFFER_SIZE
+
 #endif

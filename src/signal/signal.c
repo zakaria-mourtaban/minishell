@@ -3,48 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 00:00:34 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 18:00:24 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 11:52:38 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-void	handlesignal(t_data *data)
-{
-	if (data->cmd.running == 1)
-		kill(data->cmd.pid, SIGINT);
-	data->cmd.running = 0;
-}
-
-void	interactivehandle_sigint(int sig)
-{
-	printf("\n");
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-	signalint = 130;
-	(void)sig;
-}
-
-void	interactivehandle_sigquit(int sig)
-{
-	(void)sig;
-}
-
-void	noninteractivehandle_sigint(int sig)
-{
-	printf("\n");
-	signalint = 130;
-	(void)sig;
-}
-
-void	noninteractivehandle_sigquit(int sig)
-{
-	(void)sig;
-}
 
 char	*getinfo(t_data *data)
 {

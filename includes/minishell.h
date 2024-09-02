@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/02 20:06:43 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 12:26:05 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,7 @@ int						unset_env(t_env **head, const char *key);
 void					print_list(t_env *env_head);
 pid_t					ft_getuid(void);
 
-bool					is_builtin_command(const char *command);
+int	is_builtin_command(const char *command);
 int						pwd_command(void);
 int						exit_command(t_arg *args);
 int						echo_command(t_arg *args);
@@ -192,4 +192,56 @@ char					**tokens_to_args(char *tokens);
 void					free_args(char **args);
 int						unset_command(t_arg *args, t_env **env_list);
 void					free_list_arg(t_arg *head);
+void	free_resources(char *key, char *value);
+int	is_input_null(char **input);
+int	is_key_invalid(char *key);
+void	swap_nodes(t_env *a, t_env *b);
+void	sort_env_list(t_env *head);
+void	remove_quotes_from_str(char *str);
+int	check_key(char *key);
+void	print_sorted_env_list(t_env *head);
+char	*concatenvloop(char *input, t_data *data);
+int	dollarcount(char *input);
+
+
+/*		signals		*/
+void	noninteractivehandle_sigquit(int sig);
+void	noninteractivehandle_sigint(int sig);
+void	interactivehandle_sigquit(int sig);
+void	interactivehandle_sigint(int sig);
+void	handlesignal(t_data *data);
+char	*getinfo(t_data *data);
+void	interactivemode(t_data *data, char **input);
+void	noninteractivemode(t_data *data, char **input);
+
+
+/*		utils		*/
+void	remove_quotes(t_tokens *tokens);
+void	free_data(t_data *data);
+void	free_env_list(t_env *env_list);
+void	free_cmdchain(t_tokens *cmdchain);
+
+/*		env		*/
+char	*concatenvloop(char *input, t_data *data);
+char	*envvaluestr(char *key, t_data *data);
+int	find_char_index(char *string, char c);
+char	*concatenv(char *input, t_data *data);
+int	dollarcount(char *input);
+char	*read_pid_line(int fd);
+ssize_t	read_status_file(char *buffer, size_t size);
+pid_t	ft_getpid(void);
+pid_t	ft_getuid(void);
+t_env	*create_envp_node(char *key, char *value, int hidden);
+t_env	*create_envp_list_node(char *envp_str, int hidden);
+void	add_node_to_envp_list(t_env **head, t_env **current, t_env *new_node);
+t_env	*init_copy_envp(char **envp);
+int	set_env(t_env **head, const char *key, const char *value, int hidden);
+void	free_tab(char **tab);
+void	free_list(t_env *head);
+char	*handle_dollar_sign(char *input, t_data *data);
+void	copy_and_append_char(char **result, char *input, int *i);
+void	handle_question_mark(char **result, int *i, t_data *data);
+void	handle_two_dollar(char **result, int *i);
+void	handle_normal_variable(char *input, int *i, char **result, t_env *env);
+void	split_envp(char *envp_str, char **key, char **value);
 #endif

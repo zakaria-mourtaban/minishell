@@ -6,7 +6,7 @@
 /*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 11:18:31 by odib              #+#    #+#             */
-/*   Updated: 2024/09/03 03:48:49 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/03 09:44:47 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,8 +110,7 @@ void	free_list_arg(t_arg *head)
 	{
 		temp = head;
 		head = head->next;
-		free(temp->arg);  // Free the string stored in arg
-		free(temp);       // Free the current node
+		free(temp->arg);
+		free(temp);
 	}
 }
-

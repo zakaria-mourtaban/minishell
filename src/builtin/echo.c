@@ -3,52 +3,56 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 12:07:09 by odib              #+#    #+#             */
-/*   Updated: 2024/09/01 18:30:00 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/02 23:52:38 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-bool is_valid_n_flag(const char *arg)
+bool	is_valid_n_flag(const char *arg)
 {
-    if (arg[0] != '-' || arg[1] != 'n')
-        return false;
+	int	i;
 
-    for (int i = 1; arg[i] != '\0'; i++)
-    {
-        if (arg[i] != 'n')
-            return false;
-    }
-
-    return true;
+	i = 1;
+	if (arg[0] != '-' || arg[1] != 'n')
+		return (false);
+	while (arg[i] != '\0')
+	{
+		if (arg[i] != 'n')
+			return (false);
+		i++;
+	}
+	return (true);
 }
-int echo_command(t_arg *args) 
+
+int	echo_command(t_arg *args)
 {
-    int newline = 1;  
-    t_arg *current = args->next;
+	int		newline;
+	t_arg	*current;
 
-
-    while (current != NULL && is_valid_n_flag(current->arg)) {
-        newline = 0; 
-        current = current->next;
-    }
-    while (current) {
-        if (current->arg == NULL) {
-            fprintf(stderr, "Error: Null argument encountered.\n");
-            return 1; 
-        }
-        printf("%s", current->arg);
-        if (current->next) {
-            printf(" ");
-        }
-        current = current->next;
-    }
-    if (newline) {
-        printf("\n");
-    }
-
-    return 0;
+	newline = 1;
+	current = args->next;
+	while (current != NULL && is_valid_n_flag(current->arg))
+	{
+		newline = 0;
+		current = current->next;
+	}
+	while (current)
+	{
+		if (current->arg == NULL)
+		{
+			perror("Error: Null argument encountered.\n");
+			return (1);
+		}
+		printf("%s", current->arg);
+		if (current->next)
+			printf(" ");
+		current = current->next;
+	}
+	if (newline)
+		printf("\n");
+	return (0);
 }

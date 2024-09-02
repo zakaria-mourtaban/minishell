@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 11:18:31 by odib              #+#    #+#             */
-/*   Updated: 2024/09/01 17:59:56 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/02 23:52:11 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,23 +79,23 @@ int	cd_to_path(char *path, t_env *env_list)
 
 int	change_dir(t_arg *args, t_env *env_list)
 {
-	t_arg *current = args->next;
+	t_arg	*current;
 
+	current = args->next;
 	if (current == NULL)
 	{
 		return (cd_to_home(env_list));
 	}
-
-	if (current->arg[0] == '-' && current->arg[1] == '\0')
+	if ((current->arg[0] == '-' && current->arg[1] == '\0')
+		|| (current->arg[0] == '-' && current->arg[1] == '-'
+			&& current->arg[2] == '\0'))
 	{
 		return (cd_to_oldpwd(env_list));
 	}
-
 	if (current->next == NULL)
 	{
 		return (cd_to_path(current->arg, env_list));
 	}
-
-	fprintf(stderr, "cd: too many arguments\n");
+	perror("cd: too many arguments\n");
 	return (1);
 }

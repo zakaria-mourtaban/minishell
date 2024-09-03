@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/03 11:50:48 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 12:48:51 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -284,8 +284,6 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	}
 	i = 0;
 	current = cmds;
-	if (data->tmpfd != -1)
-		dup2(STDIN_FILENO, data->tmpfd);
 	while (current)
 	{
 		if (ft_strlen(current->args->arg) == 0)

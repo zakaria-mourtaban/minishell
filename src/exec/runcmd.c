@@ -232,32 +232,9 @@ void	handleheredoc(t_data *data)
 {
 	t_tokens *tmp;
 	char *input;
-	char **heredocs;
-	int foundheredoc;
 	int i;
 
-	i = 0;
-	foundheredoc = 0;
-	tmp = data->cmdchain;
-	while (tmp)
-	{
-		if (tmp->id == TOKEN_HEREDOC_EOF)
-			i++;
-		tmp = tmp->next;
-	}
-	tmp = data->cmdchain;
-	heredocs = malloc(sizeof(char *) * i);
-	i = 0;
-	while (tmp)
-	{
-		if (tmp->id == TOKEN_HEREDOC_EOF)
-		{
-			foundheredoc = 1;
-			heredocs[i] = ft_strdup("");
-			i++;
-		}
-		tmp = tmp->next;
-	}
+	input = NULL;
 	tmp = data->cmdchain;
 	i = 0;
 	while (tmp)
@@ -265,6 +242,8 @@ void	handleheredoc(t_data *data)
 		printf("in loop\n");
 		if (tmp->id == TOKEN_HEREDOC_EOF && tmp->error == 0)
 		{
+			tmp->id = TOKEN_IN_FILE;
+			tmp->content = ft_strdup("<");
 			tmp = tmp->next;
 			if (tmp && tmp->id == TOKEN_SPACE)
 				tmp = tmp->next;
@@ -272,23 +251,25 @@ void	handleheredoc(t_data *data)
 			{
 				while (1)
 				{
-					printf("> ");
-					input = ft_get_next_line(0);
+					input = readline(">");
 					if (ft_strcmp(input, tmp->content) == 0
 						&& ft_strlen(input) == ft_strlen(tmp->content))
 						break ;
-					heredocs[i] = ft_strjoingnl(heredocs[i], input);
-					heredocs[i] = ft_strjoingnl(heredocs[i], "\n");
-					free(input);
+					input = ft_strjoingnl(input, "\n");
 				}
-				if (heredocs[i] != NULL)
-					printf("%s\n", heredocs[i]);
+				if (input != NULL)
+					printf("%s\n", input);
 			}
 			else
 			{
 				tmp->error = 1;
 				printf("Invalid EOF\n");
 			}
+			data->tmpfd = open(ft_itoa(i), O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			ft_putstr_fd(input, data->tmpfd);
+			close(data->tmpfd);
+			free(input);
+			tmp->content = ft_itoa(i);
 			tmp = tmp->next;
 		}
 		i++;
@@ -296,13 +277,6 @@ void	handleheredoc(t_data *data)
 			break ;
 		if (tmp)
 			tmp = tmp->next;
-	}
-	if (foundheredoc)
-	{
-		if (heredocs[i - 1] == NULL)
-			heredocs[i - 1] = ft_strdup("\n");
-		data->tmpfd = open("heredocfile", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		ft_putstr_fd(heredocs[i - 1], data->tmpfd);
 	}
 }
 

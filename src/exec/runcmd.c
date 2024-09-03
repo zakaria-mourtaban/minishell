@@ -60,20 +60,13 @@ void	fixuptoken(t_data *data)
 	tmp = data->cmdchain;
 	while (tmp)
 	{
-		if (tmp->id == TOKEN_IN_FILE && tmp->next
-			&& (tmp->next->id == TOKEN_COMMAND || tmp->next->id == TOKEN_WORD))
-			tmp->next->id = TOKEN_FILE;
-		if (tmp->id == TOKEN_IN_FILE && tmp->next && tmp->next->next
-			&& (tmp->next->next->id == TOKEN_COMMAND
-				|| tmp->next->next->id == TOKEN_WORD))
-			tmp->next->next->id = TOKEN_FILE;
 		if ((tmp->id == TOKEN_OUT_FILE || tmp->id == TOKEN_OUT_A_FILE
-				|| tmp->id == TOKEN_HEREDOC_EOF))
+				|| tmp->id == TOKEN_HEREDOC_EOF || tmp->id == TOKEN_IN_FILE))
 		{
 			tmp = tmp->next;
 			if (tmp && tmp->id == TOKEN_SPACE)
 				tmp = tmp->next;
-			if (tmp != NULL)
+			if (tmp && (tmp->id == TOKEN_WORD || tmp->id == TOKEN_COMMAND))
 				tmp->id = TOKEN_FILE;
 		}
 		if (tmp)
@@ -176,7 +169,8 @@ void	handleredirects(t_data *data, t_command *command)
 						break ;
 					}
 				}
-				tmp = tmp->next;
+				if (tmp)
+					tmp = tmp->next;
 			}
 			else if (tmp->id == TOKEN_OUT_FILE && tmp->error == 0)
 			{
@@ -232,44 +226,59 @@ void	handleheredoc(t_data *data)
 {
 	t_tokens *tmp;
 	char *input;
+	char *tmpstr;
+	char *buffer;
 	int i;
 
 	input = NULL;
+	buffer = NULL;
+	signal(SIGINT, interactivehandle_sigint);
+	signal(SIGQUIT, interactivehandle_sigquit);
 	tmp = data->cmdchain;
 	i = 0;
 	while (tmp)
 	{
-		printf("in loop\n");
 		if (tmp->id == TOKEN_HEREDOC_EOF && tmp->error == 0)
 		{
 			tmp->id = TOKEN_IN_FILE;
+			free(tmp->content);
 			tmp->content = ft_strdup("<");
 			tmp = tmp->next;
 			if (tmp && tmp->id == TOKEN_SPACE)
 				tmp = tmp->next;
-			if (tmp && (tmp->id == TOKEN_FILE))
+			if (tmp && (tmp->id == TOKEN_FILE) && tmp->error == 0)
 			{
 				while (1)
 				{
-					input = readline(">");
-					if (ft_strcmp(input, tmp->content) == 0
+					input = readline("> ");
+					if (input && ft_strcmp(input, tmp->content) == 0
 						&& ft_strlen(input) == ft_strlen(tmp->content))
 						break ;
-					input = ft_strjoingnl(input, "\n");
+					if (input == NULL)
+						break ;
+					if (buffer == NULL)
+						buffer = ft_strdup(input);
+					else
+						buffer = ft_strjoingnl(buffer, input);
+					buffer = ft_strjoingnl(buffer, "\n");
+					free(input);
 				}
 				if (input != NULL)
 					printf("%s\n", input);
 			}
 			else
-			{
-				tmp->error = 1;
-				printf("Invalid EOF\n");
-			}
-			data->tmpfd = open(ft_itoa(i), O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			ft_putstr_fd(input, data->tmpfd);
+				break ;
+			if (buffer == NULL)
+				buffer = ft_strdup("");
+			tmpstr = ft_itoa(i);
+			data->tmpfd = open(tmpstr, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (buffer)
+				ft_putstr_fd(buffer, data->tmpfd);
 			close(data->tmpfd);
-			free(input);
-			tmp->content = ft_itoa(i);
+			if (buffer)
+				free(buffer);
+			tmp->content = ft_strdup(tmpstr);
+			free(tmpstr);
 			tmp = tmp->next;
 		}
 		i++;
@@ -278,6 +287,32 @@ void	handleheredoc(t_data *data)
 		if (tmp)
 			tmp = tmp->next;
 	}
+	signal(SIGINT, noninteractivehandle_sigint);
+	signal(SIGQUIT, noninteractivehandle_sigquit);
+}
+
+int	checkheredocerror(t_data *data)
+{
+	t_tokens *tmp;
+	int haserrored;
+	haserrored = 0;
+	tmp = data->cmdchain;
+	while (tmp)
+	{
+		if (tmp->id == TOKEN_HEREDOC_EOF && checkheredoc(tmp))
+		{
+			printf("here\n");
+			data->cmd.status = 2;
+			printerror(tmp);
+			tmp->error = 1;
+			tmp = getnextcommand(tmp);
+			haserrored = 1;
+			continue ;
+		}
+		if (tmp)
+			tmp = tmp->next;
+	}
+	return (haserrored);
 }
 
 void	initcmd(char *input, char **env, t_data *data)
@@ -290,14 +325,17 @@ void	initcmd(char *input, char **env, t_data *data)
 	tokenizer(handle_dollar_sign(input, data), data);
 	fixuptoken(data);
 	remove_quotes(data->cmdchain);
-	handleheredoc(data);
-	checksyntaxerror(data);
-	printcmds(data);
-	command = getcommands(data);
-	handleredirects(data, command);
-	print_command_list(command);
-	execute_pipeline(command, data);
-	free_command_list(command);
+	if (!checkheredocerror(data))
+	{
+		handleheredoc(data);
+		checksyntaxerror(data);
+		printcmds(data);
+		command = getcommands(data);
+		handleredirects(data, command);
+		print_command_list(command);
+		execute_pipeline(command, data);
+		free_command_list(command);
+	}
 	free_cmdchain(data->cmdchain);
 	if (data->cmd.status > 255)
 		data->cmd.status = data->cmd.status % 255;

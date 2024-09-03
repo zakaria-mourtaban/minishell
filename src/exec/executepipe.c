@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/03 12:48:51 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 16:25:09 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -266,7 +266,7 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 			num_cmds++;
 		current = current->next;
 	}
-	while (num_cmds < 1)
+	while (num_cmds <= 1)
 		num_cmds++;
 	pipes = malloc(sizeof(int) * (num_cmds - 1) * 2);
 	if (!pipes)
@@ -292,7 +292,8 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 			continue ;
 		}
 		path = get_path(current->args->arg, data->env_list);
-		if (is_builtin_command(current->args->arg))
+		if (is_builtin_command(current->args->arg) && current->next == NULL
+			&& i == 0 && current->error == 0)
 		{
 			in = dup(STDIN_FILENO);
 			out = dup(STDOUT_FILENO);
@@ -302,8 +303,12 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 			close(in);
 			close(out);
 		}
-		else
+		else if (current->error == 0)
 			execute_command(current, pipes, i, num_cmds, data->env_list);
+		if (current->infile > 1)
+			close(current->infile);
+		if (current->outfile > 1)
+			close(current->outfile);
 		current = current->next;
 		i++;
 		free(path);
@@ -312,12 +317,12 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	i = 0;
 	while (i < num_cmds)
 	{
-		wait(&data->cmd.status);
-		// waitpid(-1, &data->cmd.status, 0);
+		// wait(&data->cmd.status);
+		waitpid(-1, &data->cmd.status, 0);
 		i++;
 	}
 	if (signalint == 130)
 		data->cmd.status = 130;
-	if (pipes == NULL)
+	if (pipes != NULL)
 		free(pipes);
 }

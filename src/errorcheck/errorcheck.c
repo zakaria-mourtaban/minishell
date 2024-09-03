@@ -25,14 +25,11 @@ t_tokens	*getprev(t_tokens *token)
 
 t_tokens	*getnext(t_tokens *token)
 {
-	t_tokens	*tmp;
-
-	tmp = token;
-	if (token == NULL)
-		return (NULL);
-	while (tmp && tmp->id == TOKEN_SPACE)
-		tmp = tmp->next;
-	return (tmp);
+	if (token && token->next && token->next->id == TOKEN_SPACE)
+		token = token->next;
+	if (token && token->next)
+		return (token->next);
+	return (NULL);
 }
 
 int	checkpipe(t_tokens *token)
@@ -61,8 +58,11 @@ int	checkfileoutappend(t_tokens *token)
 
 int	checkheredoc(t_tokens *token)
 {
-	if (!getnext(token->next) || getnext(token->next)->id != TOKEN_FILE)
-		return (1);
+	t_tokens	*next_token;
+
+	next_token = getnext(token->next);
+	if (!next_token || (next_token->id != TOKEN_FILE))
+		return (1); // Error: No valid file or command after <
 	return (0);
 }
 
@@ -70,20 +70,20 @@ int	checkfileout(t_tokens *token)
 {
 	t_tokens	*next_token;
 
-	next_token = getnext(token->next);
+	next_token = getnext(token);
 	if (!next_token || (next_token->id != TOKEN_FILE))
-		return (1); // Error: No valid file or command after >
-	return (0);     // No error
+		return (1); // Error: No valid file or command after <
+	return (0);    // No error
 }
 
 int	checkfilein(t_tokens *token)
 {
 	t_tokens	*next_token;
 
-	next_token = getnext(token->next);
+	next_token = getnext(token);
 	if (!next_token || (next_token->id != TOKEN_FILE))
 		return (1); // Error: No valid file or command after <
-	return (0);     // No error
+	return (0);
 }
 
 void	printerror(t_tokens *token)
@@ -94,12 +94,14 @@ void	printerror(t_tokens *token)
 		printf("bash: %s: Is a directory\n", getnext(token)->content);
 	else
 	{
-		if (getnext(token)->content)
+		if (getnext(token) && getnext(token)->content)
 			printf("bash: syntax error near unexpected token `%s'\n",
 				getnext(token)->content);
 		else if (token->next)
 			printf("bash: syntax error near unexpected token `%s'\n",
 				token->next->content);
+		else
+			printf("bash: syntax error near unexpected token `newline'\n");
 	}
 }
 int	is_command(t_tokens *token)
@@ -199,17 +201,10 @@ int	checksyntaxerror(t_data *data)
 			if (tmp && tmp->next)
 				tmp = tmp->next->next;
 		}
-		else if (tmp->id == TOKEN_HEREDOC_EOF && checkheredoc(tmp))
-		{
-			data->cmd.status = 2;
-			printerror(tmp->next);
-			tmp->error = 1;
-			tmp = getnextcommand(tmp);
-		}
 		else if (tmp->id == TOKEN_IN_FILE && checkfilein(tmp))
 		{
 			data->cmd.status = 2;
-			printerror(tmp->next);
+			printerror(tmp);
 			tmp->error = 1;
 			tmp = getnextcommand(tmp);
 		}

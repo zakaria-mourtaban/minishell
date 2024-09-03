@@ -6,7 +6,7 @@
 /*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 23:30:14 by odib              #+#    #+#             */
-/*   Updated: 2024/09/03 11:37:50 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/04 02:09:50 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,11 @@ char	*handle_dollar_sign(char *input, t_data *data)
 	result = ft_strdup("");
 	while (i < ft_strlen1(input) && input[i])
 	{
+		if (input[i] == '\\' && input[i + 1] == '$')
+		{
+			printf("$");	
+			i+=2;
+		}
 		if (input[i] == '$')
 		{
 			if (input[i + 1] == '$')

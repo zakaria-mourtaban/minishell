@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executepipe.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/03 11:40:07 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/03 11:50:48 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,14 @@ int	is_builtin_command(const char *command)
 {
 	if (command == NULL)
 		return (0);
-
 	// Check command length and content
 	if (ft_strlen(command) == 2 && ft_strcmp(command, "cd") == 0)
 		return (1);
-	else if (ft_strlen(command) == 4 && (ft_strcmp(command, "echo") == 0 || ft_strcmp(command, "exit") == 0))
+	else if (ft_strlen(command) == 4 && (ft_strcmp(command, "echo") == 0
+			|| ft_strcmp(command, "exit") == 0))
 		return (1);
-	else if (ft_strlen(command) == 3 && (ft_strcmp(command, "pwd") == 0 || ft_strcmp(command, "env") == 0))
+	else if (ft_strlen(command) == 3 && (ft_strcmp(command, "pwd") == 0
+			|| ft_strcmp(command, "env") == 0))
 		return (1);
 	else if (ft_strlen(command) == 6 && ft_strcmp(command, "export") == 0)
 		return (1);
@@ -168,7 +169,7 @@ int	execute_builtin_command_nofork(t_command *command, t_data *data)
 }
 
 void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
-		t_data *data)
+		t_env *env_list)
 {
 	char	**args;
 	int		arg_count;
@@ -206,11 +207,11 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
 			dup2(cmd->infile, STDIN_FILENO);
 		}
 		// Close all pipe ends in child process
-		// printf("executing %s %d %d\n", cmd->args->arg, cmd->infile,
 		for (int j = 0; j < 2 * (num_cmds - 1); j++)
 		{
 			close(pipes[j]);
 		}
+		// printf("executing %s %d %d\n", cmd->args->arg, cmd->infile,
 		// 	cmd->outfile);
 		// Construct the arguments array
 		arg_count = 0;
@@ -237,22 +238,12 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
 		args[j] = NULL;
 		// Execute the command
 		if (args[0])
-			path = get_path(args[0], data->env_list);
-		if (is_builtin_command(args[0]))
-			execute_builtin_command(cmd, data);
-		else if (!access(path, X_OK) && cmd->error == 0)
-			execve(path, args, data->env);
-		else
-		{
-			if (path != args[0])
-				free(path);
-			free(args);
-			exit(127);
-		}
+			path = get_path(args[0], env_list);
+		execve(path, args, createenv(env_list));
 		if (path != args[0])
 			free(path);
 		free(args);
-		exit(0);
+		exit(1);
 	}
 }
 
@@ -260,7 +251,6 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 {
 	int			*pipes;
 	int			num_cmds;
-	int			ispiped;
 	int			i;
 	t_command	*current;
 	int			in;
@@ -268,7 +258,7 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	char		*path;
 
 	num_cmds = 0;
-	ispiped = 0;
+	pipes = NULL;
 	current = cmds;
 	while (current)
 	{
@@ -276,23 +266,21 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 			num_cmds++;
 		current = current->next;
 	}
-	if (num_cmds > 1)
+	while (num_cmds < 1)
+		num_cmds++;
+	pipes = malloc(sizeof(int) * (num_cmds - 1) * 2);
+	if (!pipes)
+		return ;
+	i = 0;
+	while (i < num_cmds - 1)
 	{
-		ispiped = 1;
-		pipes = malloc(sizeof(int) * (num_cmds - 1) * 2);
-		if (!pipes)
-			return ;
-		i = 0;
-		while (i < num_cmds - 1)
+		if (pipe(pipes + i * 2) == -1)
 		{
-			if (pipe(pipes + i * 2) == -1)
-			{
-				perror("pipe");
-				free(pipes);
-				return ;
-			}
-			i++;
+			perror("pipe");
+			free(pipes);
+			return ;
 		}
+		i++;
 	}
 	i = 0;
 	current = cmds;
@@ -300,15 +288,13 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 		dup2(STDIN_FILENO, data->tmpfd);
 	while (current)
 	{
-		printf("executing\n");
 		if (ft_strlen(current->args->arg) == 0)
 		{
 			current = current->next;
 			continue ;
 		}
 		path = get_path(current->args->arg, data->env_list);
-		if (is_builtin_command(current->args->arg) && current->next == NULL
-			&& i == 0 && current->error == 0)
+		if (is_builtin_command(current->args->arg))
 		{
 			in = dup(STDIN_FILENO);
 			out = dup(STDOUT_FILENO);
@@ -318,8 +304,8 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 			close(in);
 			close(out);
 		}
-		else if (current->error == 0)
-			execute_command(current, pipes, i, num_cmds, data);
+		else
+			execute_command(current, pipes, i, num_cmds, data->env_list);
 		current = current->next;
 		i++;
 		free(path);
@@ -329,11 +315,11 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	while (i < num_cmds)
 	{
 		wait(&data->cmd.status);
-		//waitpid(-1, &data->cmd.status, 0);
+		// waitpid(-1, &data->cmd.status, 0);
 		i++;
 	}
 	if (signalint == 130)
 		data->cmd.status = 130;
-	if (ispiped)
+	if (pipes == NULL)
 		free(pipes);
 }

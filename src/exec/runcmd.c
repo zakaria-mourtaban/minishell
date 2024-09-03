@@ -272,7 +272,8 @@ void	handleheredoc(t_data *data)
 			{
 				while (1)
 				{
-					input = readline("> ");
+					printf("> ");
+					input = ft_get_next_line(0);
 					if (ft_strcmp(input, tmp->content) == 0
 						&& ft_strlen(input) == ft_strlen(tmp->content))
 						break ;

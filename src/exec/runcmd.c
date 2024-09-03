@@ -339,7 +339,7 @@ void	initcmd(char *input, char **env, t_data *data)
 	free_cmdchain(data->cmdchain);
 	if (data->cmd.status > 255)
 		data->cmd.status = data->cmd.status % 255;
-	// free(input);
+	//free(input);
 	(void)env;
 	(void)command;
 	(void)data;

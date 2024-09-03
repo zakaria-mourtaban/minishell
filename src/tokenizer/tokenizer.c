@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 17:07:10 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/02 17:35:19 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 21:37:22 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,16 @@ void	append(t_tokens **cmds, char *data, int type)
 	tmp = *cmds;
 	while (tmp->next != NULL)
 	{
+		tmp = tmp->next;
+	}
+	if (tmp && tmp->id == TOKEN_SPACE && type == TOKEN_SPACE)
+		return ;
+	if (type != TOKEN_SPACE && tmp->id != TOKEN_SPACE)
+	{
+		new_node = newnode(ft_strdup(" "), TOKEN_SPACE);
+		new_node->error = 0;
+		tmp->next = new_node;
+		new_node->previous = tmp;
 		tmp = tmp->next;
 	}
 	if ((tmp->id == TOKEN_COMMAND || tmp->id == TOKEN_WORD)

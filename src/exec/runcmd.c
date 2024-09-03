@@ -319,7 +319,7 @@ void	initcmd(char *input, char **env, t_data *data)
 		return ;
 	tokenizer(handle_dollar_sign(input, data), data);
 	fixuptoken(data);
-	remove_quotes(data->cmdchain);
+	remove_quotes(data->cmdchain);;
 	if (!checkheredocerror(data))
 	{
 		handleheredoc(data);

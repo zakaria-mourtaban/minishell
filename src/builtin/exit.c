@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 12:07:54 by odib              #+#    #+#             */
-/*   Updated: 2024/09/03 20:37:18 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 20:46:55 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int	exit_command(t_arg *args)
 {
 	int exit_status;
 	t_arg *arg;
-
+	
 	arg = args->next;
 	if (arg && arg->next)
 		handle_too_many_args_error();

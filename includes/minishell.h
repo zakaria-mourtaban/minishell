@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/03 16:53:31 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 21:25:24 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,13 @@ typedef struct s_env
 /* ascii art */
 # include "art.h"
 
+typedef struct s_pids
+{
+	pid_t				pid;
+	struct s_pids		*next;
+
+}						t_pids;
+
 typedef struct s_arg
 {
 	char				*arg;
@@ -109,6 +116,7 @@ typedef struct s_data
 }						t_data;
 
 extern int				signalint;
+t_tokens				*newnode(char *data, int type);
 t_arg					*create_arg_node(char *arg);
 void					add_argument(t_command *cmd, char *arg);
 t_command				*create_command_node(void);

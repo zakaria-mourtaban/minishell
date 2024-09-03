@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/03 20:33:09 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 21:16:36 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,7 +168,7 @@ int	execute_builtin_command_nofork(t_command *command, t_data *data)
 	return (-1);
 }
 
-void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
+pid_t	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
 		t_data *data)
 {
 	char	**args;
@@ -255,6 +255,16 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
 		free(args);
 		exit(data->cmd.status);
 	}
+	return (pid);
+}
+
+void	appendpid(pid_t pid, t_pids *pids)
+{
+	while (pids != NULL)
+		pids = pids->next;
+	pids = malloc(sizeof(t_pids));
+	pids->pid = pid;
+	pids->next = NULL;
 }
 
 void	execute_pipeline(t_command *cmds, t_data *data)
@@ -262,6 +272,7 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	int			*pipes;
 	int			num_cmds;
 	int			i;
+	pid_t		pid;
 	t_command	*current;
 	int			in;
 	int			out;
@@ -312,7 +323,7 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 			close(out);
 		}
 		else if (current->error == 0)
-			execute_command(current, pipes, i, num_cmds, data);
+			pid = execute_command(current, pipes, i, num_cmds, data);
 		if (current->infile > 1)
 			close(current->infile);
 		if (current->outfile > 1)
@@ -323,11 +334,12 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	}
 	close_pipes(pipes, (num_cmds - 1) * 2);
 	i = 0;
-	while (i < num_cmds)
+	while (i < num_cmds - 1)
 	{
 		wait(&data->cmd.status);
 		i++;
 	}
+	waitpid(pid,&data->cmd.status,0);
 	if (signalint == 130)
 		data->cmd.status = 130;
 	if (pipes != NULL)

@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/03 11:12:53 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 16:53:31 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,6 @@ void					handlesignal(t_data *data);
 t_command				*parse_tokens(t_tokens *tokens);
 void					print_command_list(t_command *cmd_list);
 int						checksyntaxerror(t_data *data);
-void					remove_quotes(t_tokens *tokens);
 void					specify_token_cmd(t_tokens *token);
 char					*get_env(t_env *head, const char *key);
 char					*get_env_copy(char *name, t_env *copy_env);
@@ -219,6 +218,9 @@ void					remove_quotes(t_tokens *tokens);
 void					free_data(t_data *data);
 void					free_env_list(t_env *env_list);
 void					free_cmdchain(t_tokens *cmdchain);
+void					printerror(t_tokens *token);
+int						checkheredoc(t_tokens *token);
+t_tokens				*getnextcommand(t_tokens *tmp);
 
 /*		env		*/
 char					*concatenvloop(char *input, t_data *data);

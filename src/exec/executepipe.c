@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/03 16:25:09 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 20:33:09 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,7 +169,7 @@ int	execute_builtin_command_nofork(t_command *command, t_data *data)
 }
 
 void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
-		t_env *env_list)
+		t_data *data)
 {
 	char	**args;
 	int		arg_count;
@@ -207,11 +207,11 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
 			dup2(cmd->infile, STDIN_FILENO);
 		}
 		// Close all pipe ends in child process
+		// printf("executing %s %d %d\n", cmd->args->arg, cmd->infile,
 		for (int j = 0; j < 2 * (num_cmds - 1); j++)
 		{
 			close(pipes[j]);
 		}
-		// printf("executing %s %d %d\n", cmd->args->arg, cmd->infile,
 		// 	cmd->outfile);
 		// Construct the arguments array
 		arg_count = 0;
@@ -238,12 +238,22 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
 		args[j] = NULL;
 		// Execute the command
 		if (args[0])
-			path = get_path(args[0], env_list);
-		execve(path, args, createenv(env_list));
+			path = get_path(args[0], data->env_list);
+		if (is_builtin_command(args[0]))
+			execute_builtin_command(cmd, data);
+		else if (cmd->error == 0)
+			execve(path, args, data->env);
+		else
+		{
+			if (path != args[0])
+				free(path);
+			free(args);
+			exit(127);
+		}
 		if (path != args[0])
 			free(path);
 		free(args);
-		exit(1);
+		exit(data->cmd.status);
 	}
 }
 
@@ -266,8 +276,6 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 			num_cmds++;
 		current = current->next;
 	}
-	while (num_cmds <= 1)
-		num_cmds++;
 	pipes = malloc(sizeof(int) * (num_cmds - 1) * 2);
 	if (!pipes)
 		return ;
@@ -304,7 +312,7 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 			close(out);
 		}
 		else if (current->error == 0)
-			execute_command(current, pipes, i, num_cmds, data->env_list);
+			execute_command(current, pipes, i, num_cmds, data);
 		if (current->infile > 1)
 			close(current->infile);
 		if (current->outfile > 1)
@@ -317,8 +325,7 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 	i = 0;
 	while (i < num_cmds)
 	{
-		// wait(&data->cmd.status);
-		waitpid(-1, &data->cmd.status, 0);
+		wait(&data->cmd.status);
 		i++;
 	}
 	if (signalint == 130)

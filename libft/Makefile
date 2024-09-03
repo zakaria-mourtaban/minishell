@@ -1,6 +1,6 @@
 NAME = libft.a
 
-CFLAGS = -Wall -Werror -Wextra -std=c99
+CFLAGS = -Wall -Werror -Wextra -std=c99 -g
 CC = gcc
 
 all: $(NAME); 

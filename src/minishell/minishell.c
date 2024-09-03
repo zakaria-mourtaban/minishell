@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/02 20:26:33 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/03 19:38:22 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,6 @@ int	main(int ac, char **av, char **env)
 	char	*input;
 	t_data	data;
 
-	using_history();
 	init(&data, env);
 	while (1)
 	{
@@ -109,7 +108,7 @@ int	main(int ac, char **av, char **env)
 			printf("\n");
 			break ;
 		}
-		if (ft_strlen(input) != 0)
+		if (ft_strlen(input) != 0 && input[0] != ' ')
 			add_history(input);
 		noninteractivemode(&data, &input);
 		initcmd(input, env, &data);

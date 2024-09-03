@@ -229,9 +229,6 @@ void	handleheredoc(t_data *data)
 	char *tmpstr;
 	char *buffer;
 	int i;
-
-	input = NULL;
-	buffer = NULL;
 	signal(SIGINT, interactivehandle_sigint);
 	signal(SIGQUIT, interactivehandle_sigquit);
 	tmp = data->cmdchain;
@@ -248,6 +245,8 @@ void	handleheredoc(t_data *data)
 				tmp = tmp->next;
 			if (tmp && (tmp->id == TOKEN_FILE) && tmp->error == 0)
 			{
+				input = NULL;
+				buffer = NULL;
 				while (1)
 				{
 					input = readline("> ");
@@ -263,8 +262,6 @@ void	handleheredoc(t_data *data)
 					buffer = ft_strjoingnl(buffer, "\n");
 					free(input);
 				}
-				if (input != NULL)
-					printf("%s\n", input);
 			}
 			else
 				break ;
@@ -275,8 +272,7 @@ void	handleheredoc(t_data *data)
 			if (buffer)
 				ft_putstr_fd(buffer, data->tmpfd);
 			close(data->tmpfd);
-			if (buffer)
-				free(buffer);
+			free(buffer);
 			tmp->content = ft_strdup(tmpstr);
 			free(tmpstr);
 			tmp = tmp->next;
@@ -319,7 +315,6 @@ void	initcmd(char *input, char **env, t_data *data)
 {
 	t_command *command;
 
-	signalint = 0;
 	if (ft_strlen(input) == 0)
 		return ;
 	tokenizer(handle_dollar_sign(input, data), data);
@@ -329,10 +324,10 @@ void	initcmd(char *input, char **env, t_data *data)
 	{
 		handleheredoc(data);
 		checksyntaxerror(data);
-		printcmds(data);
+		// printcmds(data);
 		command = getcommands(data);
 		handleredirects(data, command);
-		print_command_list(command);
+		// print_command_list(command);
 		execute_pipeline(command, data);
 		free_command_list(command);
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/11 22:15:38 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/04 00:24:20 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/03 16:53:31 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,5 +250,4 @@ void					handle_two_dollar(char **result, int *i);
 void					handle_normal_variable(char *input, int *i,
 							char **result, t_env *env);
 void					split_envp(char *envp_str, char **key, char **value);
-// void	free_list_arg(t_arg *head);
 #endif

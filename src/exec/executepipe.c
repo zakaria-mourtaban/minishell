@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   executepipe.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/17 21:26:40 by zmourtab          #+#    #+#             */
 /*   Updated: 2024/09/03 16:25:09 by zmourtab         ###   ########.fr       */
@@ -243,14 +243,8 @@ void	execute_command(t_command *cmd, int *pipes, int i, int num_cmds,
 		if (path != args[0])
 			free(path);
 		free(args);
-		// free_args(args);
-		// free_list_arg(current);
-		// free(pipes);
-		// free(current);
 		exit(1);
 	}
-	// free_args(args);
-	// free(current);
 }
 
 void	execute_pipeline(t_command *cmds, t_data *data)
@@ -331,9 +325,4 @@ void	execute_pipeline(t_command *cmds, t_data *data)
 		data->cmd.status = 130;
 	if (pipes != NULL)
 		free(pipes);
-	free_command_list(current);
-	free(current);
-	free(pipes);
-	// close(in);
-	// close(out);
 }

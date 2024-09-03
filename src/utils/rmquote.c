@@ -12,41 +12,6 @@
 
 #include "../../includes/minishell.h"
 
-
-// Helper function to handle quotes
-static void	handle_quotes(char **src, char **dst, char *quote)
-{
-	if (!*quote && (**src == '\'' || **src == '\"'))
-		*quote = **src;
-	else if (*quote && **src == *quote)
-		*quote = 0;
-	else
-	{
-		**dst = **src;
-		(*dst)++;
-	}
-}
-// Helper function to handle backslashes
-static void	handle_backslashes(char **src, char **dst)
-{
-	if (**src == '\\')
-	{
-		if (*(*src + 1) == '\\')
-		{
-			**dst = '\\';  // Keep one backslash
-			(*dst)++;
-			(*src)++;  // Skip the second backslash
-		}
-		// Single backslash is skipped automatically by not copying it to dst
-	}
-	else
-	{
-		**dst = **src;
-		(*dst)++;
-	}
-}
-
-// Main function to remove quotes and handle backslashes
 void	remove_quotes(t_tokens *tokens)
 {
 	char	*src;
@@ -60,47 +25,21 @@ void	remove_quotes(t_tokens *tokens)
 		dst = tokens->content;
 		while (*src)
 		{
-			if (*src == '\\')
-				handle_backslashes(&src, &dst);
+			if (!quote && (*src == '\'' || *src == '\"'))
+				quote = *src;
+			else if (quote && *src == quote)
+				quote = 0;
 			else
-				handle_quotes(&src, &dst, &quote);
-
+			{
+				*dst = *src;
+				dst++;
+			}
 			src++;
 		}
 		*dst = '\0';
 		tokens = tokens->next;
 	}
 }
-
-// void	remove_quotes(t_tokens *tokens)
-// {
-// 	char	*src;
-// 	char	*dst;
-// 	char	quote;
-
-// 	while (tokens)
-// 	{
-// 		quote = 0;
-// 		src = tokens->content;
-// 		dst = tokens->content;
-// 		while (*src)
-// 		{
-// 			if (!quote && (*src == '\'' || *src == '\"'))
-// 				quote = *src;
-// 			else if (quote && *src == quote)
-// 				quote = 0;
-// 			else
-// 			{
-// 				*dst = *src;
-// 				dst++;
-// 			}
-// 			src++;
-// 		}
-// 		*dst = '\0';
-// 		tokens = tokens->next;
-// 	}
-// }
-
 
 // void	specify_token_cmd(t_tokens *token)
 // {
@@ -142,7 +81,6 @@ void	remove_quotes(t_tokens *tokens)
 // 	}
 // 	return (count);
 // }
-
 
 // char	*removepair(char *buffer, int ic, int ci)
 // {

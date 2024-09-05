@@ -1,6 +1,0 @@
-{
-	"makefile.configureOnOpen": false,
-	"files.associations": {
-		"type_traits": "c"
-	}
-}

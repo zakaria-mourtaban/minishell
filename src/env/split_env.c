@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_env.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 23:43:08 by odib              #+#    #+#             */
-/*   Updated: 2024/09/03 12:27:01 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/05 20:32:14 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,6 @@ void	split_envp(char *envp_str, char **key, char **value)
 	else
 	{
 		*key = ft_strdup(envp_str);
-		*value = ft_strdup("");
+		*value = NULL;
 	}
 }

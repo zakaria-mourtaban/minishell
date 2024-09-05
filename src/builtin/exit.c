@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 12:07:54 by odib              #+#    #+#             */
-/*   Updated: 2024/09/03 20:46:55 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/04 13:43:20 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ int	check_status_str(char *str)
 
 int	calculate_exit_status(int status)
 {
-	int res;
-	
+	int	res;
+
 	res = status % 256;
 	while (res < 0)
 	{
@@ -42,8 +42,8 @@ int	calculate_exit_status(int status)
 
 int	convert_and_validate_exit_status(char *arg)
 {
-	int exit_status;
-	
+	int	exit_status;
+
 	if (!check_status_str(arg))
 	{
 		printf("exit : %s numeric argument needed\n", arg);
@@ -53,23 +53,27 @@ int	convert_and_validate_exit_status(char *arg)
 	return (calculate_exit_status(exit_status));
 }
 
-void	handle_too_many_args_error()
+int	handle_too_many_args_error(void)
 {
 	printf("exit: too many arguments\n");
-	exit(1);
+	return (1);
 }
 
 int	exit_command(t_arg *args)
 {
-	int exit_status;
-	t_arg *arg;
-	
+	int		exit_status;
+	t_arg	*arg;
+
 	arg = args->next;
 	if (arg && arg->next)
-		handle_too_many_args_error();
+	{
+		exit_status = 1;
+		return (handle_too_many_args_error());
+	}
 	if (arg)
 		exit_status = convert_and_validate_exit_status(arg->arg);
 	else
 		exit_status = 0;
+	free_list_arg(arg);
 	return (exit(exit_status), exit_status);
 }

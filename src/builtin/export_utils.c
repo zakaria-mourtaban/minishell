@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 10:27:56 by odib              #+#    #+#             */
-/*   Updated: 2024/09/03 10:28:53 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/05 20:31:57 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,8 @@ void	remove_quotes_from_str(char *str)
 		src++;
 	}
 	*dst = '\0';
+	free(src);
+	free(dst);
 }
 
 int	check_key(char *key)
@@ -109,7 +111,11 @@ void	print_sorted_env_list(t_env *head)
 	current = head;
 	while (current)
 	{
-		printf("%s=\"%s\"\n", current->key, current->value);
+		if (current->value != NULL)
+			printf("%s=\"%s\"\n", current->key, current->value);
+		else
+			printf("%s\n", current->key);
 		current = current->next;
 	}
+	free_env_list(current);
 }

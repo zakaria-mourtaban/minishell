@@ -6,7 +6,7 @@
 /*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 11:18:31 by odib              #+#    #+#             */
-/*   Updated: 2024/09/03 09:44:47 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/04 13:41:24 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ int	cd_to_home(t_env *env_list)
 	}
 	set_env(&env_list, "OLDPWD", pwd, 0);
 	set_env(&env_list, "PWD", home, 0);
+	free(home);
+	free(pwd);
 	return (0);
 }
 
@@ -43,6 +45,7 @@ int	cd_to_oldpwd(t_env *env_list)
 		return (1);
 	}
 	set_env(&env_list, "OLDPWD", pwd, 0);
+	printf("%s\n", old_pwd);
 	new_pwd = getcwd(NULL, 0);
 	if (new_pwd == NULL)
 	{
@@ -51,6 +54,8 @@ int	cd_to_oldpwd(t_env *env_list)
 	}
 	set_env(&env_list, "PWD", new_pwd, 0);
 	free(new_pwd);
+	free(old_pwd);
+	free(pwd);
 	return (0);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   new_env_$.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 23:30:14 by odib              #+#    #+#             */
-/*   Updated: 2024/09/03 17:21:15 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/06 04:25:21 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,16 +28,17 @@ void	handle_normal_variable(char *input, int *i, char **result, t_env *env)
 	{
 		sub_env = ft_substr(input, start, end - start);
 		env_value = get_env(env, sub_env);
-		if (env_value && *result != NULL)
+		if (env_value)
 			*result = ft_strjoingnl(*result, env_value);
-		else
-			*result = ft_strdup(env_value);
 		free(env_value);
 		free(sub_env);
 	}
 	else
 		*result = ft_strjoingnl(*result, "$");
 }
+// *result = ft_strjoingnl(*result, env_value);
+// else
+// 	*result = ft_strdup(env_value);
 
 void	handle_two_dollar(char **result, int *i)
 {
@@ -78,7 +79,9 @@ char	*handle_dollar_sign(char *input, t_data *data)
 	result = ft_strdup("");
 	while (i < ft_strlen1(input) && input[i])
 	{
-		if (input[i] == '$')
+		if (input[i] == '$' && isquote(input[i + 1]) && i == 0)
+			i++;
+		else if (input[i] == '$')
 		{
 			if (input[i + 1] == '$')
 				handle_two_dollar(&result, &i);

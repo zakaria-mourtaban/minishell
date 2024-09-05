@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execveutils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 23:10:31 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/01 18:00:15 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/05 02:38:59 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,15 +55,35 @@ char	*get_path(char *cmd, t_env *envp_list)
 		path_part = ft_strjoin(allpath[i], "/");
 		exec = ft_strjoin(path_part, s_cmd[0]);
 		free(path_part);
-		if (access(exec, F_OK | X_OK) == 0)
-		{
-			ft_free_tab(allpath);
-			ft_free_tab(s_cmd);
-			return (exec);
-		}
-		free(exec);
+		if (exec && access(exec, F_OK | X_OK) == 0)
+			return (ft_free_tab(allpath), ft_free_tab(s_cmd), exec);
+		if (exec)
+			free(exec);
 	}
-	ft_free_tab(allpath);
-	ft_free_tab(s_cmd);
-	return (ft_strdup(cmd));
+	return (ft_free_tab(allpath), ft_free_tab(s_cmd), ft_strdup(cmd));
+}
+
+void	execute_pipeline(t_command *cmds, t_data *data)
+{
+	t_exp	xp;
+
+	expp1(&xp, cmds, data);
+	if (!xp.pipes)
+		return ;
+	xp.i = 0;
+	if (expp5(&xp, data))
+		return ;
+	xp.i = 0;
+	xp.current = cmds;
+	while (xp.current)
+	{
+		if (ft_strlen(xp.current->args->arg) == 0)
+		{
+			xp.current = xp.current->next;
+			continue ;
+		}
+		expp2(&xp, data);
+		expp3(&xp, data);
+	}
+	expp4(&xp, data);
 }

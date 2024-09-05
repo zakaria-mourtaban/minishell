@@ -1,33 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   utils_error.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/30 12:12:30 by odib              #+#    #+#             */
-/*   Updated: 2024/09/04 13:42:37 by odib             ###   ########.fr       */
+/*   Created: 2024/09/06 04:34:04 by odib              #+#    #+#             */
+/*   Updated: 2024/09/06 04:35:39 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int	env_command(t_env *env_list)
+int	casenext(t_tokens **tmp)
 {
-	t_env	*temp;
-
-	if (env_list == NULL)
+	if ((*tmp)->error == 1)
 	{
-		perror("Error: Environment list is NULL\n");
+		(*tmp) = getnextcommand((*tmp));
+		if (*tmp)
+			(*tmp) = (*tmp)->next;
 		return (1);
 	}
-	temp = env_list;
-	while (temp != NULL)
-	{
-		if (temp->hidden == 0)
-			printf("%s=\"%s\"\n", temp->key, temp->value);
-		temp = temp->next;
-	}
-	free_env_list(temp);
 	return (0);
+}
+
+void	checkpipeerr(t_data *data)
+{
+	t_tokens	*tmp;
+
+	tmp = data->cmdchain;
+	while (tmp)
+	{
+		if (casenext(&tmp))
+			continue ;
+		if (tmp->id == TOKEN_PIPE && checkpipe(tmp))
+			handleerrpipe(data, &tmp, &tmp);
+		tmp = tmp->next;
+	}
 }

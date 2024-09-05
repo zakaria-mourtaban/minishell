@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   environment.c                                      :+:      :+:    :+:   */
+/*   env_list_management.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 06:10:13 by odib              #+#    #+#             */
-/*   Updated: 2024/09/03 11:08:54 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/05 20:33:06 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,9 @@ int	set_env(t_env **head, const char *key, const char *value, int hidden)
 			&& ft_strlen(current->key) == ft_strlen(key))
 		{
 			free(current->value);
-			current->value = ft_strdup(value);
+			current->value = NULL;
+			if (value != NULL)
+				current->value = ft_strdup(value);
 			current->hidden = hidden;
 			return (0);
 		}
@@ -33,7 +35,6 @@ int	set_env(t_env **head, const char *key, const char *value, int hidden)
 		current = current->next;
 	}
 	new_node = create_envp_node((char *)key, (char *)value, hidden);
-	printf("newnodehidden:%d\n", new_node->hidden);
 	if (!new_node)
 		return (-1);
 	prev->next = new_node;

@@ -6,13 +6,13 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 10:22:42 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/03 19:38:22 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/05 20:36:40 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int		signalint;
+int		g_signalint;
 
 char	*envtostr(t_env *envs)
 {
@@ -20,7 +20,8 @@ char	*envtostr(t_env *envs)
 
 	out = ft_strdup(envs->key);
 	out = ft_strjoingnl(out, "=");
-	out = ft_strjoingnl(out, envs->value);
+	if (envs->value != NULL)
+		out = ft_strjoingnl(out, envs->value);
 	return (out);
 }
 
@@ -68,10 +69,10 @@ t_env	*get_tenv(t_env *head, const char *key)
 void	init(t_data *data, char **env)
 {
 	t_env	*tmp;
-	char 	*tmpval;
+	char	*tmpval;
 
 	art();
-	signalint = 0;
+	g_signalint = 0;
 	data->env_list = NULL;
 	data->cmdchain = NULL;
 	data->env = NULL;

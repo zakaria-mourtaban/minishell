@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:24:52 by odib              #+#    #+#             */
-/*   Updated: 2024/09/03 10:30:33 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/05 20:32:21 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ char	**argtochar(t_arg *arg)
 		i++;
 	}
 	args[i] = NULL;
-	return (args);
+	return (free_list_arg(tmp), args);
 }
 
 int	getac(t_arg *arg)
@@ -53,6 +53,7 @@ int	getac(t_arg *arg)
 		tmp = tmp->next;
 		i++;
 	}
+	free_list_arg(tmp);
 	return (i);
 }
 
@@ -83,7 +84,7 @@ int	set_export_variable(t_env **env_list, char *arg)
 	split_envp(arg, &key, &value);
 	if (!key || ft_strlen(key) == 0 || is_key_invalid(key))
 		return (free_resources(key, value), -1);
-	if (ft_strlen(value) == 0)
+	if (value == NULL)
 	{
 		if (set_env(env_list, key, value, 1) != 0)
 			return (free_resources(key, value), -1);

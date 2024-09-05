@@ -6,7 +6,7 @@
 /*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:15:36 by odib              #+#    #+#             */
-/*   Updated: 2024/09/03 11:34:11 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/06 06:49:12 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,25 +56,6 @@ void	ft_split_env(char *envp_str, char **key, char **value)
 	}
 }
 
-pid_t	ft_getpid(void)
-{
-	int		fd;
-	char	*line;
-
-	fd = open("/proc/self/status", O_RDONLY);
-	if (fd == -1)
-	{
-		perror("open");
-		return (-1);
-	}
-	line = read_pid_line(fd);
-	close(fd);
-	if (line != NULL)
-		return ((pid_t)ft_atoi(line + 4));
-	else
-		return (-1);
-}
-
 pid_t	ft_getuid(void)
 {
 	char	buffer[256];
@@ -97,3 +78,22 @@ pid_t	ft_getuid(void)
 	}
 	return (uid);
 }
+
+// pid_t	ft_getpid(void)
+// {
+// 	int		fd;
+// 	char	*line;
+
+// 	fd = open("/proc/self/status", O_RDONLY);
+// 	if (fd == -1)
+// 	{
+// 		perror("open");
+// 		return (-1);
+// 	}
+// 	line = read_pid_line(fd);
+// 	close(fd);
+// 	if (line != NULL)
+// 		return ((pid_t)ft_atoi(line + 4));
+// 	else
+// 		return (-1);
+// }

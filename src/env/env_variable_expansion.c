@@ -6,7 +6,7 @@
 /*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 14:42:27 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/03 12:26:21 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/06 04:29:25 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,14 +65,44 @@ char	*concatenv(char *input, t_data *data)
 	return (out);
 }
 
-// void	concatenvtoken(t_data *data)
-// {
-// 	t_tokens	*tmp;
-//
-// 	tmp = data->cmdchain;
-// 	while (tmp)
-// 	{
-// 		tmp->content = handle_dollar_sign(tmp->content, data);
-// 		tmp = tmp->next;
-// 	}
-// }
+int	isexpandable(char *input)
+{
+	t_isexpandable	is;
+
+	is.i = 0;
+	is.isexpandable = 0;
+	is.sinquote = 0;
+	is.doublequote = 0;
+	while (input[is.i] != '\0')
+	{
+		if (input[is.i] == '\'' && is.doublequote == 0)
+		{
+			is.sinquote = 1;
+			is.doublequote = 0;
+		}
+		if (input[is.i] == '\"' && is.sinquote == 0)
+		{
+			is.doublequote = 1;
+			is.sinquote = 0;
+		}
+		if (input[is.i] == '$' && !is.doublequote && !is.sinquote)
+			return (1);
+		if (input[is.i] == '$' && is.doublequote)
+			is.isexpandable = 1;
+		is.i++;
+	}
+	return (is.isexpandable);
+}
+
+void	concatenvtoken(t_data *data)
+{
+	t_tokens	*tmp;
+
+	tmp = data->cmdchain;
+	while (tmp)
+	{
+		if (isexpandable(tmp->content))
+			tmp->content = handle_dollar_sign(tmp->content, data);
+		tmp = tmp->next;
+	}
+}

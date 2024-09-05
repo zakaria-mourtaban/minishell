@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 00:00:34 by zmourtab          #+#    #+#             */
-/*   Updated: 2024/09/03 11:52:38 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/04 18:00:11 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,11 @@ void	interactivemode(t_data *data, char **input)
 			break ;
 		}
 	}
+	if (g_signalint != 0)
+	{
+		data->cmd.status = g_signalint;
+		g_signalint = 0;
+	}
 	(void)data;
 }
 
@@ -60,12 +65,14 @@ void	noninteractivemode(t_data *data, char **input)
 {
 	signal(SIGINT, noninteractivehandle_sigint);
 	signal(SIGQUIT, noninteractivehandle_sigint);
-	while (data->cmd.running == 1 && signalint != 130)
+	while (data->cmd.running == 1 && g_signalint != 130)
 	{
-		if (signalint == 130)
+		if (g_signalint == 130)
 		{
 			handlesignal(data);
 			printf("\n");
+			data->cmd.status = g_signalint;
+			g_signalint = 0;
 			break ;
 		}
 	}

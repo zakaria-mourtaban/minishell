@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
+/*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 12:07:09 by odib              #+#    #+#             */
-/*   Updated: 2024/09/03 17:19:36 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/04 13:52:59 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,5 +54,5 @@ int	echo_command(t_arg *args)
 	}
 	if (newline)
 		printf("\n");
-	return (0);
+	return (free_list_arg(current), 0);
 }

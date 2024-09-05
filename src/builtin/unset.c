@@ -6,7 +6,7 @@
 /*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 11:37:39 by odib              #+#    #+#             */
-/*   Updated: 2024/09/03 00:23:04 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/04 13:50:13 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,13 @@ int	unset_command(t_arg *args, t_env **env_list)
 		perror("unset: not enough arguments\n");
 		return (1);
 	}
+	if (!check_key(current->arg))
+		return (is_key_invalid(current->arg));
 	while (current != NULL)
 	{
 		unset(env_list, current->arg);
 		current = current->next;
 	}
+	free_list_arg(current);
 	return (0);
 }

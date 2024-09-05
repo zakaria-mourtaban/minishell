@@ -6,7 +6,7 @@
 /*   By: odib <odib@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 10:46:33 by odib              #+#    #+#             */
-/*   Updated: 2024/09/03 12:16:17 by odib             ###   ########.fr       */
+/*   Updated: 2024/09/06 04:25:35 by odib             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,11 @@ static int	skip_single_quote_section(char *input, int i)
 			i++;
 	}
 	return (i);
+}
+
+int	isquote(char c)
+{
+	return (c == '\'' || c == '\"');
 }
 
 int	dollarcount(char *input)

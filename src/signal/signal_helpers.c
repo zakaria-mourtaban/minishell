@@ -6,7 +6,7 @@
 /*   By: zmourtab <zakariamourtaban@gmail.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:51:08 by odib              #+#    #+#             */
-/*   Updated: 2024/09/03 19:37:33 by zmourtab         ###   ########.fr       */
+/*   Updated: 2024/09/04 18:00:11 by zmourtab         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	interactivehandle_sigint(int sig)
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
-	signalint = 130;
+	g_signalint = 130;
 	(void)sig;
 }
 
@@ -37,7 +37,7 @@ void	interactivehandle_sigquit(int sig)
 void	noninteractivehandle_sigint(int sig)
 {
 	printf("\n");
-	signalint = 130;
+	g_signalint = 130;
 	(void)sig;
 }
 

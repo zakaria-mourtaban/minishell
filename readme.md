@@ -75,5 +75,5 @@ to remove old local branches<br>
 git fetch --prune && git branch -d $(git branch --merged | grep -v 'main')<br>
 
 ## Ignore realine leaks
-Take a copy of the readline.supp put in your minishell and run the next command ->
+Take a copy of the readline.supp put in your minishell and run the next command -><br>
 valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --suppressions=readline.supp ./minishell<br>

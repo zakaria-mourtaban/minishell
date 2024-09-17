@@ -1,7 +1,3 @@
-Here is a suggested `README.md` file for the mandatory part of your Minishell project:
-
----
-
 # Minishell
 
 ## Introduction
@@ -63,23 +59,11 @@ To run the shell:
 ./minishell
 ```
 
-## External Functions Used
-
-The project uses the following external functions:
-- `readline`, `add_history`, `printf`, `malloc`, `free`, `write`, `fork`, `wait`, `execve`, `pipe`, `dup`, `dup2`, `open`, `close`, `getcwd`, `chdir`, `signal`, `exit`, and many others from the standard C library.
-
 ## Reference
 
 - [Bash Manual](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/)
 
-## License
-
-This project is open-source and follows the 42 project license guidelines.
-
----
-
-This should give a good overview of the Minishell project's mandatory part based on the project description【4†source】.
-
+## Know git better :) ->
 
 git checkout main<br>
 git pull origin main<br>
